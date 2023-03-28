@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from decouple import config
 
 url = URL.create(
+    drivername= "mysql",
     username= config('DB_USER'),
     password= config('DB_PASSWORD'),
     host= config('DB_HOST'),

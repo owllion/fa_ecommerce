@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import sessionmaker
 from decouple import config
+from sqlalchemy.ext.declarative import declarative_base
 
 url = URL.create(
     drivername= "mysql",
@@ -13,5 +14,8 @@ url = URL.create(
 )
 
 engine = create_engine(url)
-Session = sessionmaker(bind=engine)
-session = Session()
+SessionLocal = sessionmaker(bind=engine)
+# autocommit=False, autoflush=False,
+session = SessionLocal()
+
+Base = declarative_base()

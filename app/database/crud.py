@@ -9,7 +9,7 @@ def get_user(*,db: Session=Depends(db.get_db), user_id: int):
 
 
 def get_user_by_email(*,db: Session=Depends(db.get_db), email: str):
-    return db.query(user_model.User.User).filter(user_model.User.User.email == email).first()
+    return db.query(user_model.User).filter(user_model.User.email == email).first()
 
 
 def get_users(*,db: Session=Depends(db.get_db), skip: int = 0, limit: int = 100):

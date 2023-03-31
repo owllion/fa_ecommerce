@@ -1,14 +1,15 @@
 from fastapi import Depends, FastAPI
 
-from .routers import items,user
+from .routers import item_router,user_router,auth_router
+from .models import item_model,user_model
 from .database import db
-from .models import item as item_model,user as user_model
 import uvicorn
 
 app = FastAPI()
 
-app.include_router(items.router)
-app.include_router(user.router)
+app.include_router(item_router.router)
+app.include_router(user_router.router)
+app.include_router(auth_router.router)
 
 item_model.Base.metadata.create_all(db.engine)
 user_model.Base.metadata.create_all(db.engine)

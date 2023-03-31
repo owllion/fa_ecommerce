@@ -6,12 +6,10 @@ from fastapi.responses import RedirectResponse
 from fastapi.encoders import jsonable_encoder
 from ..utils.dependencies import *
 
-from ..schemas import user as user_schema,item as item_schema
-
-
-
+from ..schemas import user_schema,item_schema
 
 from ..database import db,crud
+from ..database.crud import user_crud
 from sqlalchemy.orm import Session
 
 class Item(BaseModel):
@@ -39,9 +37,9 @@ router = APIRouter(
 
 
 #--------------------router --------------
-@router.post("/users/", response_model=user_schema.User)
+@router.post("/users/", response_model=user_schema.UserSchema)
 def create_user(
-    user: user_schema.UserCreate, 
+    user: user_schema.UserCreateSchema, 
     db: Session = Depends(db.get_db)
     ):
     db_user = crud.get_user_by_email(db=db, email=user.email)
@@ -50,13 +48,13 @@ def create_user(
     return crud.create_user(db=db, user=user)
 
 
-@router.get("/users/", response_model=list[user_schema.User])
+@router.get("/users/", response_model=list[user_schema.UserSchema])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(db.get_db)):
     users = crud.get_users(db=db, skip=skip, limit=limit)
     return users
 
 
-@router.get("/users/{user_id}", response_model=user_schema.User)
+@router.get("/users/{user_id}", response_model=user_schema.UserSchema)
 def read_user(user_id: str, db: Session = Depends(db.get_db)):
     db_user = crud.get_user(db=db, user_id=user_id)
     if db_user is None:

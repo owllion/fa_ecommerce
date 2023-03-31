@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 from fastapi import Depends
-from ..models import item as item_model,user as user_model
-from ..schemas import item as item_schema,user as user_schema
+from ..models import item_model,user_model
+
+from ..schemas import item_schema,user_schema
 from ..database import db
 
 def get_user(*,db: Session=Depends(db.get_db), user_id: int):
@@ -13,13 +14,13 @@ def get_user_by_email(*,db: Session=Depends(db.get_db), email: str):
 
 
 def get_users(*,db: Session=Depends(db.get_db), skip: int = 0, limit: int = 100):
-    return db.query(user_model.User).offset(skip).limit(limit).all() #為啥這邊return會是Schema的User type?這邊不都寫了是user_model的?!?!?
+    return db.query(user_model.User).offset(skip).limit(limit).all()
 
 
-def create_user(*, db: Session = Depends(db.get_db), user: user_schema.UserCreate):
+def create_user(*, db: Session = Depends(db.get_db), user: user_schema.UserCreateSchema):
     fake_hashed_password = user.password + "notreallyhashed"
     db_user = user_model.User(email=user.email, hashed_password=fake_hashed_password)
-    db.add(db_user) #喔是創建的時候要用pydantic的model喔...
+    db.add(db_user) 
     db.commit()
     db.refresh(db_user)
     return db_user

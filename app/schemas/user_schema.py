@@ -26,7 +26,6 @@ class GoogleLoginSchema(BaseModel):
     email: EmailStr
 
 
-
 class UserSchema(UserBaseSchema): #used to return data
     id: str
     verified: bool = False
@@ -35,3 +34,7 @@ class UserSchema(UserBaseSchema): #used to return data
     default_avatar: str = config('DEFAULT_AVATAR_URL')
     created_at: datetime
     updated_at: datetime
+
+class UserWithTokenSchema(UserSchema):
+    access_token: str
+    refresh_token: str

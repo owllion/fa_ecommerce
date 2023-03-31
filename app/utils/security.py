@@ -23,11 +23,12 @@ def verify_password(password: str, hashed_password: str):
 
 
 def create_token(user_id: str, token_type: str):
-    token_timedelta = timedelta(days=10) if token_type == 'access' else timedelta(minutes=30)
+    token_timedelta = timedelta(minutes=30) if token_type == 'access' else timedelta(days=10)
 
     expire = datetime.utcnow() + token_timedelta
+    print(expire,'this is expire')
     
-    return jwt.encode(
+    token = jwt.encode(
         claims = {
             "exp": expire, 
             "user_id":user_id
@@ -35,6 +36,9 @@ def create_token(user_id: str, token_type: str):
         key = config('JWT_SECRET') if token_type == 'access' else config('REFRESH_SECRET'), 
         algorithm= config('JWT_ALGORITHM')
     )
+    print(token,'this is token')
+
+    return token
 
 def verify_token(
     token: str, 

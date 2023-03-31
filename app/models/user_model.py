@@ -4,6 +4,7 @@ import uuid
 from ..database.db import Base,engine
 from decouple import config
 
+
 class User(Base):
     __tablename__ = "user"
 

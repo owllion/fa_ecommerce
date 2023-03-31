@@ -16,6 +16,7 @@ from ..models import user_model
 from ..database import db,crud
 from ..database.crud import user_crud
 
+from fastapi.encoders import jsonable_encoder
 
 
 ACCESS_TOKEN_EXPIRES_IN = config('ACCESS_TOKEN_EXPIRES_IN')
@@ -28,7 +29,7 @@ router = APIRouter(
 )
 
 
-@router.post('/register', status_code= status.HTTP_201_CREATED, response_model= user_schema.UserSchema)
+@router.post('/register', status_code= status.HTTP_201_CREATED, response_model= user_schema.UserWithTokenSchema)
 async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depends(db.get_db)):
 
     user = user_crud.find_user_with_email(payload.email, db)
@@ -38,13 +39,14 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
             status_code=status.HTTP_409_CONFLICT,detail='Account already exist')
     
     payload = user_crud.get_updated_payload_data(payload)
-    print(payload,'this is payload')
 
-    new_user = user_model.User(**payload.dict())
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return new_user
+    new_user = user_crud.save_data_then_return(payload,db)
+    data = jsonable_encoder(new_user)  
+    print(data,'this is data')
+    data['access_token'] = security.create_token(new_user.id,"access")
+    data['refresh_token'] = security.create_token(new_user.id,"refresh")
+
+    return data
 
 
 
@@ -54,8 +56,7 @@ def login(
     db: Session = Depends(db.get_db)
 ):
     user = user_crud.find_user_with_email(payload.email, db)
-       
-
+    
     if not user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -66,6 +67,6 @@ def login(
         access_token = security.create_token(user.id,"access")
         refresh_token = security.create_token(user.id,"refresh")
         user['access_token'] = access_token
-        user['refresh_token'] - refresh_token
+        user['refresh_token'] = refresh_token
 
         return user

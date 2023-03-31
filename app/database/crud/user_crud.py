@@ -24,6 +24,17 @@ def find_user_with_id(
     
     return user
 
+def save_data_then_return(
+    payload: user_schema.UserCreateSchema, 
+    db: Session = Depends(db.get_db)
+):
+    new_user = user_model.User(**payload.dict())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user
+
 
 def get_updated_payload_data(payload: user_schema.UserCreateSchema):
     payload.password = security.hash_password(payload.password)

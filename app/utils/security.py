@@ -11,6 +11,9 @@ from ..database.crud import user_crud
 from ..database import db
 
 
+ACCESS_TOKEN_EXPIRES_IN = config('ACCESS_TOKEN_EXPIRES_IN')
+REFRESH_TOKEN_EXPIRES_IN = config('REFRESH_TOKEN_EXPIRES_IN')
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -23,10 +26,9 @@ def verify_password(password: str, hashed_password: str):
 
 
 def create_token(user_id: str, token_type: str):
-    token_timedelta = timedelta(minutes=30) if token_type == 'access' else timedelta(days=10)
+    token_timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRES_IN) if token_type == 'access' else timedelta(days=REFRESH_TOKEN_EXPIRES_IN)
 
     expire = datetime.utcnow() + token_timedelta
-    print(expire,'this is expire')
     
     token = jwt.encode(
         claims = {
@@ -40,7 +42,7 @@ def create_token(user_id: str, token_type: str):
 
     return token
 
-def verify_token(
+def decode_token(
     token: str, 
     token_type: str, 
     db: Session = Depends(db.get_db)
@@ -63,6 +65,8 @@ def verify_token(
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,detail="User does not exist."
         )
+
+        return payload
 
     except ExpiredSignatureError:
         raise HTTPException(

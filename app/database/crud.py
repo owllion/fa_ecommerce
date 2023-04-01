@@ -31,7 +31,6 @@ def get_items(*,db: Session=Depends(db.get_db), skip: int = 0, limit: int = 100)
 
 
 def create_user_item(*, db: Session=Depends(db.get_db), item: item_schema.ItemCreate, user_id: int):
-    #為啥傳入的item部會直接是db model的???為啥匯市pydantic model?? 
     db_item = item_model.Item(**item.dict(), owner_id=user_id)
     # we pass the extra keyword argument owner_id that is not provided by the Pydantic model, with:
 

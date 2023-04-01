@@ -50,7 +50,6 @@ async def create_user(
 
 @router.post('/login',response_model= user_schema.UserWithTokenSchema)
 def login(
-
     payload: user_schema.LoginUserSchema, 
     db: Session = Depends(db.get_db)
 ):

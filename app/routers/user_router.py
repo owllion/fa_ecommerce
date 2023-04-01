@@ -1,4 +1,4 @@
-from fastapi import FastAPI,HTTPException, Body,Header,Response,APIRouter,Depends,status
+from fastapi import FastAPI,HTTPException, Body,Header,Response,APIRouter,Depends,status,Request
 from sqlalchemy.orm import Session
 from enum import Enum
 from typing import Annotated
@@ -9,7 +9,7 @@ from ..utils.dependencies import *
 from ..schemas import user_schema,item_schema
 from ..database import db,crud
 from ..database.crud import user_crud
-from ..schemas.user_schema import SupportedFiled
+from ..schemas.user_schema import SupportedFiled,VerifiedValue
 
 router = APIRouter(
     prefix="/user",
@@ -18,13 +18,6 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-# @router.post("/update", status_code=status.HTTP_200_OK)
-# def update_user(id: str , username: str, db: Session = Depends(db.get_db)):
-#     user = user_crud.find_user_with_id(id,db)
-#     test = 'verified'
-#     user[test] = username
-#     db.commit()
-
 @router.post(
     "/update", 
     status_code= status.HTTP_200_OK,
@@ -32,6 +25,7 @@ router = APIRouter(
     response_model= None
 )
 def update_user(
+    req: Request,
     payload: user_schema.UserUpdateSchema,
     db: Session = Depends(db.get_db)
 ):
@@ -40,13 +34,24 @@ def update_user(
     print(id,field,value)
     user = user_crud.find_user_with_id(id,db)
 
-    if field == SupportedFiled.USERNAME:
-        if not type(value) is bool: 
-            raise TypeError('value for verified field must be boolean') 
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,detail="User does not exist."
+        )
+
+    if field == SupportedFiled.VERIFIED:
+        print(value,'this is vlaue')
+        print(VerifiedValue.ZERO.value)
+        print(value == VerifiedValue.ZERO.value, 'same')
+        if value != VerifiedValue.ZERO.value and value != VerifiedValue.ONE.value: 
+            raise HTTPException(
+                status_code= status.HTTP_400_BAD_REQUEST,
+                detail= "value for verified field must be 0 or 1"
+            )
     
-        user.verified = value
+        user.verified = int(value)
     
-    elif field == SupportedFiled.VERIFIED:
+    elif field == SupportedFiled.USERNAME:
         user.username = value
 
     db.commit()

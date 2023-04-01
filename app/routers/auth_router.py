@@ -62,9 +62,9 @@ def login(
         )
 
     if user_crud.password_is_matched(payload.password, user.password) and user_crud.user_is_verified(user.verified):
-        user = jsonable_encoder(user)
         access_token = security.create_token(user.id,"access")
         refresh_token = security.create_token(user.id,"refresh")
+        user = jsonable_encoder(user)
         user['access_token'] = access_token
         user['refresh_token'] = refresh_token
 

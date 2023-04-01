@@ -42,7 +42,11 @@ class UserWithTokenSchema(UserSchema):
 class SupportedFiled(str,Enum):
     USERNAME = 'username'
     VERIFIED = 'verified'
+
+class VerifiedValue(str,Enum):
+    ZERO = "0"
+    ONE = "1"
 class UserUpdateSchema(BaseModel):
     id: str
     field: SupportedFiled = Field(description="user data's field you want to update.Only the updating to the username and verify field is supported.")
-    value: str | bool = Field(description="data for update the field you specify.")
+    value: str | VerifiedValue = Field(description="data for update the field you specify.('0' -> False & '1' -> True)")

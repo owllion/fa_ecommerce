@@ -11,8 +11,8 @@ from ..database.crud import user_crud
 from ..database import db
 
 
-ACCESS_TOKEN_EXPIRES_IN = config('ACCESS_TOKEN_EXPIRES_IN')
-REFRESH_TOKEN_EXPIRES_IN = config('REFRESH_TOKEN_EXPIRES_IN')
+ACCESS_TOKEN_EXPIRES_IN = config('ACCESS_TOKEN_EXPIRES_IN',cast=int)
+REFRESH_TOKEN_EXPIRES_IN = config('REFRESH_TOKEN_EXPIRES_IN',cast=int)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -45,12 +45,11 @@ def create_token(user_id: str, token_type: str):
 def decode_token(
     token: str, 
     token_type: str, 
-    db: Session = Depends(db.get_db)
+    db:Session
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
     )
     try:
         payload = jwt.decode(
@@ -58,15 +57,18 @@ def decode_token(
             config('JWT_SECRET') if token_type == 'access' else config('REFRESH_SECRET'),
             algorithms=[config('JWT_ALGORITHM')]
         )
+        print(payload,'這是payload')
+        print(type(payload),'這是payload type')
+        print(payload['user_id'],'這是payload type')
         
-        user = user_crud.find_user_with_id(payload.user_id, db)
+        user = user_crud.find_user_with_id(payload['user_id'], db)
 
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,detail="User does not exist."
         )
 
-        return payload
+        return user
 
     except ExpiredSignatureError:
         raise HTTPException(

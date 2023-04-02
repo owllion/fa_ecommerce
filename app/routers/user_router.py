@@ -4,6 +4,8 @@ from enum import Enum
 from typing import Annotated
 from fastapi.encoders import jsonable_encoder
 from typing import Generic,TypeVar
+from pydantic import ValidationError
+
 
 from ..utils.dependencies import *
 from ..schemas import user_schema,item_schema
@@ -34,19 +36,25 @@ def update_user(
     #Convert value to python dict then get the values.
     #Can not do this when the data is of JSON format.
 
-    if field == SupportedFiled.VERIFIED:
-        if value != VerifiedValue.ZERO.value and value != VerifiedValue.ONE.value: 
-            raise HTTPException(
-                status_code= status.HTTP_400_BAD_REQUEST,
-                detail= "value for verified field must be 0 or 1"
-            )
-    
-        req.state.mydata.verified = int(value)
-    
-    elif field == SupportedFiled.USERNAME:
-        req.state.mydata.username = value
+    try:
+        if field == SupportedFiled.VERIFIED:
+            req.state.mydata.verified = int(value)
+        
+        elif field == SupportedFiled.USERNAME:
+            req.state.mydata.username = value
 
-    db.commit()
+        db.commit()
+
+    except:
+        raise HTTPException(
+            status_code= status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail = "Something went wrong!"
+        )
+        
+
+
+
+
    
 
 @router.get("/{user_id}", response_model=user_schema.UserSchema)

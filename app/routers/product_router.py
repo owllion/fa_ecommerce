@@ -11,7 +11,7 @@ public_router = APIRouter(
 protected_router = APIRouter(
     prefix="/product",
     tags=["product_protected"],
-    dependencies=[Depends(get_token_header)],
+    dependencies=[Depends(validate_token)],
     responses={404: {"description": "Not found"}},
 )
 

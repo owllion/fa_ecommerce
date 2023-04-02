@@ -48,8 +48,8 @@ def decode_token(
     db:Session
 ):
     credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="Malformed token, please provide a valid token",
     )
     try:
         payload = jwt.decode(
@@ -57,10 +57,6 @@ def decode_token(
             config('JWT_SECRET') if token_type == 'access' else config('REFRESH_SECRET'),
             algorithms=[config('JWT_ALGORITHM')]
         )
-        print(payload,'這是payload')
-        print(type(payload),'這是payload type')
-        print(payload['user_id'],'這是payload type')
-        
         user = user_crud.find_user_with_id(payload['user_id'], db)
 
         if not user:

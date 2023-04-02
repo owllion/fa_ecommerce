@@ -1,4 +1,4 @@
-from fastapi import FastAPI,HTTPException,APIRouter,Depends,status
+from fastapi import FastAPI,HTTPException,APIRouter,Depends,status,Body
 from enum import Enum
 #from pydantic import BaseModel,Field,EmailStr
 from typing import Annotated
@@ -70,20 +70,26 @@ def login(
 
         return user
     
-@router.post('/refresh-token')
+@router.post('/refresh-token', response_model=user_schema.AccessAndRefreshTokenSchema)
 def get_refresh_token(
-    token: str,
+    payload: user_schema.TokenSchema,
     db: Session = Depends(db.get_db)
 ):
-    decoded_data = security.decode_token(token,'refresh',db)
+    if not payload.token: 
+        raise HTTPException(
+            status_code= status.HTTP_400_BAD_REQUEST,
+            detail="Please provide refresh token"
+        )
+    
+    decoded_data = security.decode_token(payload.token,'refresh',db)
 
     return {
         'access_token': security.create_token(
-            decoded_data.user_id,
+            decoded_data.id,
             'access'
         ),
         'refresh_token': security.create_token(
-            decoded_data.user_id,
+            decoded_data.id,
             'refresh'
         )
     }

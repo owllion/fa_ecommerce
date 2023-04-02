@@ -38,7 +38,11 @@ class UserSchema(UserBaseSchema): #used to return data
 class UserWithTokenSchema(UserSchema):
     access_token: str
     refresh_token: str
-
+class TokenSchema(BaseModel):
+    token: str
+class AccessAndRefreshTokenSchema(BaseModel):
+    access_token: str
+    refresh_token: str
 class SupportedFiled(str,Enum):
     USERNAME = 'username'
     VERIFIED = 'verified'
@@ -47,6 +51,7 @@ class VerifiedValue(str,Enum):
     ZERO = "0"
     ONE = "1"
 class UserUpdateSchema(BaseModel):
-    id: str
     field: SupportedFiled = Field(description="user data's field you want to update.Only the updating to the username and verify field is supported.")
     value: str | VerifiedValue = Field(description="data for update the field you specify.('0' -> False & '1' -> True)")
+
+

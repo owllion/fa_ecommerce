@@ -4,10 +4,13 @@ from sqlalchemy.orm import Session
 from ..utils.security import decode_token
 from ..database.crud import user_crud
 from ..database import db
-async def get_token_header(req:Request ,authorization: Annotated[str, Header()],db: Session = Depends(db.get_db)):
+
+
+async def validate_token(req:Request ,authorization: Annotated[str, Header()],db: Session = Depends(db.get_db)):
+    #no need to check if there is authorization token or not, coz if we do not pass the token, fastApi will directly response 422 error, would not even run a single line in this function.
+
     token = authorization.replace('Bearer ','')
+
     decoded_data = decode_token(token,'access',db)
-    print(decoded_data,'挖喔')
     
-    
-    req.state.user = decoded_data
+    req.state.mydata = decoded_data

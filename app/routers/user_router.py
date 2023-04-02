@@ -14,7 +14,7 @@ from ..schemas.user_schema import SupportedFiled,VerifiedValue
 router = APIRouter(
     prefix="/user",
     tags=["user"],
-    dependencies=[Depends(get_token_header)],
+    dependencies=[Depends(validate_token)],
     responses={404: {"description": "Not found"}},
 )
 
@@ -30,29 +30,21 @@ def update_user(
     db: Session = Depends(db.get_db)
 ):
 
-    (id,field,value) = jsonable_encoder(payload).values()
-    print(id,field,value)
-    user = user_crud.find_user_with_id(id,db)
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,detail="User does not exist."
-        )
+    (field,value) = jsonable_encoder(payload).values()
+    #Convert value to python dict then get the values.
+    #Can not do this when the data is of JSON format.
 
     if field == SupportedFiled.VERIFIED:
-        print(value,'this is vlaue')
-        print(VerifiedValue.ZERO.value)
-        print(value == VerifiedValue.ZERO.value, 'same')
         if value != VerifiedValue.ZERO.value and value != VerifiedValue.ONE.value: 
             raise HTTPException(
                 status_code= status.HTTP_400_BAD_REQUEST,
                 detail= "value for verified field must be 0 or 1"
             )
     
-        user.verified = int(value)
+        req.state.mydata.verified = int(value)
     
     elif field == SupportedFiled.USERNAME:
-        user.username = value
+        req.state.mydata.username = value
 
     db.commit()
    

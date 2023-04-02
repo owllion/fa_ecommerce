@@ -29,13 +29,14 @@ async def create_user(
     db: Session = Depends(db.get_db)
 ):
 
+
     user = user_crud.find_user_with_email(payload.email, db)
 
     if user:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,detail='Account already exist')
     
-    payload = user_crud.get_updated_payload_data(payload)
+    # payload = user_crud.get_updated_payload_data(payload)
 
     new_user = user_crud.save_data_then_return(payload,db)
 
@@ -53,47 +54,55 @@ def login(
     payload: user_schema.LoginUserSchema, 
     db: Session = Depends(db.get_db)
 ):
-    user = user_crud.find_user_with_email(payload.email, db)
-    
-    if not user:
+    try:
+
+        user = user_crud.find_user_with_email(payload.email, db)
+        
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='User does not exist!'
+            )
+
+        if user_crud.password_is_matched(payload.password, user.password) and user_crud.user_is_verified(user.verified):
+            access_token = security.create_token(user.id,"access")
+            refresh_token = security.create_token(user.id,"refresh")
+            user = jsonable_encoder(user)
+            user['access_token'] = access_token
+            user['refresh_token'] = refresh_token
+
+            return user
+        
+    except:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='User does not exist!'
+            status_code= status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail= "Something went wrong."
         )
 
-    if user_crud.password_is_matched(payload.password, user.password) and user_crud.user_is_verified(user.verified):
-        access_token = security.create_token(user.id,"access")
-        refresh_token = security.create_token(user.id,"refresh")
-        user = jsonable_encoder(user)
-        user['access_token'] = access_token
-        user['refresh_token'] = refresh_token
-
-        return user
     
 @router.post('/refresh-token', response_model=user_schema.AccessAndRefreshTokenSchema)
 def get_refresh_token(
     payload: user_schema.TokenSchema,
     db: Session = Depends(db.get_db)
 ):
-    if not payload.token: 
-        raise HTTPException(
-            status_code= status.HTTP_400_BAD_REQUEST,
-            detail="Please provide refresh token"
-        )
-    
-    decoded_data = security.decode_token(payload.token,'refresh',db)
+    try:
+        decoded_data = security.decode_token(payload.token,'refresh',db)
 
-    return {
-        'access_token': security.create_token(
-            decoded_data.id,
-            'access'
-        ),
-        'refresh_token': security.create_token(
-            decoded_data.id,
-            'refresh'
+        return {
+            'access_token': security.create_token(
+                decoded_data.id,
+                'access'
+            ),
+            'refresh_token': security.create_token(
+                decoded_data.id,
+                'refresh'
+            )
+        }
+    except:
+        raise HTTPException(
+            status_code= status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail= "Something went wrong."
         )
-    }
-        
 
 
 

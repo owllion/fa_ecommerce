@@ -1,6 +1,6 @@
 from datetime import datetime
 import uuid
-from pydantic import BaseModel, EmailStr, constr,Field,validator,root_validator
+from pydantic import BaseModel, EmailStr, constr,Field,validator
 
 from enum import Enum
 
@@ -58,8 +58,8 @@ class UserUpdateSchema(BaseModel):
     field: SupportedFiled = Field(description="user data's field you want to update.Only the updating to the username and verify field is supported.")
     value: str | VerifiedValue = Field(description="data for update the field you specify.('0' -> False & '1' -> True)")
 
-    @root_validator
-    def validate_value(cls, values):
+    @validator('value')
+    def validate_value(cls, v, values):
         field_name,field_value = values.get('field'), values.get('value')
         if field_name == 'verified' and field_value not in verified_values:
             raise ValueError("value for verified field must be '0' or '1'")

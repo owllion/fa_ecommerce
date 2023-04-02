@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,TIMESTAMP,text
 from sqlalchemy.orm import relationship
 import uuid
-from ..database.db import Base,engine
+from ..database.db import Base
 from decouple import config
 
 
@@ -12,7 +12,6 @@ class User(Base):
     email = Column(String(80), unique=True,index=True)
     username = Column(String(30), index=True)
     password = Column(String(80))
-
     upload_avatar = Column(String(100), nullable=True,default='')
 
     default_avatar = Column(String(100), default= config('DEFAULT_AVATAR_URL'))

@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from .routers import product_router,user_router,auth_router
+from .routers import index
 from .models import item_model,user_model
 from .database import db
 
@@ -17,9 +17,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth_router.router)
-app.include_router(user_router.router)
-app.include_router(product_router.public_router)
+# app.include_router(auth_router.router)
+# app.include_router(user_router.router)
+# app.include_router(product_router.public_router)
+app.include_router(router=index.router, prefix="/api")
 
 item_model.Base.metadata.create_all(db.engine)
 user_model.Base.metadata.create_all(db.engine)

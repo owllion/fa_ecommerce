@@ -38,7 +38,6 @@ def create_token(user_id: str, token_type: str):
         key = config('JWT_SECRET') if token_type == 'access' else config('REFRESH_SECRET'), 
         algorithm= config('JWT_ALGORITHM')
     )
-    print(token,'this is token')
 
     return token
 

@@ -34,7 +34,8 @@ async def create_user(
 
     if user:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,detail='Account already exist')
+            status_code=status.HTTP_409_CONFLICT,detail='Account already exist'
+        )
     
     # payload = user_crud.get_updated_payload_data(payload)
 
@@ -103,7 +104,6 @@ def get_refresh_token(
             status_code= status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail= "Something went wrong."
         )
-
 
 
 

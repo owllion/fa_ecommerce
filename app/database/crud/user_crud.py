@@ -4,8 +4,9 @@ from pydantic import EmailStr
 from fastapi import Depends,status,HTTPException
 from sqlalchemy.orm import Session
 
-from ...schemas import user_schema
+from ...schemas import user_schema,email_schema
 from ...utils import security
+from ...utils.email import email 
 
 def find_user_with_email(
     email: str,
@@ -58,4 +59,13 @@ def password_is_matched(payload_pwd: str, user_pwd: str):
         )
     return True
 
+def sendVerifyOrResetLink(params: email_schema.SendVerifyOrResetLinkSchema):
+    user_id,email,link_type,url_params = params.values()
+
+    token = security.create_token(user_id,'access')
+    
+    target_link = f'config(FRONTEND_DEPLOY_URL)/auth/{url_params}/{token}'
+
+    email.sendLink()
+    sendLink({ type: link_type,link: target_link, email: email })
 

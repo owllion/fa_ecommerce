@@ -3,6 +3,7 @@ from ...schemas import email_schema
 def get_html_template(params: email_schema.CreateEmailContentSchema
 ) -> str:
     btn_text, btn_link, title, content, link_type, action = params.values()
+    print(btn_link,btn_text,title,content,link_type,'全都印出來')
 
     html = f'''
     <!DOCTYPE html

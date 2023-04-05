@@ -1,12 +1,15 @@
-from ...database import db
-from ...models import user_model
+
 from pydantic import EmailStr
 from fastapi import Depends,status,HTTPException
 from sqlalchemy.orm import Session
+from decouple import config
 
 from ...schemas import user_schema,email_schema
 from ...utils import security
-from ...utils.email import email 
+from ...utils.email import email
+from ...database import db
+from ...models import user_model
+
 
 def find_user_with_email(
     email: str,
@@ -59,13 +62,19 @@ def password_is_matched(payload_pwd: str, user_pwd: str):
         )
     return True
 
-def sendVerifyOrResetLink(params: email_schema.SendVerifyOrResetLinkSchema):
-    user_id,email,link_type,url_params = params.values()
+async def sendVerifyOrResetLink(params: email_schema.SendVerifyOrResetLinkSchema):
+    print(params,'這是sendVerify參數')
+    user_id,user_email,link_type,url_params = params.values()
 
     token = security.create_token(user_id,'access')
     
-    target_link = f'config(FRONTEND_DEPLOY_URL)/auth/{url_params}/{token}'
+    target_link = f'{config("FRONTEND_DEPLOY_URL")}/auth/{url_params}/{token}'
 
-    email.sendLink()
-    sendLink({ type: link_type,link: target_link, email: email })
+    print("target_link",target_link)
+
+    await email.send_link({ 
+        'type': link_type,
+        'link': target_link, 
+        'email': user_email 
+    })
 

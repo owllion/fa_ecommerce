@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 
 from ..utils.dependencies import *
 from ..utils import security
-
+from ..utils.email import email
 from ..schemas import user_schema
 from ..models import user_model
 
@@ -31,6 +31,7 @@ async def create_user(
 
 
     user = user_crud.find_user_with_email(payload.email, db)
+    
 
     if user:
         raise HTTPException(
@@ -40,6 +41,16 @@ async def create_user(
     # payload = user_crud.get_updated_payload_data(payload)
 
     new_user = user_crud.save_data_then_return(payload,db)
+
+    link_params = {
+        'user_id': new_user.id,
+        'user_email': new_user.email,
+        'link_type' : 'verify',
+        'url_params' : 'verify-email'   
+    }
+    print(link_params,'這是Link_params')
+    
+    await user_crud.sendVerifyOrResetLink(link_params)
 
     return_data = jsonable_encoder(new_user) 
 

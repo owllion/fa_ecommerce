@@ -21,10 +21,18 @@ class UserCreateSchema(UserBaseSchema):
     
 class LoginUserSchema(BaseModel):
     email: EmailStr
+    password: str
+
+class CreatePasswordSchema(BaseModel):
     password: constr(min_length=8) 
-    
-class GoogleLoginSchema(BaseModel):
+
+class EmailBaseSchema(BaseModel):
     email: EmailStr
+class GoogleLoginSchema(EmailBaseSchema):
+    pass
+    
+
+
 
 
 class UserSchema(UserBaseSchema): #used to return data

@@ -62,7 +62,7 @@ def password_is_matched(payload_pwd: str, user_pwd: str):
         )
     return True
 
-async def sendVerifyOrResetLink(params: email_schema.SendVerifyOrResetLinkSchema):
+async def send_verify_or_reset_link(params: email_schema.SendVerifyOrResetLinkSchema):
     user_id,user_email,link_type,url_params = params.values()
 
     token = security.create_token(user_id,'access')

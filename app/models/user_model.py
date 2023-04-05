@@ -38,7 +38,9 @@ def hash_password(mapper, connection, target):
     """
     Hash the password before saving it to the database.
     """
+    print(target.password,'這是tp')
+    print(security.is_hashed_password(target.password),'這是簡扼pwd')
     if target.password and not security.is_hashed_password(target.password):
-        security.hash_password(target.password)
+        target.password = security.hash_password(target.password)
 
         

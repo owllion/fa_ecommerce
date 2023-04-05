@@ -13,6 +13,8 @@ from ..models import user_model
 from ..database import db
 from ..database.crud import user_crud
 from ..exceptions.http_exception import CustomHTTPException
+from ..utils.logger import logger
+
 
 router = APIRouter(
     prefix="/auth",
@@ -35,8 +37,6 @@ async def create_user(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,detail='Account already exist'
         )
-    
-    # payload = user_crud.get_updated_payload_data(payload)
 
     new_user = user_crud.save_data_then_return(payload,db)
 
@@ -47,7 +47,7 @@ async def create_user(
         'url_params' : 'verify-email'   
     }
     
-    await user_crud.sendVerifyOrResetLink(link_params)
+    await user_crud.send_verify_or_reset_link(link_params)
 
     return_data = jsonable_encoder(new_user) 
 
@@ -81,8 +81,9 @@ def login(
 
             return user
         
-    except Exception as e:
-        raise CustomHTTPException(detail= str(e))
+    except HTTPException as e:
+        logger.error(e, exc_info=True)
+        raise CustomHTTPException(detail= str(e.detail))
 
     
 @router.post('/refresh-token', response_model=user_schema.AccessAndRefreshTokenSchema)
@@ -103,12 +104,9 @@ def get_refresh_token(
                 'refresh'
             )
         }
-    except:
-        raise HTTPException(
-            status_code= status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail= "Something went wrong."
-        )
-
+    except HTTPException as e:
+        logger.error(e, exc_info=True)
+        raise CustomHTTPException(detail= str(e.detail))
 
 
 

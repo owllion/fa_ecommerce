@@ -23,10 +23,8 @@ async def send_link(params: email_schema.SendLinkParamsSchema):
     link_type,link,email = params.values()
 
     res = get_mail_text(link_type)
-    print(res,'這是get mail text')
 
     btn_text,title,content,link_type,action = get_mail_text(link_type).values()
-    print(btn_text,title,content,link_type)
 
     try:
         message = MessageSchema(

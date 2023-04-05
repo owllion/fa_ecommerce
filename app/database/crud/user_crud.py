@@ -63,14 +63,11 @@ def password_is_matched(payload_pwd: str, user_pwd: str):
     return True
 
 async def sendVerifyOrResetLink(params: email_schema.SendVerifyOrResetLinkSchema):
-    print(params,'這是sendVerify參數')
     user_id,user_email,link_type,url_params = params.values()
 
     token = security.create_token(user_id,'access')
     
     target_link = f'{config("FRONTEND_DEPLOY_URL")}/auth/{url_params}/{token}'
-
-    print("target_link",target_link)
 
     await email.send_link({ 
         'type': link_type,

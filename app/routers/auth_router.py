@@ -10,9 +10,9 @@ from ..utils import security
 from ..utils.email import email
 from ..schemas import user_schema
 from ..models import user_model
-
 from ..database import db
 from ..database.crud import user_crud
+from ..exceptions.http_exception import CustomHTTPException
 
 router = APIRouter(
     prefix="/auth",
@@ -28,8 +28,6 @@ async def create_user(
     payload: user_schema.UserCreateSchema, 
     db: Session = Depends(db.get_db)
 ):
-
-
     user = user_crud.find_user_with_email(payload.email, db)
     
 
@@ -48,7 +46,6 @@ async def create_user(
         'link_type' : 'verify',
         'url_params' : 'verify-email'   
     }
-    print(link_params,'這是Link_params')
     
     await user_crud.sendVerifyOrResetLink(link_params)
 
@@ -67,7 +64,6 @@ def login(
     db: Session = Depends(db.get_db)
 ):
     try:
-
         user = user_crud.find_user_with_email(payload.email, db)
         
         if not user:
@@ -85,11 +81,8 @@ def login(
 
             return user
         
-    except:
-        raise HTTPException(
-            status_code= status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail= "Something went wrong."
-        )
+    except Exception as e:
+        raise CustomHTTPException(detail= str(e))
 
     
 @router.post('/refresh-token', response_model=user_schema.AccessAndRefreshTokenSchema)

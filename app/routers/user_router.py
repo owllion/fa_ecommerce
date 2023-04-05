@@ -11,15 +11,30 @@ from ..schemas import user_schema,item_schema
 from ..database import db,crud
 from ..database.crud import user_crud
 from ..schemas.user_schema import SupportedFiled,VerifiedValue
+from ..exceptions.http_exception import CustomHTTPException
+from ..utils.router_settings import get_router_settings
+from ..utils.dependencies import validate_token
 
-router = APIRouter(
-    prefix="/user",
-    tags=["user"],
-    dependencies=[Depends(validate_token)],
-    responses={404: {"description": "Not found"}},
-)
+protected_router = APIRouter(**get_router_settings(
+  {
+    'is_protected': True,
+    'prefix': '/user',
+    'tags': ['user'],
+    'responses': {404: {"description": "Not found"}}
+  }  
+))
 
-@router.post(
+public_router = APIRouter(**get_router_settings(
+  {
+    'is_protected': False,
+    'prefix': '/user',
+    'tags': ['user'],
+    'responses': {404: {"description": "Not found"}}
+  }  
+))
+
+
+@protected_router.post(
     "/update", 
     status_code= status.HTTP_200_OK,
     response_description= "Successfully update",
@@ -41,51 +56,38 @@ def update_user(
         
         elif field == SupportedFiled.USERNAME:
             req.state.mydata.username = value
+        #modify req.state.mydata == directly current user's data 
 
         db.commit()
+        #then save it to the db
 
-    except:
-        raise HTTPException(
-            status_code= status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail = "Something went wrong!"
-        )
-        
-@router.post(
+    except Exception as e:
+        raise CustomHTTPException(detail= str(e))
+
+@protected_router.get("/{user_id}", response_model=user_schema.UserSchema)
+def read_user(user_id: str, db: Session = Depends(db.get_db)):
+    user = user_crud.find_user_with_id(user_id,db)
+    return user
+
+
+
+@protected_router.post(
     "/reset-password", 
     status_code= status.HTTP_200_OK,
     response_description= "Successfully reset password",
     response_model= None
 )
-def update_user(
+def reset_password(
     req: Request,
-    payload: user_schema.UserUpdateSchema,
+    password: Annotated[str, Body()],
     db: Session = Depends(db.get_db)
 ):
-
-    (field,value) = jsonable_encoder(payload).values()
-    #Convert value to python dict then get the values.
-    #Can not do this when the data is of JSON format.
-
     try:
-        if field == SupportedFiled.VERIFIED:
-            req.state.mydata.verified = int(value)
-        
-        elif field == SupportedFiled.USERNAME:
-            req.state.mydata.username = value
-
+        req.state.mydata.password = password
         db.commit()
-
-    except:
-        raise HTTPException(
-            status_code= status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail = "Something went wrong!"
-        )
+    except Exception as e:
+        raise CustomHTTPException(detail= str(e))
 
 
-
-@router.get("/{user_id}", response_model=user_schema.UserSchema)
-def read_user(user_id: str, db: Session = Depends(db.get_db)):
-    user = user_crud.find_user_with_id(user_id,db)
-    return user
 
 

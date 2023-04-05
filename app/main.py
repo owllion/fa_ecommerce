@@ -4,8 +4,6 @@ from starlette.responses import RedirectResponse
 import uvicorn
 
 from .routers import index
-#from .models import item_model,user_model
-#from .database import db
 
 app = FastAPI()
 
@@ -19,9 +17,6 @@ app.add_middleware(
 
 app.include_router(router=index.router, prefix="/api")
 
-#db.Base.metadata.create_all(db.engine)
-# item_model.Base.metadata.create_all(db.engine)
-# user_model.Base.metadata.create_all(db.engine)
 
 @app.get("/")
 def go_to_doc():

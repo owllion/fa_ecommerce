@@ -1,9 +1,10 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,TIMESTAMP,text
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String,TIMESTAMP,text,event
 from sqlalchemy.orm import relationship
 import uuid
 from decouple import config
-from ..database.db import Base
 
+from ..database.db import Base
+from ..utils import security
 
 class User(Base):
     __tablename__ = "user"
@@ -31,21 +32,13 @@ class User(Base):
 
     items = relationship("Item", back_populates="owner")
 
-class Item(Base):
-    __tablename__ = "item"
+@event.listens_for(User, 'before_insert')
+@event.listens_for(User, 'before_update')
+def hash_password(mapper, connection, target):
+    """
+    Hash the password before saving it to the database.
+    """
+    if target.password and not security.is_hashed_password(target.password):
+        security.hash_password(target.password)
 
-    id = Column(String(36), primary_key=True, index=True,default=str(uuid.uuid4()))
-    title = Column(String(60), index=True)
-    description = Column(String(200), index=True)
-    owner_id = Column(String(36), ForeignKey("user.id"))
-    created_at = Column(
-        TIMESTAMP(timezone=True),nullable=False, 
-        server_default=text("now()")
-    )
-    updated_at = Column(
-        TIMESTAMP(timezone=True),
-        nullable=False, 
-        server_default=text("now()")
-    )
-
-    owner = relationship("User", back_populates="items")
+        

@@ -1,9 +1,10 @@
 from typing import Annotated
-from fastapi import Header, HTTPException,Request,status,Depends
+
+from fastapi import Depends, Header, Request
 from sqlalchemy.orm import Session
-from ..utils.security import decode_token
-from ..database.crud import user_crud
+
 from ..database import db
+from ..utils.security import decode_token
 
 
 async def validate_token(req:Request ,authorization: Annotated[str, Header()],db: Session = Depends(db.get_db)):

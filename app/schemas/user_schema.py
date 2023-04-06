@@ -1,11 +1,12 @@
-from datetime import datetime
 import uuid
-from pydantic import BaseModel, EmailStr, constr,Field,validator
-
+from datetime import datetime
 from enum import Enum
 
 from decouple import config
+from pydantic import BaseModel, EmailStr, Field, HttpUrl, constr, validator
+
 from .item_schema import Item
+
 
 class UserBaseSchema(BaseModel):
     email: EmailStr
@@ -73,5 +74,8 @@ class UserUpdateSchema(BaseModel):
             raise ValueError("value for verified field must be '0' or '1'")
         
         return values
+
+class UserUploadAvatarSchema(BaseModel):
+    url: HttpUrl
 
 

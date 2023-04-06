@@ -1,20 +1,21 @@
-from fastapi import FastAPI,HTTPException, Body,Header,APIRouter,Depends,status,Request
-from fastapi.responses import JSONResponse
-from sqlalchemy.orm import Session
 from enum import Enum
-from typing import Annotated
-from fastapi.encoders import jsonable_encoder
-from typing import Generic,TypeVar
-from pydantic import ValidationError
+from typing import Annotated, Generic, TypeVar
 
-from ..utils.dependencies import *
-from ..schemas import user_schema,item_schema
-from ..database import db,crud
-from ..database.crud import user_crud
-from ..schemas.user_schema import SupportedFiled,VerifiedValue
+from fastapi import (APIRouter, Body, Depends, FastAPI, Header, HTTPException,
+                     Request, status)
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+from pydantic import ValidationError
+from sqlalchemy.orm import Session
+
+from ..database import db
 from ..exceptions.http_exception import CustomHTTPException
-from ..utils.router_settings import get_router_settings
+from ..schemas import item_schema, user_schema
+from ..schemas.user_schema import SupportedFiled, VerifiedValue
+from ..services import user_services
+from ..utils.dependencies import *
 from ..utils.logger import logger
+from ..utils.router_settings import get_router_settings
 
 protected_router = APIRouter(**get_router_settings(
   {
@@ -68,7 +69,7 @@ def update_user(
 
 @protected_router.get("/{user_id}", response_model=user_schema.UserSchema)
 def read_user(user_id: str, db: Session = Depends(db.get_db)):
-    user = user_crud.find_user_with_id(user_id,db)
+    user = user_services.find_user_with_id(user_id,db)
     return user
 
 
@@ -102,7 +103,7 @@ async def forgot_password(
     db: Session = Depends(db.get_db)
 ):
     try:
-        user = user_crud.find_user_with_email(payload.email, db)
+        user = user_services.find_user_with_email(payload.email, db)
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -116,7 +117,7 @@ async def forgot_password(
             'url_params' : 'reset-password/token'   
         }   
     
-        await user_crud.send_verify_or_reset_link(link_params)
+        await user_services.send_verify_or_reset_link(link_params)
 
         content = {
             "detail": "A verification email has been sent to your registered email address successfully."

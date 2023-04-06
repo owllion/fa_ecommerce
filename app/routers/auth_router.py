@@ -1,20 +1,20 @@
-from fastapi import FastAPI,HTTPException,APIRouter,Depends,status,Body
 from enum import Enum
 #from pydantic import BaseModel,Field,EmailStr
 from typing import Annotated
-from sqlalchemy.orm import Session
+
+from fastapi import APIRouter, Body, Depends, FastAPI, HTTPException, status
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy.orm import Session
 
-from ..utils.dependencies import *
-from ..utils import security
-from ..utils.email import email
-from ..schemas import user_schema
-from ..models import user_model
 from ..database import db
-from ..database.crud import user_crud
 from ..exceptions.http_exception import CustomHTTPException
+from ..models import user_model
+from ..schemas import user_schema
+from ..services import user_services
+from ..utils import security
+from ..utils.dependencies import *
+from ..utils.email import email
 from ..utils.logger import logger
-
 
 router = APIRouter(
     prefix="/auth",
@@ -30,7 +30,7 @@ async def create_user(
     payload: user_schema.UserCreateSchema, 
     db: Session = Depends(db.get_db)
 ):
-    user = user_crud.find_user_with_email(payload.email, db)
+    user = user_services.find_user_with_email(payload.email, db)
     
 
     if user:
@@ -38,7 +38,7 @@ async def create_user(
             status_code=status.HTTP_409_CONFLICT,detail='Account already exist'
         )
 
-    new_user = user_crud.save_data_then_return(payload,db)
+    new_user = user_services.save_data_then_return(payload,db)
 
     link_params = {
         'user_id': new_user.id,
@@ -47,7 +47,7 @@ async def create_user(
         'url_params' : 'verify-email'   
     }
     
-    await user_crud.send_verify_or_reset_link(link_params)
+    await user_services.send_verify_or_reset_link(link_params)
 
     return_data = jsonable_encoder(new_user) 
 
@@ -64,7 +64,7 @@ def login(
     db: Session = Depends(db.get_db)
 ):
     try:
-        user = user_crud.find_user_with_email(payload.email, db)
+        user = user_services.find_user_with_email(payload.email, db)
         
         if not user:
             raise HTTPException(
@@ -72,7 +72,7 @@ def login(
                 detail='User does not exist!'
             )
 
-        if user_crud.password_is_matched(payload.password, user.password) and user_crud.user_is_verified(user.verified):
+        if user_services.password_is_matched(payload.password, user.password) and user_services.user_is_verified(user.verified):
             access_token = security.create_token(user.id,"access")
             refresh_token = security.create_token(user.id,"refresh")
             user = jsonable_encoder(user)

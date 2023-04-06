@@ -1,15 +1,15 @@
 from datetime import datetime, timedelta
 from typing import Annotated
+
+from decouple import config
 from fastapi import Depends, FastAPI, HTTPException, status
-from jose import JWTError,ExpiredSignatureError,jwt
+from jose import ExpiredSignatureError, JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
-from decouple import config
 from sqlalchemy.orm import Session
 
-from ..database.crud import user_crud
 from ..database import db
-
+from ..services import user_services
 
 ACCESS_TOKEN_EXPIRES_IN = config('ACCESS_TOKEN_EXPIRES_IN',cast=int)
 REFRESH_TOKEN_EXPIRES_IN = config('REFRESH_TOKEN_EXPIRES_IN',cast=int)
@@ -58,7 +58,7 @@ def decode_token(
             config('JWT_SECRET') if token_type == 'access' else config('REFRESH_SECRET'),
             algorithms=[config('JWT_ALGORITHM')]
         )
-        user = user_crud.find_user_with_id(payload['user_id'], db)
+        user = user_services.find_user_with_id(payload['user_id'], db)
 
         if not user:
             raise HTTPException(

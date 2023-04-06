@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class CreateEmailContentSchema(BaseModel):
     btn_text: str
     btn_link: str

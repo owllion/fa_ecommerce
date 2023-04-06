@@ -1,14 +1,13 @@
-
-from pydantic import EmailStr
-from fastapi import Depends,status,HTTPException
-from sqlalchemy.orm import Session
 from decouple import config
+from fastapi import Depends, HTTPException, status
+from pydantic import EmailStr
+from sqlalchemy.orm import Session
 
-from ...schemas import user_schema,email_schema
-from ...utils import security
-from ...utils.email import email
 from ...database import db
 from ...models import user_model
+from ...schemas import email_schema, user_schema
+from ...utils import security
+from ...utils.email import email
 
 
 def find_user_with_email(

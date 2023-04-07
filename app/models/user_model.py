@@ -1,16 +1,7 @@
 import uuid
 
 from decouple import config
-from sqlalchemy import (
-    TIMESTAMP,
-    Boolean,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    event,
-    text,
-)
+from sqlalchemy import TIMESTAMP, Boolean, Column, Integer, String, event, text
 from sqlalchemy.orm import relationship
 
 from ..database.db import Base
@@ -31,6 +22,8 @@ class User(Base):
 
     verified = Column(Boolean, nullable=False,default=False)
 
+
+
     created_at = Column(
         TIMESTAMP(timezone=True),nullable=False, 
         server_default=text("now()")
@@ -39,7 +32,13 @@ class User(Base):
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"), onupdate=text("now()"))
 
     items = relationship("Item", back_populates="owner")
+
+    #cartList
+    cart_items = relationship("Cart", back_populates="user")
+
+    like_items = relationship("Like", back_populates="user")
     orders = relationship("Order", back_populates="owner")
+    reviews = relationship("Review", back_populates="user")
 
 @event.listens_for(User, 'before_insert')
 @event.listens_for(User, 'before_update')
@@ -49,5 +48,3 @@ def hash_password(mapper, connection, target):
     """
     if target.password and not security.is_hashed_password(target.password):
         target.password = security.hash_password(target.password)
-
-        

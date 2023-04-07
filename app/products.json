@@ -1,0 +1,1141 @@
+[{
+  "_id": {
+    "$oid": "62ddf6823e256a053755ccb5"
+  },
+  "productName": "Trench Coat",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/257555_STONE_5",
+    "https://media.tedbaker.com/t_pdp_dt_3-5m,c_fit,w_720,h_900/Product/Womens/257555_STONE_6",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/257555_STONE_3"
+  ],
+  "price": 130,
+  "salePrice": 80,
+  "brand": "Givenchy",
+  "category": "coat",
+  "description": "A trench coat to shout about, meet Givenchy, the side-split trench you’ll want to wear come winter and summer alike. With a drawstring waist giving this ultimate classic an instant update. Factor in its small details, like its buckled wrists and double breast style, and there you have an outerwear winner.",
+  "stock": 500,
+  "availability": true,
+  "sales": 62,
+  "isChecked": false,
+  "productId": "zHZPEbJwQaEFeRi3z4uYs",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658713730923"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981364"
+    }
+  },
+  "__v": 0,
+  "color": "STONE",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/257555_STONE_5",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/257555_STONE_5",
+    "https://media.tedbaker.com/t_pdp_dt_3-5m,c_fit,w_320,h_400/Product/Womens/257555_STONE_6",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/257555_STONE_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf6b63e256a053755ccb8"
+  },
+  "productName": "Double Breasted Peaked Lapel Coat",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/252384_CAMEL_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/252384_CAMEL_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/252384_CAMEL_4"
+  ],
+  "price": 329,
+  "salePrice": 180,
+  "brand": "Gucci",
+  "category": "coat",
+  "description": "Where to? Walk in the park, the city or to your favourite restaurant in Gucci. It’s long length and double-breasted front will warm you, while the peaked lapel and tailored shape will keep you on the fashion leader board. Walking never looked so good.",
+  "stock": 5000,
+  "availability": true,
+  "sales": 990,
+  "isChecked": false,
+  "productId": "2VzudOg-XIwJxQ32QE0Q5",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658713782968"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981365"
+    }
+  },
+  "__v": 0,
+  "color": "CAMEL",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/252384_CAMEL_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/252384_CAMEL_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/252384_CAMEL_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/252384_CAMEL_4"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf6d23e256a053755ccbb"
+  },
+  "productName": "Ankle Grazer Skinny Leg Trouser",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/243294_IVORY_4",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/243294_IVORY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/243294_IVORY_3"
+  ],
+  "price": 119,
+  "salePrice": 47,
+  "brand": "Cartier",
+  "category": "trouser",
+  "description": "Ankle Grazer Skinny Leg Trouser to shout about, meet Cartier, the side-split trench you’ll want to wear come winter and summer alike. With a drawstring waist giving this ultimate classic an instant update. Factor in its small details, like its buckled wrists and double breast style, and there you have an outerwear winner.",
+  "stock": 2,
+  "availability": true,
+  "sales": 700,
+  "isChecked": false,
+  "productId": "byZuCItPtEicpTtRI7o4i",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658713810989"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981365"
+    }
+  },
+  "__v": 0,
+  "color": "IVORY",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/243294_IVORY_4",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/243294_IVORY_4",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/243294_IVORY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/243294_IVORY_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf6e93e256a053755ccbe"
+  },
+  "productName": "Deco Print Maxi Dress",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/248169_BLACK_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/248169_BLACK_5",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/248169_BLACK_6"
+  ],
+  "price": 450,
+  "salePrice": 300,
+  "brand": "Cartier",
+  "category": "dress",
+  "description": "Art deco. Make like the 1920s and head out for some cocktails or afternoon tea in LETTII. Adorned with an art deco print and a waist tie, it will sit perfectly with a boot or a shoe. Exuberance in dress from. Shell: 100% Polyester; Lining: 100% Polyester",
+  "stock": 80,
+  "availability": true,
+  "sales": 325,
+  "isChecked": false,
+  "productId": "h15WZmQl7jLpAl_iu3H0c",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658713833374"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981365"
+    }
+  },
+  "__v": 0,
+  "color": "BLACK",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/248169_BLACK_3",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/248169_BLACK_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/248169_BLACK_5",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/248169_BLACK_6"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf6f53e256a053755ccc1"
+  },
+  "productName": "Long Wool Wrap Coat",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/150263_OLIVE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/150263_OLIVE_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/150263_OLIVE_5"
+  ],
+  "price": 999,
+  "salePrice": 500,
+  "brand": "Dior",
+  "category": "coat",
+  "description": "Art deco. Make like the 1920s and head out for some cocktails or afternoon tea in Dior. Adorned with an art deco print and a waist tie, it will sit perfectly with a boot or a shoe. Exuberance in dress from. Shell:75% wool,20% polyamide,5% cashmere;Body Lining:97% polyester,3% elastane;Sleeve Lining:97% polyester,3% elastane",
+  "stock": 1200,
+  "availability": true,
+  "sales": 963,
+  "isChecked": false,
+  "productId": "tosgQzZWFgxsT8CTR54KC",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658713845138"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981365"
+    }
+  },
+  "__v": 0,
+  "color": "OLIVE",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/150263_OLIVE_2",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/150263_OLIVE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/150263_OLIVE_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/150263_OLIVE_5"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf7033e256a053755ccc4"
+  },
+  "productName": "Midi Wool Wrap Coat",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/147603_CAMEL_4",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/147603_CAMEL_5",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/147603_CAMEL_9"
+  ],
+  "price": 300,
+  "salePrice": 189,
+  "brand": "Dior",
+  "category": "coat",
+  "description": "Art deco. Make like the 1920s and head out for some cocktails or afternoon tea in Dior. Adorned with an art deco print and a waist tie, it will sit perfectly with a boot or a shoe. Exuberance in dress from. Shell:75% wool,20% polyamide,5% cashmere;Body Lining:97% polyester,3% elastane;Sleeve Lining:97% polyester,3% elastane",
+  "stock": 1200,
+  "availability": true,
+  "sales": 963,
+  "isChecked": false,
+  "productId": "6HhbwQiMjTJF87qs02m_B",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658713859227"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981365"
+    }
+  },
+  "__v": 0,
+  "color": "CAMEL",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/147603_CAMEL_4",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/147603_CAMEL_4",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/147603_CAMEL_5",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/147603_CAMEL_9"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf70d3e256a053755ccc7"
+  },
+  "productName": "Straight Tailored Coat",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/251353_NAVY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/251353_NAVY_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/251353_NAVY_3"
+  ],
+  "price": 799,
+  "salePrice": 650,
+  "brand": "Givenchy",
+  "category": "coat",
+  "description": "Givenchy is a standout. This lightweight coat keeps both style and formality in play with a classic cut and a peaked lapel. Wear with matching trousers or mix and match with jeans to add a formal edge to a casual look.",
+  "stock": 12,
+  "availability": true,
+  "sales": 321,
+  "isChecked": false,
+  "productId": "dnrP_AXNy1EntmOWl61iA",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658713869157"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981365"
+    }
+  },
+  "__v": 0,
+  "color": "NAVY",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/251353_NAVY_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/251353_NAVY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/251353_NAVY_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/251353_NAVY_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf7193e256a053755ccca"
+  },
+  "productName": "Linen Blend Blazer",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/252025_NAVY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/252025_NAVY_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/252025_NAVY_3"
+  ],
+  "price": 732,
+  "salePrice": 650,
+  "brand": "Givenchy",
+  "category": "blazer",
+  "description": "Smart-casual summer dressing, sorted. The Givenchy is a perfectly lightweight linen blazer that instantly elevates a white tee underneath. Keep it relaxed with the buttons undone, and we'd suggest styling with our Givenchy trousers for a matching look.",
+  "stock": 120,
+  "availability": true,
+  "sales": 32,
+  "isChecked": false,
+  "productId": "MFf8WrYBtK-13AQmQwzDU",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658713881983"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981365"
+    }
+  },
+  "__v": 0,
+  "color": "NAVY",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/252025_NAVY_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/252025_NAVY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/252025_NAVY_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/252025_NAVY_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf7243e256a053755cccd"
+  },
+  "productName": "Peak Lapel Blazer",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/257066_MID-GREY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/257066_MID-GREY_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/257066_MID-GREY_3"
+  ],
+  "price": 600,
+  "salePrice": 199,
+  "brand": "Gucci",
+  "category": "blazer",
+  "description": "Blaze a fabulous trail with JOANNI. A fantastic addition to any woman’s wardrobe, this is a high fashion item built to turn heads wherever it’s worn. Sporting clean-cut lines, the edgy peak lapels add that statement feature that elevates this piece beyond a simple blazer. Wear this with plain trousers and heels to complete the look.",
+  "stock": 800,
+  "availability": true,
+  "sales": 700,
+  "isChecked": false,
+  "productId": "CoV0FV6gw_uN6WYcHUU5I",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658713892590"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981365"
+    }
+  },
+  "__v": 0,
+  "color": "MID-GREY",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/257066_MID-GREY_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/257066_MID-GREY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/257066_MID-GREY_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/257066_MID-GREY_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf76e3e256a053755ccd0"
+  },
+  "productName": "Single Breasted Fitted Blazer",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/261664_MID-PINK_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/261664_MID-PINK_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/261664_MID-PINK_4"
+  ],
+  "price": 300,
+  "salePrice": 120,
+  "brand": "Gucci",
+  "category": "blazer",
+  "description": "Blaze a fabulous trail with JOANNI. A fantastic addition to any woman’s wardrobe, this is a high fashion item built to turn heads wherever it’s worn. Sporting clean-cut lines, the edgy peak lapels add that statement feature that elevates this piece beyond a simple blazer. Wear this with plain trousers and heels to complete the look.",
+  "stock": 800,
+  "availability": true,
+  "sales": 60,
+  "isChecked": false,
+  "productId": "bTMPNKLVhXGT_m1H-HtgH",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658713966094"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981365"
+    }
+  },
+  "__v": 0,
+  "color": "MID-PINK",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/261664_MID-PINK_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/261664_MID-PINK_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/261664_MID-PINK_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/261664_MID-PINK_4"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf7873e256a053755ccd3"
+  },
+  "productName": "Slim Tailored blazer",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/250349_NAVY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/250349_NAVY_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/250349_NAVY_3"
+  ],
+  "price": 120,
+  "salePrice": 89,
+  "brand": "Gucci",
+  "category": "blazer",
+  "description": "Blaze a fabulous trail with JOANNI. A fantastic addition to any woman’s wardrobe, this is a high fashion item built to turn heads wherever it’s worn. Sporting clean-cut lines, the edgy peak lapels add that statement feature that elevates this piece beyond a simple blazer. Wear this with plain trousers and heels to complete the look.",
+  "stock": 80,
+  "availability": true,
+  "sales": 605,
+  "isChecked": false,
+  "productId": "ZywgQV6eNW6w3lGN5x0do",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658713991965"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981365"
+    }
+  },
+  "__v": 0,
+  "color": "NAVY",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/250349_NAVY_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/250349_NAVY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/250349_NAVY_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/250349_NAVY_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf79b3e256a053755ccd6"
+  },
+  "productName": "Knit Bodice Mockable Dress",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/252828_NAVY_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/252828_NAVY_4",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/252828_NAVY_5"
+  ],
+  "price": 399,
+  "salePrice": 200,
+  "brand": "Cartier",
+  "category": "dress",
+  "description": "Blaze a fabulous trail with JOANNI. A fantastic addition to any woman’s wardrobe, this is a high fashion item built to turn heads wherever it’s worn. Sporting clean-cut lines, the edgy peak lapels add that statement feature that elevates this piece beyond a simple blazer. Wear this with plain trousers and heels to complete the look.",
+  "stock": 1,
+  "availability": true,
+  "sales": 255,
+  "isChecked": false,
+  "productId": "MlN-Mg-a7ebdoBE9NewQx",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714011748"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "NAVY",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/252828_NAVY_3",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/252828_NAVY_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/252828_NAVY_4",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/252828_NAVY_5"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf7a53e256a053755ccd9"
+  },
+  "productName": "Engineered Knit Sweater",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/256862_MID-GREY_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/256862_MID-GREY_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/256862_MID-GREY_4"
+  ],
+  "price": 255,
+  "salePrice": 100,
+  "brand": "Cartier",
+  "category": "knitwear",
+  "description": "Bring softness with edge to your knitwear collection. With MACIIY you’ll feel unbelievably cosy wherever you go. But thanks to the unique design, you’ll be able to relish in a chic, fashionable look. Sporting a cable knit front, balloon sleeves, and a raised centre panel at the waist, this will be a sweater you reach for again and again.",
+  "stock": 2,
+  "availability": true,
+  "sales": 700,
+  "isChecked": false,
+  "productId": "_pDFm6eDUwsTn2duUdem_",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714021618"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "MID-GREY",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/256862_MID-GREY_2",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/256862_MID-GREY_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/256862_MID-GREY_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/256862_MID-GREY_4"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf7ae3e256a053755ccdc"
+  },
+  "productName": "Bow Detail Chunky Knit",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/252947_LT-BLUE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/252947_LT-BLUE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/252947_LT-BLUE_3"
+  ],
+  "price": 129,
+  "salePrice": 51,
+  "brand": "Dior",
+  "category": "knitwear",
+  "description": "Big bad bow. Who would have thought it? Choose DAIZZY for a jumper with a difference. It does the same job as an ordinary jumper, but it creates quite an impact with its large, statement bow. Tuck it in to your favourite skirt for a feminine look. Feminine, but certainly not dainty.",
+  "stock": 20,
+  "availability": true,
+  "sales": 70,
+  "isChecked": false,
+  "productId": "g-pEGFUpGIyxF2sbmWD27",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714030626"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "BLUE",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/252947_LT-BLUE_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/252947_LT-BLUE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/252947_LT-BLUE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/252947_LT-BLUE_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf9283e256a053755cce2"
+  },
+  "productName": "Zip Front High Neck Knitted Sweater",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/256860_NATURAL_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/256860_NATURAL_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/256860_NATURAL_3"
+  ],
+  "price": 145,
+  "salePrice": 87,
+  "brand": "Dior",
+  "category": "knitwear",
+  "description": "Knitwear season is upon us again – luckily, JORDIYN will make sure you’re prepared. A classic, cosy zip-up cardigan, featuring arrow-shaped stitch details and a wide collar for extra style points. A versatile piece you’ll be reaching for through to spring.",
+  "stock": 200,
+  "availability": true,
+  "sales": 80,
+  "isChecked": false,
+  "productId": "S_FiYECuMwMR5m1ytISt0",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714408121"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "NATURAL",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/256860_NATURAL_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/256860_NATURAL_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/256860_NATURAL_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/256860_NATURAL_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf93e3e256a053755cce5"
+  },
+  "productName": "Heavy Weight Relaxed Fit T-Shirt",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/258321_CAMEL_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/258321_CAMEL_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/258321_CAMEL_3"
+  ],
+  "price": 45,
+  "salePrice": 20,
+  "brand": "Lululemon",
+  "category": "tshirt",
+  "description": "Looking for basics with a little bit of edge? Then DALAS is here to help. A casual round neck, short-sleeved t-shirt, this can be worn with jeans, trousers, chinos, and shorts with boots, shoes and trainers with ease. Meanwhile, the stitched magnolia motif on the chest coupled with the relaxed fit offers an effortless, stylish edge, to an otherwise simple tee.By choosing Ted Baker cotton products, you’re supporting our investment in the Better Cotton Initiative’s mission. This product is sourced via a system of mass balance and therefore may not contain better cotton..",
+  "stock": 2000,
+  "availability": true,
+  "sales": 8000,
+  "isChecked": false,
+  "productId": "l5tpx7qu5MZuxGj3hgSb-",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714430825"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "CAMEL",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/258321_CAMEL_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/258321_CAMEL_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/258321_CAMEL_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/258321_CAMEL_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf9483e256a053755cce8"
+  },
+  "productName": "MIB Rave Doodle T-Shirt",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/258532_NUDE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/258532_NUDE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/258532_NUDE_3"
+  ],
+  "price": 60,
+  "salePrice": 36,
+  "brand": "Lululemon",
+  "category": "tshirt",
+  "description": "It’s time to liven up your clothing collection, and PARBRK knows just how to do that. A classic short-sleeve t-shirt that can be paired with everything from jeans and shorts to a casual pair of trousers and joggers. Meanwhile, the doodle graphic across the front adds a youthful sensibility that’ll give you that laid-back feeling wherever you are.",
+  "stock": 20,
+  "availability": true,
+  "sales": 388,
+  "isChecked": false,
+  "productId": "564Mke3rLMFJ1xCUFl7Va",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714440413"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "NUDE",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/258532_NUDE_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/258532_NUDE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/258532_NUDE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/258532_NUDE_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf9b0cffda644c5a03cf9"
+  },
+  "productName": "Graphic Oversized T-Shirt",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/261443_WHITE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/261443_WHITE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/261443_WHITE_3"
+  ],
+  "price": 55,
+  "salePrice": 0,
+  "brand": "Lululemon",
+  "category": "tshirt",
+  "description": "It’s time to liven up your clothing collection, and PARBRK knows just how to do that. A classic short-sleeve t-shirt that can be paired with everything from jeans and shorts to a casual pair of trousers and joggers. Meanwhile, the doodle graphic across the front adds a youthful sensibility that’ll give you that laid-back feeling wherever you are.",
+  "stock": 200,
+  "availability": true,
+  "sales": 107,
+  "isChecked": false,
+  "productId": "4EmKjUrAEGBfZz9z3o-U3",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714544702"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "WHITE",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/261443_WHITE_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/261443_WHITE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/261443_WHITE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/261443_WHITE_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf9d2cffda644c5a03cfc"
+  },
+  "productName": "Fitted T-Shirt",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/247575_BLACK_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/247575_BLACK_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/247575_BLACK_3"
+  ],
+  "price": 49,
+  "salePrice": 29,
+  "brand": "Lululemon",
+  "category": "tshirt",
+  "description": "Add some fresh florals to your off-duty repertoire with our PERIIE T-shirt. In the Sandalwood print, this fitted style is a great choice for everyday use, and goes with everything from jeans to more casual joggers.",
+  "stock": 20,
+  "availability": true,
+  "sales": 700,
+  "isChecked": false,
+  "productId": "MEnXGjwtSSULdtre83UMO",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714578970"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "BLACK",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/247575_BLACK_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/247575_BLACK_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/247575_BLACK_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/247575_BLACK_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf9dbcffda644c5a03cff"
+  },
+  "productName": "Short Sleeve Graphic T-Shirt",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/259428_WHITE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/259428_WHITE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/259428_WHITE_3"
+  ],
+  "price": 55,
+  "salePrice": 27,
+  "brand": "Lululemon",
+  "category": "tshirt",
+  "description": "Add some fresh florals to your off-duty repertoire with our PERIIE T-shirt. In the Sandalwood print, this fitted style is a great choice for everyday use, and goes with everything from jeans to more casual joggers.",
+  "stock": 2,
+  "availability": true,
+  "sales": 21,
+  "isChecked": false,
+  "productId": "M5qwVt4xcoXfvvwWtBSuc",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714587611"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "WHITE",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/259428_WHITE_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/259428_WHITE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/259428_WHITE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/259428_WHITE_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf9e4cffda644c5a03d02"
+  },
+  "productName": "Boxy Short Sleeve Shirt",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/259458_GREEN_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/259458_GREEN_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Womens/259458_GREEN_3"
+  ],
+  "price": 110,
+  "salePrice": 77,
+  "brand": "Lenon",
+  "category": "shirt",
+  "description": "Feel like it's summer every day with TALAH. The vibrant floral print and relaxed boxy fit of this shirt bring a fun twist to your daytime style. Pair with the matching shorts for a fabulous co-ord worthy of beach days and walks in the park.",
+  "stock": 200,
+  "availability": true,
+  "sales": 752,
+  "isChecked": false,
+  "productId": "m8c5avzhXechf-AqhKqvH",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714596639"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "GREEN",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/259458_GREEN_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/259458_GREEN_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/259458_GREEN_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Womens/259458_GREEN_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf9f3cffda644c5a03d05"
+  },
+  "productName": "Floral Outline Printed Shirt",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/260753_WHITE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/260753_WHITE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/260753_WHITE_3"
+  ],
+  "price": 90,
+  "salePrice": 60,
+  "brand": "Lenon",
+  "category": "shirt",
+  "description": "Smart casual is a look that you’ll need throughout the year, and when you have ASHLO hanging in your wardrobe, you know it’s a style you’ll be able to execute with ease. A long-sleeve button-front shirt, the all-over floral print brings the fun without being too bold, meaning it can be worn just as easily with jeans as it can with trousers.",
+  "stock": 20,
+  "availability": true,
+  "sales": 6500,
+  "isChecked": false,
+  "productId": "5cqTjbjZ3nfWFGOoq9pZh",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714611329"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "WHITE",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260753_WHITE_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260753_WHITE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260753_WHITE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260753_WHITE_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddf9fdcffda644c5a03d08"
+  },
+  "productName": "Floral Placement Print Shirt",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_3-5m,c_fit,w_720,h_900/Product/Mens/256519_WHITE_1",
+    "https://media.tedbaker.com/t_pdp_dt_3-5m,c_fit,w_720,h_900/Product/Mens/256519_WHITE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/256519_WHITE_3"
+  ],
+  "price": 80,
+  "salePrice": 39,
+  "brand": "Lenon",
+  "category": "shirt",
+  "description": "For floral fans — and certainly not for wallflowers. HAMLETT’s stand-out design brings this short-sleeved shirt to life; it’s 100% cotton too, so it’s just right for the warmer months. Who needs plain when you can have playful?",
+  "stock": 20,
+  "availability": true,
+  "sales": 6500,
+  "isChecked": false,
+  "productId": "wn4B_WnrVu_oKOnLp3CDF",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714621677"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "WHITE",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_3-5m,c_fit,w_320,h_400/Pro\nduct/Mens/256519_WHITE_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_3-5m,c_fit,w_320,h_400/Product/Mens/256519_WHITE_1",
+    "https://media.tedbaker.com/t_pdp_dt_3-5m,c_fit,w_320,h_400/Product/Mens/256519_WHITE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/256519_WHITE_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddfa08cffda644c5a03d0b"
+  },
+  "productName": "Short Sleeve Floral Printed Shirt",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/260412_WHITE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/260412_WHITE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/260412_WHITE_4"
+  ],
+  "price": 85,
+  "salePrice": 0,
+  "brand": "Lenon",
+  "category": "shirt",
+  "description": "In a cotton and linen blend for ultimate breathability, NEELE is the whole package. Featuring a floral print, relaxed fit and short sleeves, this piece is perfect for warm weather or an island getaway.",
+  "stock": 71,
+  "availability": true,
+  "sales": 65,
+  "isChecked": false,
+  "productId": "t3oy-UKEnqX2U_ybWtYSq",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714632334"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "WHITE",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260412_WHITE_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260412_WHITE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260412_WHITE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260412_WHITE_4"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddfa13cffda644c5a03d0e"
+  },
+  "productName": "LS Floral Print Shirt",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/260682_NAVY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/260682_NAVY_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/260682_NAVY_3"
+  ],
+  "price": 90,
+  "salePrice": 63,
+  "brand": "Lenon",
+  "category": "shirt",
+  "description": "Florals can be fun and fashionable, something that SELVO proves with ease. The ideal way to add a touch of fun to your wardrobe, while remaining serious, the all-over Ted Baker magnolia motif makes this a stand out shirt you’ll love to wear. Ideal for work and parties alike, pair it with smart-casual trousers and trainers for a laid-back yet smart appearance.",
+  "stock": 1000,
+  "availability": true,
+  "sales": 75,
+  "isChecked": false,
+  "productId": "-1Lx_UgqHiL4EyQKChJt7",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714643119"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "NAVY",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260682_NAVY_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260682_NAVY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260682_NAVY_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260682_NAVY_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddfa22cffda644c5a03d11"
+  },
+  "productName": "Short Sleeve Coral Print Shirt",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/260421_BLACK_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/260421_BLACK_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/260421_BLACK_3"
+  ],
+  "price": 85,
+  "salePrice": 75,
+  "brand": "Lenon",
+  "category": "shirt",
+  "description": "Lenon exudes class and a little playfulness with an all over coral print and relaxed short sleeved style. This button down shirt is the perfect option for a night out on the town or a formal event, and its linen construction will keep you fresh all day long.",
+  "stock": 100,
+  "availability": true,
+  "sales": 75,
+  "isChecked": false,
+  "productId": "jBcoEUU4yhFDqsDLZNWgm",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714658282"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "BLACK",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260421_BLACK_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260421_BLACK_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260421_BLACK_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/260421_BLACK_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddfa2bcffda644c5a03d14"
+  },
+  "productName": "Short Sleeve Revere Printed Shirt",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/259178_GREEN_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/259178_GREEN_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/259178_GREEN_3"
+  ],
+  "price": 95,
+  "salePrice": 57,
+  "brand": "Lenon",
+  "category": "shirt",
+  "description": "Keep it cool in COMPTER. A button-down shirt with a playful print is always a winner in our book, and this sketchy geometric print is no exception. A sharp collar contrasts with this print to create a billiant blend of smart and casual thats ideal for both work and play.",
+  "stock": 935,
+  "availability": true,
+  "sales": 777,
+  "isChecked": false,
+  "productId": "k2mexLTLVboiKOPvYjfp8",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714667611"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "GREEN",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/259178_GREEN_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/259178_GREEN_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/259178_GREEN_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/259178_GREEN_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddfa36cffda644c5a03d17"
+  },
+  "productName": "Short Sleeve Carrot Print Shirt",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/259399_WHITE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/259399_WHITE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/259399_WHITE_3"
+  ],
+  "price": 108,
+  "salePrice": 65,
+  "brand": "Gucci",
+  "category": "shirt",
+  "description": "Get your five a day in style. LENON is crafted in breathable linen, keeping you fresh all day long through work and play. Pair with shorts or jeans for a versatile look that meets you where you are.",
+  "stock": 93,
+  "availability": true,
+  "sales": 666,
+  "isChecked": false,
+  "productId": "1aswuT7a4q0FxtvNo7U_X",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714678283"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "WHITE",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/259399_WHITE_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/259399_WHITE_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/259399_WHITE_2",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/259399_WHITE_3"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddfa42cffda644c5a03d1a"
+  },
+  "productName": "All-over flower Knitted Bucket Hat",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/258327_DK-NAVY_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/258327_DK-NAVY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/258327_DK-NAVY_2"
+  ],
+  "price": 45,
+  "salePrice": 20,
+  "brand": "Cartier",
+  "category": "hat",
+  "description": "It’ll feel like the 90s never left when you bring Cartier into your collection. An amazingly retro bucket hat, this evokes that early 90s vibe that everyone looks back at with fondness. However, thanks to the soft knitted material and all-over floral print, this bucket hat is given a stylish update to bring it into the modern-day with ease.",
+  "stock": 9,
+  "availability": true,
+  "sales": 800,
+  "isChecked": false,
+  "productId": "6KoaXvYADtkONXPw-qfi_",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714690523"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "NAVY",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/258327_DK-NAVY_3",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/258327_DK-NAVY_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/258327_DK-NAVY_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/258327_DK-NAVY_2"
+  ]
+},{
+  "_id": {
+    "$oid": "62ddfa4ccffda644c5a03d1d"
+  },
+  "productName": "Summer Bloom Retro Swirl Baseball Cap",
+  "imageList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/261281_NATURAL_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/261281_NATURAL_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_720,h_900/Product/Mens/261281_NATURAL_4"
+  ],
+  "price": 35,
+  "salePrice": 10,
+  "brand": "Cartier",
+  "category": "hat",
+  "description": "Hit refresh on your accessories with SALIAT. Our Retro Swirl print brings a playful edge to this cap to top off your sunshine-ready looks.",
+  "stock": 50,
+  "availability": true,
+  "sales": 7000,
+  "isChecked": false,
+  "productId": "d1z7nD8_ANheM1QRPDy9j",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1658714700185"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666085981366"
+    }
+  },
+  "__v": 0,
+  "color": "NATURAL",
+  "thumbnail": "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/261281_NATURAL_1",
+  "thumbnailList": [
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/261281_NATURAL_1",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/261281_NATURAL_3",
+    "https://media.tedbaker.com/t_pdp_dt_xlg_3-5m,c_fit,w_320,h_400/Product/Mens/261281_NATURAL_4"
+  ]
+}]

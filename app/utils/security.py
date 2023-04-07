@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from ..database import db
 from ..services import user_services
+from ..utils.logger import logger
 
 ACCESS_TOKEN_EXPIRES_IN = config('ACCESS_TOKEN_EXPIRES_IN',cast=int)
 REFRESH_TOKEN_EXPIRES_IN = config('REFRESH_TOKEN_EXPIRES_IN',cast=int)
@@ -71,5 +72,6 @@ def decode_token(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,detail="Token has expired."
         )
-    except JWTError:
+    except JWTError as e:
+        logger.error(e, exc_info=True)
         raise credentials_exception

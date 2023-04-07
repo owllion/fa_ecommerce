@@ -11,11 +11,12 @@ from sqlalchemy.orm import Session
 from ..database import db
 from ..exceptions.http_exception import CustomHTTPException
 from ..schemas import item_schema, user_schema
-from ..schemas.user_schema import SupportedFiled, VerifiedValue
+from ..schemas.user_schema import SupportedField, VerifiedValue
 from ..services import user_services
 from ..utils.dependencies import *
 from ..utils.logger import logger
-from ..utils.router_settings import get_router_settings
+from ..utils.router_settings import (get_path_decorator_settings,
+                                     get_router_settings)
 
 protected_router = APIRouter(**get_router_settings(
   {
@@ -37,10 +38,8 @@ public_router = APIRouter(**get_router_settings(
 
 
 @protected_router.post(
-    "/update", 
-    status_code= status.HTTP_200_OK,
-    response_description= "Successfully update",
-    response_model= None
+    "/update",
+    **get_path_decorator_settings(description= "Successfully update user data")
 )
 def update_user(
     req: Request,
@@ -53,19 +52,24 @@ def update_user(
     #Can not do this when the data is of JSON format.
 
     try:
-        if field == SupportedFiled.VERIFIED:
+        
+        if field == SupportedField.VERIFIED:
             req.state.mydata.verified = int(value)
         
-        elif field == SupportedFiled.USERNAME:
-            req.state.mydata.username = value
+        elif field == SupportedField.LASTNAME:
+            req.state.mydata.last_name = value
+        elif field == SupportedField.FIRSTNAME:
+            req.state.mydata.first_name = value
         #modify req.state.mydata == directly current user's data 
 
         db.commit()
         #then save it to the db
 
     except HTTPException as e:
+        if type(e).__name__ == 'HTTPExceotion':
+            raise e
         logger.error(e, exc_info=True)
-        raise CustomHTTPException(detail= str(e.detail))
+        raise CustomHTTPException(detail= str(e))
 
 @protected_router.get("/{user_id}", response_model=user_schema.UserSchema)
 def read_user(user_id: str, db: Session = Depends(db.get_db)):
@@ -74,10 +78,8 @@ def read_user(user_id: str, db: Session = Depends(db.get_db)):
 
 
 @protected_router.post(
-    "/reset-password", 
-    status_code= status.HTTP_200_OK,
-    response_description= "Password has been successfully reset",
-    response_model= None
+    "/reset-password",
+    **get_path_decorator_settings(description= "Password has been successfully reset")
 )
 def reset_password(
     req: Request,
@@ -94,9 +96,7 @@ def reset_password(
 
 @public_router.post(
     "/forgot-password", 
-    status_code= status.HTTP_200_OK,
-    response_description= "Password has been successfully reset",
-    response_model= None
+    **get_path_decorator_settings(description= "Password has been successfully reset")
 )
 async def forgot_password(
     payload: user_schema.EmailBaseSchema,
@@ -127,8 +127,31 @@ async def forgot_password(
             status_code=200
         )
 
-    except HTTPException as e:
-        raise CustomHTTPException(detail= str(e.detail))
+    except Exception as e:
+        if type(e).__name__ == 'HTTPException': raise e
+        raise CustomHTTPException(detail= str(e))
+
+@protected_router.post(
+    "/upload-avatar", 
+    **get_path_decorator_settings(description="Successfully upload your avatar!")
+)
+def get_uploaded_avatar_url(
+    req: Request,
+    payload: user_schema.UserUploadAvatarSchema,
+    db: Session = Depends(db.get_db)
+):
+    try:
+        req.state.mydata.upload_avatar = payload.url
+        db.commit()
+
+    except Exception as e:
+         raise CustomHTTPException(
+            detail= str(e)
+        )
+
+
+
+    
 
 
 

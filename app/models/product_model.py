@@ -21,7 +21,7 @@ class Product(Base):
 
     brand = Column(String(30), nullable=False)
 
-    category = Column(String, nullable=False)
+    category = Column(String(30), nullable=False)
     size = Column(String(10), default="F")
     color = Column(String(20),nullable=False)
     description = Column(String(800), default="")
@@ -42,7 +42,6 @@ class Product(Base):
 
     reviews = relationship("Review", back_populates="product")
 
-    
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
 

@@ -18,6 +18,7 @@ class CouponCreate(CouponBase):
     user_id: int
 
 class CouponUpdate(BaseModel):
+    id: str
     code: str | None = None
     description: str | None = None
     amount: Decimal | None = None
@@ -27,8 +28,8 @@ class CouponUpdate(BaseModel):
 
     @root_validator(pre=True)
     def check_at_least_one_attribute(cls, values):
-        if all(not attr for attr in values.values()):
-            raise ValueError("At least one attribute must be provided.")
+        if not any(attr for attr in values.values() if attr != 'id'):
+            raise ValueError("At least one attribute other than 'id' must be provided.")
         return values
 
 class Coupon(CouponBase):

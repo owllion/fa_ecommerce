@@ -19,10 +19,15 @@ from ..database.db import Base
 class Cart(Base):
     __tablename__ = "likes"
     
+    id = Column(String(36), primary_key=True, index=True,default=str(uuid.uuid4()))
+    
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+
     product_id = Column(Integer, ForeignKey('products.id'), primary_key=True)
+
     user = relationship('User', back_populates='like_items')
-    product = relationship('Product', back_populates='likes')
+    
+    product = relationship('Product', backref='likes')
 
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
 

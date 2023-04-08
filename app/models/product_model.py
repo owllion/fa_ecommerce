@@ -19,26 +19,36 @@ class Product(Base):
 
     price = Column(Float, nullable=False)
 
-    brand = Column(String, nullable=False)
+    brand = Column(String(30), nullable=False)
 
     category = Column(String, nullable=False)
-    size = Column(String, default="F")
-    color = Column(String, default="")
-    description = Column(String, default="")
+    size = Column(String(10), default="F")
+    color = Column(String(20), default="")
+    description = Column(Text, default="")
+
     stock = Column(Integer, nullable=False)
+
     availability = Column(Boolean, nullable=False)
+
     sales = Column(Integer, nullable=False)
+
     qty = Column(Integer)
+
     is_checked = Column(Boolean, default=False)
 
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
-
     
-    image_list = Column(String, nullable=False)
-    thumbnail_list = Column(String, nullable=False)
+    image_list = relationship("ProductImageUrl", backref="parent_product")
+
+    thumbnail_list = relationship("ThumbnailUrl", backref="parent_product")
 
     reviews = relationship("Review", back_populates="product")
+
+    
+
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
 
     def __repr__(self):
         return f"<Product(id={self.id}, name='{self.product_name}')>"

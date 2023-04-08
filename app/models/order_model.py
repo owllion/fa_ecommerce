@@ -30,11 +30,16 @@ class Order(Base):
 
     order_status = Column(Integer, default=OrderStatus.COMPLETED) 
 
-    order_id = Column(String(10), unique=True, nullable=False)
+    # order_id = Column(String(10), unique=True, nullable=False)
+
+    owner = relationship("User", back_populates="orders")
 
     owner_id = Column(Integer, ForeignKey('user.id'), ondelete="CASCADE",nullable=False)
 
-    delivery_address = Column(String(100), nullable=False)
+    order_items = relationship("OrderItem", back_populates="parent_order")
+
+
+    delivery_address = Column(String(200), nullable=False)
 
     discount = Column(Float, default=0)
     
@@ -59,4 +64,3 @@ class Order(Base):
 
     updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"), onupdate=text("now()"))
 
-    owner = relationship("User", back_populates="orders")

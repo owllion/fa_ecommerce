@@ -23,6 +23,7 @@ class Review(Base):
     # review_id = Column(String(), nullable=False)
     
     rating = Column(Float, nullable=False)
+    
     comment = Column(String(300), nullable=False)
 
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.now)

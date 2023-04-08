@@ -45,12 +45,6 @@ class UserSchema(UserBaseSchema): #used to return data
     default_avatar: str = Field(config('DEFAULT_AVATAR_URL'), alias='avatarDefault')
     created_at: datetime
     updated_at: datetime
-
-    # class Config:
-    #     fields = {
-    #         'upload_avatar': 'avatarUpload',
-    #         'default_avatar': 'avatarDefault'
-    #     }
     
 class UserWithTokenSchema(UserSchema):
     token: str

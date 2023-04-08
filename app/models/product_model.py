@@ -23,8 +23,8 @@ class Product(Base):
 
     category = Column(String, nullable=False)
     size = Column(String(10), default="F")
-    color = Column(String(20), default="")
-    description = Column(Text, default="")
+    color = Column(String(20),nullable=False)
+    description = Column(String(800), default="")
 
     stock = Column(Integer, nullable=False)
 
@@ -32,11 +32,10 @@ class Product(Base):
 
     sales = Column(Integer, nullable=False)
 
-    qty = Column(Integer)
+    qty = Column(Integer, default=1)
 
     is_checked = Column(Boolean, default=False)
 
-    
     image_list = relationship("ProductImageUrl", backref="parent_product")
 
     thumbnail_list = relationship("ThumbnailUrl", backref="parent_product")

@@ -4,8 +4,8 @@ from decouple import config
 from sqlalchemy import TIMESTAMP, Boolean, Column, Integer, String, event, text
 from sqlalchemy.orm import relationship
 
-from ..database.db import Base
-from ..utils import security
+from ...database.db import Base
+from ...utils import security
 
 
 class User(Base):
@@ -29,23 +29,20 @@ class User(Base):
     verified = Column(Boolean, nullable=False,default=False)
 
     #######################
-    cart_items = relationship("Cart", back_populates="user")
+    cart_items = relationship("Cart", back_populates="relate_user",cascade="all, delete",passive_deletes=True)
 
-    like_items = relationship("Like", back_populates="user")
+    like_items = relationship("Like", back_populates="user",cascade="all, delete",passive_deletes=True)
 
-    coupon_items = relationship("Coupon", backref="user")
+    coupon_items = relationship("Coupon", backref="user",cascade="all, delete",passive_deletes=True)
 
-    orders = relationship("Order", back_populates="owner")
+    orders = relationship("Order", back_populates="owner",cascade="all, delete",passive_deletes=True)
 
-    reviews = relationship("Review", back_populates="user")
+    reviews = relationship("Review", back_populates="user",cascade="all, delete",passive_deletes=True)
     ###########################
 
-    created_at = Column(
-        TIMESTAMP(timezone=True),nullable=False, 
-        server_default=text("now()")
-    )
-
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"), onupdate=text("now()"))
+    created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
+    
+    updated_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))
 
     # items = relationship("Item", back_populates="owner")
 

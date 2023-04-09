@@ -14,7 +14,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from ..database.db import Base
+from ...database.db import Base
 
 
 class ThumbnailUrl(Base):
@@ -24,9 +24,6 @@ class ThumbnailUrl(Base):
 
     product_id = Column(Integer, ForeignKey("product.id"),ondelete="CASCADE",nullable=False)
 
-    created_at = Column(
-        TIMESTAMP(timezone=True),nullable=False, 
-        server_default=text("now()")
-    )
-
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"), onupdate=text("now()"))
+    created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
+    
+    updated_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))

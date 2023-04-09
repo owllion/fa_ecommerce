@@ -1,8 +1,11 @@
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import IntegrityError
 from database import db
-from models import item_model,user_model
+from models import item_model
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import sessionmaker
+
 from alembic import command
+from app.models.user import user_model
+
 # 創建一個 session
 Session = sessionmaker(bind=db.engine)
 session = Session()

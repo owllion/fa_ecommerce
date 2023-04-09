@@ -1,10 +1,10 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, text
 from sqlalchemy.orm import relationship
 
-from ..database.db import Base
+from ...database.db import Base
 
 
 class Product(Base):
@@ -36,16 +36,16 @@ class Product(Base):
 
     is_checked = Column(Boolean, default=False)
 
-    image_list = relationship("ProductImageUrl", backref="parent_product")
+    image_list = relationship("ProductImageUrl", backref="parent_product", cascade="all, delete",passive_deletes=True)
 
-    thumbnail_list = relationship("ThumbnailUrl", backref="parent_product")
+    thumbnail_list = relationship("ThumbnailUrl", backref="parent_product",cascade="all, delete",passive_deletes=True)
 
-    reviews = relationship("Review", back_populates="product")
+    reviews = relationship("Review", back_populates="product",cascade="all, delete",passive_deletes=True)
 
 
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
+    
+    updated_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))
 
 
     def __repr__(self):

@@ -4,7 +4,7 @@ from pydantic import EmailStr
 from sqlalchemy.orm import Session
 
 from ..database import db
-from ..models import user_model
+from ..models.user import user_model
 from ..schemas import email_schema, user_schema
 from ..utils import security
 from ..utils.email import email

@@ -10,9 +10,10 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    text,
 )
 
-from ..database.db import Base
+from ...database.db import Base
 
 
 class Coupon(Base):
@@ -36,7 +37,7 @@ class Coupon(Base):
 
     is_used = Column(Boolean, default=False)
 
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.now)
+    created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
     
-    updated_at = Column(TIMESTAMP, nullable=False, default=datetime.now, onupdate=datetime.now)
+    updated_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))
    

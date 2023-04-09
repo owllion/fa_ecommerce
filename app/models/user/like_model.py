@@ -13,20 +13,20 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from ..database.db import Base
+from ...database.db import Base
 
 
 class Like(Base):
     __tablename__ = "like"
-    
-    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
 
-    product_id = Column(Integer, ForeignKey('products.id'), primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), primary_key=True)
+
+    product_id = Column(Integer, ForeignKey('products.id',ondelete="CASCADE"), primary_key=True)
 
     user = relationship('User', back_populates='like_items')
     
     product = relationship('Product', backref='likes')
 
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
+    
+    updated_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))

@@ -14,7 +14,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from ..database.db import Base
+from ...database.db import Base
 
 
 class OrderStatus(int,Enum):
@@ -34,9 +34,9 @@ class Order(Base):
 
     owner = relationship("User", back_populates="orders")
 
-    owner_id = Column(Integer, ForeignKey('user.id'), ondelete="CASCADE",nullable=False)
+    owner_id = Column(Integer, ForeignKey('user.id',ondelete="CASCADE"),nullable=False)
 
-    order_items = relationship("OrderItem", back_populates="parent_order")
+    order_items = relationship("OrderItem", back_populates="parent_order",cascade="all, delete",passive_deletes=True)
 
 
     delivery_address = Column(String(200), nullable=False)
@@ -57,10 +57,7 @@ class Order(Base):
 
     payment_status = Column(Integer, default=PaymentStatus.PAID) 
 
-    created_at = Column(
-        TIMESTAMP(timezone=True),nullable=False, 
-        server_default=text("now()")
-    )
-
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"), onupdate=text("now()"))
+    created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
+    
+    updated_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))
 

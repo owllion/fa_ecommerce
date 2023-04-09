@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import TIMESTAMP, Boolean, Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from ..database.db import Base
+from ...database.db import Base
 
 
 class Cart(Base):

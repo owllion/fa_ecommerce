@@ -41,7 +41,7 @@ class ReviewUpdateSchema(BaseModel):
         return values
     
 
-class ReviewSchema(ReviewBase):
+class ReviewSchema(ReviewBaseSchema):
     id: str
     created_at: datetime
     updated_at: datetime

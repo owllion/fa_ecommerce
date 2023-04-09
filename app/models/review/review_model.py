@@ -12,11 +12,11 @@ class Review(Base):
 
     id = Column(String(36), primary_key=True, index=True,default=str(uuid.uuid4()))
 
-    user_id = Column(Integer, ForeignKey('user.id',ondelete="CASCADE"), nullable=False)
+    user_id = Column(String(36), ForeignKey('user.id',ondelete="CASCADE"), nullable=False)
 
     user = relationship("User", back_populates="reviews")
 
-    product_id = Column(Integer, ForeignKey('product.id',ondelete="CASCADE"), nullable=False)
+    product_id = Column(String(36), ForeignKey('product.id',ondelete="CASCADE"), nullable=False)
 
     product = relationship("Product", back_populates="reviews")
 

@@ -22,11 +22,11 @@ class CartItem(Base):
     
     id = Column(String(36), primary_key=True, index=True,default=str(uuid.uuid4()))
 
-    cart_id = Column(Integer, ForeignKey("cart.id", ondelete="CASCADE"), nullable=False)
+    cart_id = Column(String(36), ForeignKey("cart.id", ondelete="CASCADE"), nullable=False)
 
     parent_cart = relationship("Cart", back_populates="cart_items")
 
-    product_id = Column(Integer, ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
+    product_id = Column(String(36), ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
 
     quantity = Column(Integer, default=1)
 

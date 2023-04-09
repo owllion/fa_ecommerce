@@ -21,7 +21,7 @@ class Coupon(Base):
 
     id = Column(String(36), primary_key=True, index=True,default=str(uuid.uuid4()))
 
-    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user_id = Column(String(36), ForeignKey('user.id'), nullable=False)
 
     code = Column(String(255), nullable=False, index=True)
 

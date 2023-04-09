@@ -10,6 +10,7 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
+    text,
 )
 from sqlalchemy.orm import relationship
 
@@ -19,9 +20,9 @@ from ...database.db import Base
 class Like(Base):
     __tablename__ = "like"
 
-    user_id = Column(Integer, ForeignKey('users.id', ondelete="CASCADE"), primary_key=True)
+    user_id = Column(String(36), ForeignKey('user.id', ondelete="CASCADE"), primary_key=True)
 
-    product_id = Column(Integer, ForeignKey('products.id',ondelete="CASCADE"), primary_key=True)
+    product_id = Column(String(36), ForeignKey('product.id',ondelete="CASCADE"), primary_key=True)
 
     user = relationship('User', back_populates='like_items')
     

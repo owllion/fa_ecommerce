@@ -34,7 +34,7 @@ class Order(Base):
 
     owner = relationship("User", back_populates="orders")
 
-    owner_id = Column(Integer, ForeignKey('user.id',ondelete="CASCADE"),nullable=False)
+    owner_id = Column(String(36), ForeignKey('user.id',ondelete="CASCADE"),nullable=False)
 
     order_items = relationship("OrderItem", back_populates="parent_order",cascade="all, delete",passive_deletes=True)
 

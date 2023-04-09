@@ -22,11 +22,11 @@ class OrderItem(Base):
 
     id = Column(String(36), primary_key=True, index=True,default=str(uuid.uuid4()))
 
-    order_id = Column(Integer,ForeignKey("order.id",ondelete="CASCADE"),nullable=False)
+    order_id = Column(String(36),ForeignKey("order.id",ondelete="CASCADE"),nullable=False)
 
     parent_order = relationship("Order", back_populates="order_items")
 
-    product_id = Column(Integer, ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
+    product_id = Column(String(36), ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
 
     product = relationship("Product", backref="order_items")
 

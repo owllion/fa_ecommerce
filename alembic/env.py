@@ -7,7 +7,11 @@ from app.database.db import Base
 from app.models.cart import cart_item_model, cart_model
 from app.models.coupon import coupon_model
 from app.models.order import order_item_model, order_model
-from app.models.product import product_image_url_model, product_model
+from app.models.product import (
+    product_image_url_model,
+    product_model,
+    thumbnail_url_model,
+)
 from app.models.review import review_model
 from app.models.user import like_model, user_model
 

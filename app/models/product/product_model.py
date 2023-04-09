@@ -1,7 +1,16 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, text
+from sqlalchemy import (
+    TIMESTAMP,
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    Integer,
+    String,
+    text,
+)
 from sqlalchemy.orm import relationship
 
 from ...database.db import Base

@@ -5,13 +5,13 @@ from sqlalchemy import TIMESTAMP, Boolean, Column, Integer, String, event, text
 from sqlalchemy.orm import relationship
 
 from ...database.db import Base
-from ...utils import security
+from ...utils import generate_id, security
 
 
 class User(Base):
     __tablename__ = "user"
 
-    id = Column(String(36), primary_key=True, index=True,default=str(uuid.uuid4()))
+    id = Column(String(80), primary_key=True, index=True,default=generate_id.gen_id)
 
     email = Column(String(80), unique=True,index=True)
 
@@ -29,11 +29,11 @@ class User(Base):
     verified = Column(Boolean, nullable=False,default=False)
 
     #######################
-    cart_items = relationship("Cart", back_populates="relate_user",cascade="all, delete",passive_deletes=True)
+    cart = relationship("Cart", back_populates="relate_user",cascade="all, delete",passive_deletes=True)
 
-    like_items = relationship("Like", back_populates="user",cascade="all, delete",passive_deletes=True)
+    favorites = relationship("FavoriteItem", backref="owner",cascade="all, delete",passive_deletes=True)
 
-    coupon_items = relationship("Coupon", backref="user",cascade="all, delete",passive_deletes=True)
+    coupons = relationship("Coupon", backref="owner",cascade="all, delete",passive_deletes=True)
 
     orders = relationship("Order", back_populates="owner",cascade="all, delete",passive_deletes=True)
 

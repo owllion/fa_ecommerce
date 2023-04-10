@@ -17,14 +17,12 @@ from sqlalchemy.orm import relationship
 from ...database.db import Base
 
 
-class Like(Base):
-    __tablename__ = "like"
+class FavoriteItem(Base):
+    __tablename__ = "favorite_item"
 
-    user_id = Column(String(36), ForeignKey('user.id', ondelete="CASCADE"), primary_key=True)
+    user_id = Column(String(80), ForeignKey('user.id', ondelete="CASCADE"), primary_key=True)
 
-    product_id = Column(String(36), ForeignKey('product.id',ondelete="CASCADE"), primary_key=True)
-
-    user = relationship('User', back_populates='like_items')
+    product_id = Column(String(80), ForeignKey('product.id',ondelete="CASCADE"), primary_key=True)
     
     product = relationship('Product', backref='likes')
 

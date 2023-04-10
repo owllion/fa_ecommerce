@@ -14,12 +14,13 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from ...database.db import Base
+from ...utils.generate_id import gen_id
 
 
 class Product(Base):
     __tablename__ = 'product'
 
-    id = Column(String(36), primary_key=True, index=True,default=str(uuid.uuid4()))
+    id = Column(String(80), primary_key=True, index=True,default=gen_id)
 
     # product_id = Column(String, nullable=False, unique=True, index=True)
     product_name = Column(String(50), nullable=False)

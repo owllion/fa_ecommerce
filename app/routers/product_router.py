@@ -1,25 +1,37 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from ..constants import exceptions
+from ..constants import api_msgs, exceptions
 from ..exceptions.http_exception import CustomHTTPException
 from ..schemas import product_schema
 from ..services import product_services
 from ..utils.dependencies import *
+from ..utils.router_settings import get_path_decorator_settings, get_router_settings
 
-public_router = APIRouter(
-    prefix="/product",
-    tags=["product"],
-    responses={404: {"description": "Not found"}},
+protected_router = APIRouter(**get_router_settings(
+  {
+    'is_protected': True,
+    'prefix': '/product',
+    'tags': ['product'],
+    'responses': {404: {"description": "Not found"}}
+  }  
+))
+
+public_router = APIRouter(**get_router_settings(
+  {
+    'is_protected': False,
+    'prefix': '/product',
+    'tags': ['product'],
+    'responses': {404: {"description": "Not found"}}
+  }  
+))
+
+@protected_router.post(
+        "/", 
+        **get_path_decorator_settings(
+            description= "Successfully create product.",
+            response_model= product_schema.ProductSchema
+    )
 )
-
-protected_router = APIRouter(
-    prefix="/product",
-    tags=["product"],
-    dependencies=[Depends(validate_token)],
-    responses={404: {"description": "Not found"}},
-)
-
-@public_router.post("/")
 def create_product(payload: product_schema.ProductCreateSchema, db: Session = Depends(db.get_db)):
     
     try:
@@ -28,10 +40,14 @@ def create_product(payload: product_schema.ProductCreateSchema, db: Session = De
         if product: 
             raise HTTPException(
                 status_code= status.HTTP_400_BAD_REQUEST,
-                detail = "product already exists"
+                detail = api_msgs.PRODUCT_ALREADY_EXISTS
             )
         
-        product_services.save_to_db_then_return(product,db)
+        new_product = product_services.save_to_db_then_return(product,db)
+        
+        return new_product
+
+
     except Exception as e:
         if type(e).__name__ == exceptions.HTTPException:
             raise e

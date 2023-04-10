@@ -15,16 +15,17 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from ...database.db import Base
+from ...utils.generate_id import gen_id
 
 
 class ProductImageUrl(Base):
     __tablename__ = 'product_image_url'
 
-    id = Column(String(36), primary_key=True, index=True,default=str(uuid.uuid4()))
+    id = Column(String(80), primary_key=True, index=True,default=gen_id)
     
     url = Column(String(350), nullable= False)
 
-    product_id = Column(String(36), ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
+    product_id = Column(String(80), ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
     

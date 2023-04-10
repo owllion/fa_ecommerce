@@ -15,24 +15,23 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from ...database.db import Base
+from ...utils.generate_id import gen_id
 
 
 class CartItem(Base):
     __tablename__ = "cart_item"
     
-    id = Column(String(36), primary_key=True, index=True,default=str(uuid.uuid4()))
+    id = Column(String(80), primary_key=True, index=True,default= gen_id)
 
-    cart_id = Column(String(36), ForeignKey("cart.id", ondelete="CASCADE"), nullable=False)
+    cart_id = Column(String(80), ForeignKey("cart.id", ondelete="CASCADE"), nullable=False)
 
     parent_cart = relationship("Cart", back_populates="cart_items")
 
-    product_id = Column(String(36), ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
+    product_id = Column(String(80), ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
 
     quantity = Column(Integer, default=1)
 
-    product = relationship("Product", back_populates="cart_users")
-
-    user = relationship("User", back_populates="cart_items")
+    product = relationship("Product", backref="relate_cart_item")
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
     

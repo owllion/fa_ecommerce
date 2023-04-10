@@ -2,7 +2,7 @@
 
 USER_DOES_NOT_EXIST_ERROR = "user not found"
 
-ARTICLE_ALREADY_EXISTS = "article already exists"
+PRODUCT_ALREADY_EXISTS = "product already exists"
 
 INCORRECT_LOGIN_INPUT = "incorrect email or password"
 

@@ -15,6 +15,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from ...database.db import Base
+from ...utils.generate_id import gen_id
 
 
 class OrderStatus(int,Enum):
@@ -26,7 +27,7 @@ class PaymentStatus(int,Enum):
 class Order(Base):
     __tablename__ = 'order'
 
-    id = Column(String(36), primary_key=True, index=True,default=str(uuid.uuid4()))
+    id = Column(String(80), primary_key=True, index=True,default=gen_id)
 
     order_status = Column(Integer, default=OrderStatus.COMPLETED) 
 
@@ -34,7 +35,7 @@ class Order(Base):
 
     owner = relationship("User", back_populates="orders")
 
-    owner_id = Column(String(36), ForeignKey('user.id',ondelete="CASCADE"),nullable=False)
+    owner_id = Column(String(80), ForeignKey('user.id',ondelete="CASCADE"),nullable=False)
 
     order_items = relationship("OrderItem", back_populates="parent_order",cascade="all, delete",passive_deletes=True)
 

@@ -15,18 +15,19 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from ...database.db import Base
+from ...utils.generate_id import gen_id
 
 
 class OrderItem(Base):
     __tablename__ = 'order_item'
 
-    id = Column(String(36), primary_key=True, index=True,default=str(uuid.uuid4()))
+    id = Column(String(80), primary_key=True, index=True,default=gen_id)
 
-    order_id = Column(String(36),ForeignKey("order.id",ondelete="CASCADE"),nullable=False)
+    order_id = Column(String(80),ForeignKey("order.id",ondelete="CASCADE"),nullable=False)
 
     parent_order = relationship("Order", back_populates="order_items")
 
-    product_id = Column(String(36), ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
+    product_id = Column(String(80), ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
 
     product = relationship("Product", backref="order_items")
 

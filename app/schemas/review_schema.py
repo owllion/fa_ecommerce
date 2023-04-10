@@ -14,6 +14,8 @@ from pydantic import (
     validator,
 )
 
+from . import user_schema
+
 
 class ReviewBaseSchema(BaseModel):
     user_id: int
@@ -43,6 +45,7 @@ class ReviewUpdateSchema(BaseModel):
 
 class ReviewSchema(ReviewBaseSchema):
     id: str
+    user: user_schema.UserSchema
     created_at: datetime
     updated_at: datetime
 

@@ -14,14 +14,15 @@ from sqlalchemy import (
 )
 
 from ...database.db import Base
+from ...utils.generate_id import gen_id
 
 
 class Coupon(Base):
     __tablename__ = 'coupon'
 
-    id = Column(String(36), primary_key=True, index=True,default=str(uuid.uuid4()))
+    id = Column(String(80), primary_key=True, index=True,default=gen_id)
 
-    user_id = Column(String(36), ForeignKey('user.id'), nullable=False)
+    user_id = Column(String(80), ForeignKey('user.id'), nullable=False)
 
     code = Column(String(255), nullable=False, index=True)
 

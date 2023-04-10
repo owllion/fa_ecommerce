@@ -1,19 +1,44 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 
+from ..constants import exceptions
+from ..exceptions.http_exception import CustomHTTPException
+from ..schemas import product_schema
+from ..services import product_services
 from ..utils.dependencies import *
 
 public_router = APIRouter(
     prefix="/product",
-    tags=["product_public"],
+    tags=["product"],
     responses={404: {"description": "Not found"}},
 )
 
 protected_router = APIRouter(
     prefix="/product",
-    tags=["product_protected"],
+    tags=["product"],
     dependencies=[Depends(validate_token)],
     responses={404: {"description": "Not found"}},
 )
+
+@public_router.post("/")
+def create_product(payload: product_schema.ProductCreateSchema, db: Session = Depends(db.get_db)):
+    
+    try:
+        product = product_services.find_product_with_id(payload.id)
+        
+        if product: 
+            raise HTTPException(
+                status_code= status.HTTP_400_BAD_REQUEST,
+                detail = "product already exists"
+            )
+        
+        product_services.save_to_db_then_return(product,db)
+    except Exception as e:
+        if type(e).__name__ == exceptions.HTTPException:
+            raise e
+        raise CustomHTTPException(detail= str(e))
+
+
+
 
 @public_router.put("/{product_id}")
 async def update_item(product_id: str):

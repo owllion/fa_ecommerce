@@ -17,9 +17,6 @@ class UserBaseSchema(BaseModel):
     class Config:
         orm_mode = True
         
-
-
-
 class UserCreateSchema(UserBaseSchema):
     password: constr(min_length=8)
     

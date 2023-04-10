@@ -1,15 +1,28 @@
 
+#user
+USER_NOT_FOUND = "user not found"
+USER_ALREADY_EXISTS = "user already exists"
 
-USER_DOES_NOT_EXIST_ERROR = "user not found"
-
+#product
+PRODUCT_NOT_FOUND = "product not found"
 PRODUCT_ALREADY_EXISTS = "product already exists"
+
+#review
+REVIEW_NOT_FOUND = "review not found"
+
+#order
+ORDER_ALREADY_EXISTS = "Order already exists"
+ORDER_NOT_FOUND = "Order not found"
+
+
+
+
+#auth/token
 
 INCORRECT_LOGIN_INPUT = "incorrect email or password"
 
-EMAIL_TAKEN = "user with this email already exists"
+EMAIL_ALREADY_REGISTERED_WITH_GOOGLE = "this email is already registered with google login"
 
 MALFORMED_PAYLOAD = "could not validate credentials"
-
-COMMENT_DOES_NOT_EXIST = "comment does not exist"
 
 AUTHENTICATION_REQUIRED = "authentication required"

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from pydantic import (
     BaseModel,
@@ -35,26 +35,27 @@ class ProductBaseSchema(BaseModel):
 
 class ProductCreateSchema(ProductBaseSchema):
     pass
-    
-class ProductUpdateSchema(BaseModel):
+
+
+base_keys = list(ProductBaseSchema.__annotations__.keys())
+class ProductUpdateSchema(ProductBaseSchema):
+    __annotations__ = {k: Optional[v] for k, v in ProductBaseSchema.__annotations__.items()}
+    #must add this,or when you start to add the attr other than id,you'll get the field missing error in a row.
+
     id: str
-    product_name: str | None = Field(None, max_length=50)
-    thumbnail: str | None = None
-    price: float | None = Field(None, ge=0.0)
-    brand: str | None = Field(None, max_length=30)
-    category: str | None = Field(None, max_length=30)
-    size: str | None = None
-    color: str | None = Field(None, max_length=20)
-    description: str | None = Field(None, max_length=800)
-    stock: int | None = Field(None, ge=0)
-    availability: bool | None = None
-    sales: int | None = Field(None, ge=0)
 
     @root_validator(pre=True)
     def check_at_least_one_attribute(cls, values):
-        if not any(attr for attr in values.values() if attr != 'id'):
+        if len(values) < 2 and values.get('id'):
             raise ValueError("At least one attribute other than 'id' must be provided.")
+
+        for attr in values:
+            if attr != 'id':
+                if attr not in base_keys:
+                    raise ValueError(f"You've passed a non-existing attribute: {attr}")
         return values
+
+
 class ProductSchema(ProductBaseSchema):
     id: str
     reviews: List[ReviewSchema]
@@ -62,9 +63,9 @@ class ProductSchema(ProductBaseSchema):
     thumbnail_list: List[ProductImageUrlSchema]
     created_at: datetime
     updated_at: datetime
-class LikeProductSchema(ProductSchema):
+class FavoriteItemSchema(ProductSchema):
     pass
-class LikeProductCreateSchema(ProductSchema):
+class FavoriteItemCreateSchema(ProductSchema):
     user_id: str
     product_id: str
 

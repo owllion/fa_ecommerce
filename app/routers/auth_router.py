@@ -67,8 +67,8 @@ async def create_user(
 
 
         return {
-            'token': security.create_token(new_user.id,"access"),
-            'refresh_token': security.create_token(new_user.id,"refresh"),
+            'token': security.create_token(new_user.id,'access'),
+            'refresh_token': security.create_token(new_user.id,'refresh'),
             'user': return_data,
         }
 
@@ -100,11 +100,12 @@ def login(
 
 
         if user_services.password_is_matched(payload.password, user.password) and user_services.user_is_verified(user.verified):
+            # cart_length = db.query()
             return { 
                 'token': security.create_token(user.id,"access"),
                 'refresh_token': security.create_token(user.id,"refresh"),
                 'user': user,
-                'cartLength': 0      
+                'cart_length': 2      
             }
 
 

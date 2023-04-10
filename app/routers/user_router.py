@@ -1,8 +1,16 @@
 from enum import Enum
 from typing import Annotated, Generic, TypeVar
 
-from fastapi import (APIRouter, Body, Depends, FastAPI, Header, HTTPException,
-                     Request, status)
+from fastapi import (
+    APIRouter,
+    Body,
+    Depends,
+    FastAPI,
+    Header,
+    HTTPException,
+    Request,
+    status,
+)
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
@@ -15,8 +23,7 @@ from ..schemas.user_schema import SupportedField, VerifiedValue
 from ..services import user_services
 from ..utils.dependencies import *
 from ..utils.logger import logger
-from ..utils.router_settings import (get_path_decorator_settings,
-                                     get_router_settings)
+from ..utils.router_settings import get_path_decorator_settings, get_router_settings
 
 protected_router = APIRouter(**get_router_settings(
   {
@@ -50,6 +57,7 @@ def update_user(
     (field,value) = jsonable_encoder(payload).values()
     #Convert value to python dict then get the values.
     #Can not do this when the data is of JSON format.
+    #But you can actually just write payload.field XD 
 
     try:
         

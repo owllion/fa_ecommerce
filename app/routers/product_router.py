@@ -54,13 +54,39 @@ def create_product(payload: product_schema.ProductCreateSchema, db: Session = De
             raise e
         raise CustomHTTPException(detail= str(e))
 
+@public_router.get(
+    "/{product_id}",
+    **get_path_decorator_settings(
+        description= "Get the data of a single product.",
+        response_model= product_schema.ProductSchema
+    )
+)
+def get_product(product_id: str,db:Session = Depends(db.get_db)):
+    try:
+        product = product_services.find_product_with_id(product_id,db)
+
+        if not product: 
+            raise HTTPException(
+                status_code= status.HTTP_400_BAD_REQUEST,
+                detail= api_msgs.PRODUCT_NOT_FOUND
+            )
+        
+        return jsonable_encoder(product)
+    
+                
+    except Exception as e:
+        if type(e).__name__ == exceptions.HTTPException: raise e
+        raise CustomHTTPException(detail= str(e))
+
+
+
 @protected_router.put(
     "/",
     **get_path_decorator_settings(
         description= "Successfully update the product.",
     )
 )
-def update_item(
+def update_product(
     req: Request,
     payload: product_schema.ProductUpdateSchema,
     db:Session = Depends(db.get_db)
@@ -85,6 +111,32 @@ def update_item(
     except Exception as e:
         if type(e).__name__ == exceptions.HTTPException: raise e
         raise CustomHTTPException(detail= str(e))
+
+
+@protected_router.delete(
+    "/{product_id}",
+    **get_path_decorator_settings(
+        description= "Successfully delete the product.",
+    )
+)
+def delete_product(product_id: str,db:Session = Depends(db.get_db)):
+    try:
+        product = product_services.find_product_with_id(product_id,db)
+
+        if not product: 
+            raise HTTPException(
+                status_code= status.HTTP_400_BAD_REQUEST,
+                detail= api_msgs.PRODUCT_NOT_FOUND
+            )
+        
+        db.delete(product)
+        
+        db.commit()
+        
+    except Exception as e:
+        if type(e).__name__ == exceptions.HTTPException: raise e
+        raise CustomHTTPException(detail= str(e))
+
 
 
 # @public_router.put("/{product_id}")

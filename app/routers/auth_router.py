@@ -57,6 +57,7 @@ async def create_user(
         await user_services.send_verify_or_reset_link(link_params)
 
         return_data = jsonable_encoder(new_user, by_alias=False)
+        #改成易於serilize的格式(dict)
 
         # return_data.pop('password')
 
@@ -124,7 +125,7 @@ def get_refresh_token(
         decoded_data = security.decode_token(payload.token,'refresh',db)
 
         return {
-            'access_token': security.create_token(
+            'token': security.create_token(
                 decoded_data.id,
                 'access'
             ),

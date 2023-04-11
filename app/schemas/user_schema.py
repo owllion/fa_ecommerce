@@ -49,7 +49,7 @@ class UserWithTokenSchema(UserSchema):
 class TokenSchema(BaseModel):
     token: str
 class AccessAndRefreshTokenSchema(BaseModel):
-    access_token: str
+    token: str
     refresh_token: str
 
 

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import (
     BaseModel,
@@ -58,11 +58,13 @@ class ProductUpdateSchema(ProductBaseSchema):
 
 class ProductSchema(ProductBaseSchema):
     id: str
-    reviews: List[ReviewSchema]
-    image_list: List[ProductImageUrlSchema]
-    thumbnail_list: List[ProductImageUrlSchema]
+    reviews: list[ReviewSchema] = []
+    image_list: list[ProductImageUrlSchema] = []
+    thumbnail_list: list[ProductImageUrlSchema] = []
     created_at: datetime
     updated_at: datetime
+    class Config:
+        orm_mode = True
 class FavoriteItemSchema(ProductSchema):
     pass
 class FavoriteItemCreateSchema(ProductSchema):

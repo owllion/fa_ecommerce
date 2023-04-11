@@ -46,9 +46,9 @@ class Product(Base):
 
     is_checked = Column(Boolean, default=False)
 
-    image_list = relationship("ProductImageUrl", backref="parent_product", cascade="all, delete",passive_deletes=True)
+    images = relationship("ProductImageUrl", backref="parent_product", cascade="all, delete",passive_deletes=True)
 
-    thumbnail_list = relationship("ThumbnailUrl", backref="parent_product",cascade="all, delete",passive_deletes=True)
+    thumbnails = relationship("ThumbnailUrl", backref="parent_product",cascade="all, delete",passive_deletes=True)
 
     reviews = relationship("Review", back_populates="product",cascade="all, delete",passive_deletes=True)
 

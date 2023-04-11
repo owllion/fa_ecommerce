@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi import exceptions as es
+from fastapi import status
 from fastapi.encoders import jsonable_encoder
 
 from ..constants import api_msgs, exceptions
@@ -71,11 +73,12 @@ def get_product(product_id: str,db:Session = Depends(db.get_db)):
                 detail= api_msgs.PRODUCT_NOT_FOUND
             )
         
-        return jsonable_encoder(product)
+        return product
     
                 
     except Exception as e:
-        if type(e).__name__ == exceptions.HTTPException: raise e
+        #isinstance會檢查繼承關係
+        if isinstance(e, exceptions.HTTPException): raise e
         raise CustomHTTPException(detail= str(e))
 
 

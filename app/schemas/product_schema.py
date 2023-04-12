@@ -15,8 +15,12 @@ from .review_schema import ReviewSchema
 
 
 class ProductImageUrlSchema(BaseModel):
-    url: str
-    product_id: str
+    # id: str
+    url: HttpUrl
+    # product_id: str
+
+    class Config:
+        orm_mode = True
 class ProductBaseSchema(BaseModel):
     product_name: str = Field(...,max_length=50)
     thumbnail: str
@@ -29,8 +33,10 @@ class ProductBaseSchema(BaseModel):
     stock: int = Field(..., ge=0)
     availability: bool 
     sales: int = Field(..., ge=0)
+
     class Config:
         orm_mode = True
+    
 
 
 class ProductCreateSchema(ProductBaseSchema):
@@ -58,13 +64,30 @@ class ProductUpdateSchema(ProductBaseSchema):
 
 class ProductSchema(ProductBaseSchema):
     id: str
-    reviews: list[ReviewSchema] = []
-    image_list: list[ProductImageUrlSchema] = []
-    thumbnail_list: list[ProductImageUrlSchema] = []
     created_at: datetime
     updated_at: datetime
     class Config:
         orm_mode = True
+        #自動去populate而不是原本的lazy loading
+        #也可讓pydantic model去讀取db model
+
+class SingleProductSchema(ProductSchema):
+    reviews: list[ReviewSchema] = []
+    images: list[ProductImageUrlSchema] = []
+    thumbnails: list[ProductImageUrlSchema] = []
+    class Config:
+        orm_mode = True
+
+class PaginateProductsSchema(BaseModel):
+    page: int = 1
+    limit: int = 10
+    keyword: str | None = None
+    price: str | None = None
+    brands: list[str] | str | None = None
+    categories: list[str] | str | None = None
+    sortBy: str | None = None
+    orderBy: str | None = None
+
 class FavoriteItemSchema(ProductSchema):
     pass
 class FavoriteItemCreateSchema(ProductSchema):

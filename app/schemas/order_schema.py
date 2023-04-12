@@ -1,6 +1,5 @@
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
 
 from pydantic import BaseModel, root_validator
 
@@ -69,7 +68,7 @@ class OrderUpdateSchema(OrderBaseSchema):
 class OrderSchema(OrderBaseSchema):
     id: str
     owner_id: int
-    order_items: List[OrderItemSchema]
+    order_items: list[OrderItemSchema]
     created_at: datetime
     updated_at: datetime
 

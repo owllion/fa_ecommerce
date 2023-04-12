@@ -14,18 +14,13 @@ from pydantic import (
     validator,
 )
 
-from . import user_schema
-
 
 class ReviewBaseSchema(BaseModel):
-    user_id: int
-    product_id: int
+    user_id: str
+    product_id: str
     rating: float = Field(...,min = 0.5, max=5)
     comment: str
     
-    class Config:
-        orm_mode = True
-
 
 class ReviewCreateSchema(ReviewBaseSchema):
     pass
@@ -42,12 +37,22 @@ class ReviewUpdateSchema(BaseModel):
             raise ValueError("At least 'rating' or 'comment' must be provided.")
         return values
     
+class ReviewUserSchema(BaseModel):
+    first_name: str
+    last_name: str
+    default_avatar: str
+    upload_avatar: str
 
+    class Config:
+        orm_mode = True
 class ReviewSchema(ReviewBaseSchema):
     id: str
-    user: user_schema.UserSchema
+    user: ReviewUserSchema
     created_at: datetime
     updated_at: datetime
+
+    class Config:
+        orm_mode = True
 
 
 

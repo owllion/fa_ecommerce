@@ -25,7 +25,7 @@ class ThumbnailUrl(Base):
 
     url = Column(String(350), nullable= False)
 
-
+    
     product_id = Column(String(80), ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))

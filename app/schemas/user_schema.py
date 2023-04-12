@@ -7,6 +7,7 @@ from decouple import config
 from pydantic import BaseModel, EmailStr, Field, HttpUrl, constr, validator
 
 from .item_schema import Item
+from .review_schema import ReviewSchema
 
 
 class UserBaseSchema(BaseModel):
@@ -33,6 +34,26 @@ class EmailBaseSchema(BaseModel):
 class GoogleLoginSchema(EmailBaseSchema):
     pass
 
+# class ReviewUserSchema(BaseModel):
+#     first_name: str
+#     last_name: str
+#     default_avatar: str
+#     upload_avatar: str
+
+#     class Config:
+#         orm_mode = True
+# class ReviewSchemaTest(BaseModel):
+#     id: str
+#     user: ReviewUserSchema
+#     user_id: str
+#     product_id: str
+#     rating: float
+#     comment: str
+#     created_at: datetime
+#     updated_at: datetime
+#     class Config:
+#         orm_mode = True
+    
 class UserSchema(UserBaseSchema): #used to return data
     id: str
     phone: str = ""
@@ -42,6 +63,9 @@ class UserSchema(UserBaseSchema): #used to return data
     default_avatar: str = Field(config('DEFAULT_AVATAR_URL'), alias='avatarDefault')
     created_at: datetime
     updated_at: datetime
+
+    class Config:
+        orm_mode = True
     
 class UserWithTokenSchema(UserSchema):
     token: str
@@ -95,5 +119,9 @@ class UserUpdateSchema(BaseModel):
 
 class UserUploadAvatarSchema(BaseModel):
     url: HttpUrl
+
+
+
+
 
 

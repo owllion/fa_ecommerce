@@ -2,9 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi import exceptions as es
 from fastapi import status
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import func
 
 from ..constants import api_msgs, exceptions
 from ..exceptions.http_exception import CustomHTTPException
+from ..models.product import product_model
 from ..schemas import product_schema
 from ..services import product_services
 from ..utils.dependencies import *
@@ -60,10 +62,13 @@ def create_product(payload: product_schema.ProductCreateSchema, db: Session = De
     "/{product_id}",
     **get_path_decorator_settings(
         description= "Get the data of a single product.",
-        response_model= product_schema.ProductSchema
+        response_model= product_schema.SingleProductSchema
     )
 )
-def get_product(product_id: str,db:Session = Depends(db.get_db)):
+def get_product(
+    product_id: str,
+    db:Session = Depends(db.get_db)
+):
     try:
         product = product_services.find_product_with_id(product_id,db)
 
@@ -80,6 +85,26 @@ def get_product(product_id: str,db:Session = Depends(db.get_db)):
         #isinstance會檢查繼承關係
         if isinstance(e, exceptions.HTTPException): raise e
         raise CustomHTTPException(detail= str(e))
+    
+
+@public_router.get(
+    "/",
+    **get_path_decorator_settings(
+        description= "Get the product list",
+        response_model= list[product_schema.ProductSchema]
+    )
+)
+def get_products(
+    payload: product_schema.PaginateProductsSchema,
+    db: Session 
+):
+    
+    db.query(func.count(product_model.Product.id)).filter(
+        product_model.Product.product_name.like()
+    )
+    offset = (page - 1) * limit
+    return db.query(product_model.Product).offset(offset).limit(limit).all()
+#query(func.count(*))
 
 
 

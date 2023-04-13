@@ -87,24 +87,31 @@ def get_product(
         raise CustomHTTPException(detail= str(e))
     
 
-@public_router.get(
-    "/",
+@public_router.post(
+    "/list",
     **get_path_decorator_settings(
         description= "Get the product list",
-        response_model= list[product_schema.ProductSchema]
+        response_model= product_schema.ResponsePaginateProductsSchema
     )
 )
 def get_products(
     payload: product_schema.PaginateProductsSchema,
-    db: Session 
+    db: Session = Depends(db.get_db)
 ):
+    try:
+        query = db.query(product_model.Product)
+        
+        total,filtered_list = product_services.filter_products(query,payload).values()
+        print(total,filtered_list)
+
+        return {
+            'list': filtered_list,
+            'total': total
+        }
     
-    db.query(func.count(product_model.Product.id)).filter(
-        product_model.Product.product_name.like()
-    )
-    offset = (page - 1) * limit
-    return db.query(product_model.Product).offset(offset).limit(limit).all()
-#query(func.count(*))
+    except Exception as e:
+        if isinstance(e, (HTTPException,)): raise e
+        raise CustomHTTPException(detail= str(e))
 
 
 

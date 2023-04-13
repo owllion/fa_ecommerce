@@ -81,12 +81,22 @@ class SingleProductSchema(ProductSchema):
 class PaginateProductsSchema(BaseModel):
     page: int = 1
     limit: int = 10
-    keyword: str | None = None
-    price: str | None = None
-    brands: list[str] | str | None = None
-    categories: list[str] | str | None = None
-    sortBy: str | None = None
-    orderBy: str | None = None
+    keyword: str = ""
+    price: str = ""
+    brands: list[str] | str = ""
+    categories: list[str] | str = ""
+    sort_by: str = ""
+    order_by: str = ""
+
+    class Config:
+        orm_mode = True
+
+class ResponsePaginateProductsSchema(BaseModel):
+    list: list[ProductSchema]
+    total: int
+
+    class Config:
+        orm_mode = True
 
 class FavoriteItemSchema(ProductSchema):
     pass

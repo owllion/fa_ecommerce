@@ -99,12 +99,15 @@ def filter_products(query: Query, payload: product_schema.PaginateProductsSchema
             .order_by(
                 order_by_fn(getattr(product_model.Product,payload.sort_by))
             )\
-            .offset(offset)\
-            .limit(payload.limit)
+            
+            
 
         return {
             'total': sorted_results.count(),
-            'list': sorted_results.all()
+            'list': sorted_results\
+                .offset(offset)\
+                .limit(payload.limit)\
+                .all()
         }
         
     else:
@@ -112,11 +115,13 @@ def filter_products(query: Query, payload: product_schema.PaginateProductsSchema
         unsorted_results = query\
             .filter(*filters)\
             .offset(offset)\
-            .limit(payload.limit)
 
         return {
             'total': unsorted_results.count(),
-            'list': unsorted_results.all()
+            'list': unsorted_results\
+                .offset(offset)\
+                .limit(payload.limit)\
+                .all()
         }
     
        

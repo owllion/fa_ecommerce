@@ -37,12 +37,16 @@ def save_to_db_then_return(
 
 
 def get_price_range(price: str):
+  print("getpricerange被呼叫")
   return {
     'min_': int(price[:price.index("-")]) or 0,
     'max_': int(price[price.index("-") + 1:]) or 0,
   }
 
 def filter_products(query: Query, payload: product_schema.PaginateProductsSchema):
+    """
+    Check if the payload has passed the filter condition, and then decide whether to append it to the filters list or not. Finally, perform the query with multiple conditions and return the query results.
+    """
     filters = []
 
     if payload.keyword:
@@ -73,47 +77,44 @@ def filter_products(query: Query, payload: product_schema.PaginateProductsSchema
             )
 
     if payload.price:
-        min_, max_ = get_price_range(payload.price)
+        min_, max_ = get_price_range(payload.price).values()
         print(min_,'這是min')
         print(max_,'這是max')
         
         filters.append(and_(product_model.Product.price >= min_, product_model.Product.price <= max_))
 
-    # print(query.filter(*filters),'這是query喔')
 
     offset = (payload.page - 1) * payload.limit
 
-    query_res = query.filter(
-            *filters
-        ).offset(
-            offset
-        ).limit(
-            payload.limit
-        )
-    print(query_res,'query_res 喔!')
-    print(query_res.all(),'all!')
-    # print(query_res.scalar(),'這是scalar')
+    res_without_sorted = query\
+        .filter(*filters)\
+        .offset(offset)\
+        .limit(payload.limit)
+
     if not (payload.sort_by or payload.order_by): 
         return {
-            'total': query_res.count(),
-            'list': query_res.all()
+            'total': res_without_sorted.count(),
+            'list': res_without_sorted.all()
         }
     
-    print("執行到return後?")
-
     order_by_fn = desc if payload.order_by == 'desc' else asc
 
-    sorted_query_res = query_res.order_by(
-            order_by_fn(product_model.Product[payload.sort_by]))
+    res_with_sorted = query\
+        .filter(*filters)\
+        .order_by(
+            order_by_fn(getattr(product_model.Product,payload.sort_by))
+        )\
+        .offset(offset)\
+        .limit(payload.limit)
         
     
     # print(type(res),'這是res的type')
     # print(res,'this is res')
-    print(sorted_query_res.all(),'這是all')
+    # print(sorted_query_res.all(),'這是all')
 
     return {
-        'total': sorted_query_res.scalar(),
-        'list': sorted_query_res.all()
+        'total': res_with_sorted.count(),
+        'list': res_with_sorted.all()
     }
 
 

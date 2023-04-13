@@ -92,7 +92,8 @@ class PaginateProductsSchema(BaseModel):
         orm_mode = True
 
 class ResponsePaginateProductsSchema(BaseModel):
-    list: list[ProductSchema]
+    # list: list[ProductSchema]
+    list: list[SingleProductSchema]
     total: int
 
     class Config:

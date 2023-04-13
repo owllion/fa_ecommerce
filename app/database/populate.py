@@ -1,8 +1,9 @@
+import datetime
 import json
 import random
 
 from faker import Faker
-from sqlalchemy import create_engine
+from sqlalchemy import and_, create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.models.product import (
@@ -51,7 +52,7 @@ session = Session()
 fake = Faker()
 # category = ["blazer","shirt","knitwear","tshirt","coat","hat","trouser"]
 # brand = ["Givenchy","Gucci","Lenon","Lululemon","Dior","Cartier"]
-# for _ in range(81):
+# for _ in range(1):
 #     new_product = product_model.Product(
 #         product_name=fake.word() + ' ' + fake.word() + ' ' + fake.word(),
 #         price=random.randint(100, 1000),
@@ -68,35 +69,38 @@ fake = Faker()
 #     session.add(new_product)
 #     session.commit()
 
+today = datetime.date.today()
 
-db_products = session.query(product_model.Product).all()
-def get_id_from(name: str):
-    for p in db_products:
-        if p.product_name == name: return p.id
+yesterday = today - datetime.timedelta(days=1)
 
-for _ in range(80):
-    # fake.image_url(width=320, height=400)
+# product_yesterday = session.query(product_model.Product).filter(and_(product_model.Product.created_at < today, product_model.Product.created_at > yesterday) ).count()
+# print(product_yesterday,'這是數量')
 
-    # imageurl = thumbnail_url_model.ThumbnailUrl(
-    #     url =fake.image_url(width=720, height=900),product_id =get_id_from(product['productName']) 
-    # )
+db_products = session.query(product_model.Product).filter(and_(product_model.Product.created_at < today, product_model.Product.created_at > yesterday) ).all()
+
+
+for p in db_products:
+    for _ in range(3):
+
+        image = product_image_url_model.ProductImageUrl(
+            url =fake.image_url(width=720, height=900),product_id = p.id 
+        )
+        session.add(image)
+        
+        # thumbnail = thumbnail_url_model.ThumbnailUrl(
+        #     url =fake.image_url(width=320, height=400),product_id =p.id 
+        # )
+
+        # session.add(thumbnail)
+
+        session.commit()
+
+
+
+# def get_id_from(name: str):
+#     for p in db_products:
+#         if p.product_name == name: return p.id
     
-    imageurl = thumbnail_url_model.ThumbnailUrl(
-        url =fake.image_url(width=320, height=400),product_id =get_id_from(product['productName']) 
-    )
-
-    session.add(imageurl)
-    session.commit()
-
-   
-    
-
-
-
-
-
-
-
 # with open('products.json', 'r',encoding='utf-8') as file:
 #     products = json.load(file)
 

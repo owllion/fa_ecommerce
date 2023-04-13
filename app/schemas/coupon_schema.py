@@ -2,10 +2,10 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from pydantic import BaseModel, Partial, root_validator
+from pydantic import BaseModel, root_validator
 
 
-class CouponBase(BaseModel):
+class CouponBaseSchema(BaseModel):
     code: str
     description: str = ""
     amount: Decimal
@@ -13,30 +13,32 @@ class CouponBase(BaseModel):
     minimum_amount: Decimal
     discount_type: str
 
-
-class CouponCreate(CouponBase):
+class CouponCreateSchema(CouponBaseSchema):
     user_id: int
 
-class CouponUpdate(BaseModel):
+
+base_keys = list(CouponBaseSchema.__annotations__.keys())
+
+class CouponUpdateSchema(BaseModel):
+    __annotations__ = {k: Optional[v] for k, v in CouponBaseSchema.__annotations__.items()}
+
     id: str
-    code: str | None = None
-    description: str | None = None
-    amount: Decimal | None = None
-    expiry_date: datetime | None = None
-    minimum_amount: Decimal | None = None
-    discount_type: str | None = None
 
     @root_validator(pre=True)
     def check_at_least_one_attribute(cls, values):
-        if not any(attr for attr in values.values() if attr != 'id'):
+        if len(values) < 2 and values.get('id'):
             raise ValueError("At least one attribute other than 'id' must be provided.")
+
+        for attr in values:
+            if attr != 'id':
+                if attr not in base_keys:
+                    raise ValueError(f"You've passed a non-existing attribute: {attr}")
         return values
 
-class Coupon(CouponBase):
+class CouponSchema(CouponBaseSchema):
     id: str
     user_id: int
     is_used: bool
-
 
     class Config:
         orm_mode = True

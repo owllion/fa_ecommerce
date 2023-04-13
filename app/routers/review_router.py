@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status
 
 from ..constants import api_msgs
 from ..exceptions.http_exception import CustomHTTPException

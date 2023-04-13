@@ -102,7 +102,7 @@ def get_products(
         query = db.query(product_model.Product)
         
         total,filtered_list = product_services.filter_products(query,payload).values()
-        print(total,filtered_list)
+ 
 
         return {
             'list': filtered_list,

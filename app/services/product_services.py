@@ -37,16 +37,12 @@ def save_to_db_then_return(
 
 
 def get_price_range(price: str):
-  print("getpricerange被呼叫")
   return {
     'min_': int(price[:price.index("-")]) or 0,
     'max_': int(price[price.index("-") + 1:]) or 0,
   }
 
-def filter_products(query: Query, payload: product_schema.PaginateProductsSchema):
-    """
-    Check if the payload has passed the filter condition, and then decide whether to append it to the filters list or not. Finally, perform the query with multiple conditions and return the query results.
-    """
+def get_filters(payload: product_schema.PaginateProductsSchema):
     filters = []
 
     if payload.keyword:
@@ -78,44 +74,52 @@ def filter_products(query: Query, payload: product_schema.PaginateProductsSchema
 
     if payload.price:
         min_, max_ = get_price_range(payload.price).values()
-        print(min_,'這是min')
-        print(max_,'這是max')
         
         filters.append(and_(product_model.Product.price >= min_, product_model.Product.price <= max_))
+    
+    return filters
 
+def results_need_sorting(sort_by: str,order_by: str):
+    return True if sort_by and order_by else False 
+
+
+def filter_products(query: Query, payload: product_schema.PaginateProductsSchema):
+    """
+    Check if the payload has passed the filter condition, and then decide whether to append it to the filters list or not. Finally, perform the query with multiple conditions and return the query results.
+    """
+    filters = get_filters(payload)
 
     offset = (payload.page - 1) * payload.limit
 
-    res_without_sorted = query\
-        .filter(*filters)\
-        .offset(offset)\
-        .limit(payload.limit)
+    if results_need_sorting(payload.sort_by,payload.order_by):
+        order_by_fn = desc if payload.order_by == 'desc' else asc
 
-    if not (payload.sort_by or payload.order_by): 
+        sorted_results = query\
+            .filter(*filters)\
+            .order_by(
+                order_by_fn(getattr(product_model.Product,payload.sort_by))
+            )\
+            .offset(offset)\
+            .limit(payload.limit)
+
         return {
-            'total': res_without_sorted.count(),
-            'list': res_without_sorted.all()
+            'total': sorted_results.count(),
+            'list': sorted_results.all()
+        }
+        
+    else:
+    
+        unsorted_results = query\
+            .filter(*filters)\
+            .offset(offset)\
+            .limit(payload.limit)
+
+        return {
+            'total': unsorted_results.count(),
+            'list': unsorted_results.all()
         }
     
-    order_by_fn = desc if payload.order_by == 'desc' else asc
-
-    res_with_sorted = query\
-        .filter(*filters)\
-        .order_by(
-            order_by_fn(getattr(product_model.Product,payload.sort_by))
-        )\
-        .offset(offset)\
-        .limit(payload.limit)
-        
-    
-    # print(type(res),'這是res的type')
-    # print(res,'this is res')
-    # print(sorted_query_res.all(),'這是all')
-
-    return {
-        'total': res_with_sorted.count(),
-        'list': res_with_sorted.all()
-    }
+       
 
 
 

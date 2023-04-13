@@ -42,3 +42,7 @@ class CouponSchema(CouponBaseSchema):
 
     class Config:
         orm_mode = True
+
+class AppliedCouponResultSchema(BaseModel):
+    final_price_after_discount: Decimal
+    discountedAmount: Decimal

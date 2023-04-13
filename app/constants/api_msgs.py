@@ -16,7 +16,8 @@ ORDER_NOT_FOUND = "Order not found"
 
 #coupon
 COUPON_NOT_FOUND = "coupon not found"
-
+COUPON_EXPIRED = "coupon expired"
+MINIMUM_THRESHOLD_NOT_MET = "minimum threshold not met"
 
 #auth/token
 

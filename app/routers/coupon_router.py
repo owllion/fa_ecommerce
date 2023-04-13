@@ -1,4 +1,5 @@
 from fastapi import Depends, HTTPException, status
+from fastapi.encoders import jsonable_encoder
 
 from ..constants import api_msgs
 from ..exceptions.http_exception import CustomHTTPException
@@ -20,7 +21,7 @@ protected_plural,protected_singular,public_plural,public_singular = get_router_s
         response_model= coupon_schema.CouponSchema
     )
 )
-def create_review(payload: coupon_schema.CouponCreateSchema, db: Session = Depends(db.get_db)):
+def create_coupon(payload: coupon_schema.CouponCreateSchema, db: Session = Depends(db.get_db)):
     
     try:
         new_coupon = coupon_services.save_to_db_then_return(payload,db)
@@ -143,4 +144,35 @@ def delete_coupon(coupon_id: str, db: Session = Depends(db.get_db)):
         if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
 
+@protected_singular.post(
+    "/apply-coupon",
+    **get_path_decorator_settings(
+        description= "Successfully apply the coupon.",
+        response_model= coupon_schema.AppliedCouponResultSchema
+    )
+)
+def apply_coupon(
+    code: str, 
+    total_price: float, 
+    db: Session = Depends(db.get_db)
+):
+    #1.找到coupon 2.確認有沒有過期 3.確認金額有無到達門檻 4.都符合才去用getPriceAndDiscount獲得discountTotal, discount
+
+    coupon = coupon_services.find_coupon_with_code(code)
+
+    if not coupon:
+        raise HTTPException(
+            status_code= status.HTTP_400_BAD_REQUEST,
+            detail= api_msgs.COUPON_NOT_FOUND
+        )
+    
+    expiry_date,minimum_amount,discount_type,amount = jsonable_encoder(coupon).values()
+
+    if \
+        coupon_services.is_valid_coupon(expiry_date)\
+        and\
+        coupon_services.is_threshold_met(minimum_amount,total_price):
+        
+
+    
 

@@ -75,7 +75,7 @@ def get_product(
         raise CustomHTTPException(detail= str(e))
     
 
-@public_singular.post(
+@public_plural.post(
     "/",
     **get_path_decorator_settings(
         description= "Get the product list",
@@ -110,7 +110,6 @@ def get_products(
     )
 )
 def update_product(
-    req: Request,
     payload: product_schema.ProductUpdateSchema,
     db:Session = Depends(db.get_db)
 ):

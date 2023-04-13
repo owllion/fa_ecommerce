@@ -14,7 +14,8 @@ REVIEW_NOT_FOUND = "review not found"
 ORDER_ALREADY_EXISTS = "Order already exists"
 ORDER_NOT_FOUND = "Order not found"
 
-
+#coupon
+COUPON_NOT_FOUND = "coupon not found"
 
 
 #auth/token

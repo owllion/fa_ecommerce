@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.query import Query
 
 from ..database import db
-from ..models.product import product_image_url_model, product_model
+from ..models.product import product_model
 from ..schemas import product_schema
 
 

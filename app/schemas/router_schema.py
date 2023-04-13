@@ -1,5 +1,7 @@
-from typing import List, Dict
+from typing import Dict, List
+
 from pydantic import BaseModel
+
 
 class RouterSettingParamsSchema(BaseModel):
     is_protected: bool

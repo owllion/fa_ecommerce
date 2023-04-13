@@ -1,6 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi import exceptions as es
-from fastapi import status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 
 from ..constants import api_msgs, exceptions
@@ -9,115 +7,130 @@ from ..schemas import review_schema
 from ..services import review_services
 from ..utils.dependencies import *
 from ..utils.router_settings import get_path_decorator_settings, get_router_settings
+from .api_router_settings import *
 
-protected_router = APIRouter(**get_router_settings(
-  {
-    'is_protected': True,
-    'prefix': '/review',
-    'tags': ['review'],
-    'responses': {404: {"description": "Not found"}}
-  }  
-))
+# protected_router = APIRouter(**get_router_settings(
+#   {
+#     'is_protected': True,
+#     'prefix': '/review',
+#     'tags': ['review'],
+#     'responses': api_msgs.API_RESPONSES
+#   }  
+# ))
 
-public_router = APIRouter(**get_router_settings(
-  {
-    'is_protected': False,
-    'prefix': '/review',
-    'tags': ['review'],
-    'responses': {404: {"description": "Not found"}}
-  }  
-))
+# public_router = APIRouter(**get_router_settings(
+#   {
+#     'is_protected': False,
+#     'prefix': '/review',
+#     'tags': ['review'],
+#     'responses': api_msgs.API_RESPONSES
+#   }  
+# ))
 
-@protected_router.post(
+@protected_singular.post(
     "/", 
     **get_path_decorator_settings(
-        description= "Successfully create product.",
-        response_model= review_schema.reviewSchema
+        description= "Successfully create a review of the product.",
+        response_model= review_schema.ReviewSchema
     )
 )
-def create_review(payload: review_schema.reviewCreateSchema, db: Session = Depends(db.get_db)):
+def create_review(payload: review_schema.ReviewCreateSchema, db: Session = Depends(db.get_db)):
     
     try:
-        review = review_services.find_review_with_name(payload.product_name, db)
-        
-        if product: 
-            raise HTTPException(
-                status_code= status.HTTP_400_BAD_REQUEST,
-                detail = api_msgs.PRODUCT_ALREADY_EXISTS
-            )
-        
-        new_product = product_services.save_to_db_then_return(payload,db)
+        new_product = review_services.save_to_db_then_return(payload,db)
         
         return new_product
 
 
     except Exception as e:
-        if type(e).__name__ == exceptions.HTTPException:
-            raise e
+        if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
 
-# @public_router.get(
-#     "/{product_id}",
-#     **get_path_decorator_settings(
-#         description= "Get the data of a single product.",
-#         response_model= review_schema.ProductSchema
-#     )
-# )
-@public_router.get(
-    "/{product_id}",
-    status_code= status.HTTP_200_OK,
-    response_description= ' 哈哈',
-    response_model= review_schema.ProductSchema
-)
-def get_product(product_id: str,db:Session = Depends(db.get_db)):
-    try:
-        product = product_services.find_product_with_id(product_id,db)
 
-        if not product: 
+@public_singular.get(
+    "/{review_id}",
+    **get_path_decorator_settings(
+        description= "Get the data of a single review.",
+        response_model= review_schema.ReviewSchema
+    )
+)
+def get_review(review_id: str,db:Session = Depends(db.get_db)):
+    try:
+        review = review_services.find_review_with_id(review_id,db)
+
+        if not review: 
             raise HTTPException(
                 status_code= status.HTTP_400_BAD_REQUEST,
-                detail= api_msgs.PRODUCT_NOT_FOUND
+                detail= api_msgs.REVIEW_NOT_FOUND
             )
-        print(product.thumbnails,'外面的thumbnails')
-        print(product.color,'這是顏色')
         
-        return product
-    
-                
+        return review
+          
     except Exception as e:
-        #isinstance會檢查繼承關係
+        if isinstance(e, exceptions.HTTPException): raise e
+        raise CustomHTTPException(detail= str(e))
+    
+@public_plural.get(
+    "/",
+    **get_path_decorator_settings(
+        description= "Get the review list",
+        response_model= list[review_schema.ReviewSchema]
+    )
+)
+def get_reviews(db:Session = Depends(db.get_db)):
+    try:
+        reviews = review_services.get_reviews(db)
+
+        return reviews
+          
+    except Exception as e:
+        if isinstance(e, exceptions.HTTPException): raise e
+        raise CustomHTTPException(detail= str(e))
+    
+
+
+@public_plural.get(
+    "/user/{user_id}",
+    **get_path_decorator_settings(
+        description= "Get the specific user's review list",
+        response_model= list[review_schema.ReviewSchema]
+    )
+)
+def get_user_reviews(user_id: str,db:Session = Depends(db.get_db)):
+    try:
+        reviews = review_services.get_user_reviews(user_id,db)
+
+        return reviews
+          
+    except Exception as e:
         if isinstance(e, exceptions.HTTPException): raise e
         raise CustomHTTPException(detail= str(e))
 
 
-# def get_items(db: Session, skip: int = 0, limit: int = 100):
-#     return db.query(models.Item).offset(skip).limit(limit).all()
-
-@protected_router.put(
+@protected_singular.put(
     "/",
     **get_path_decorator_settings(
-        description= "Successfully update the product.",
+        description= "Successfully update the review.",
     )
 )
-def update_product(
-    req: Request,
-    payload: review_schema.ProductUpdateSchema,
+def update_review(
+    payload: review_schema.ReviewUpdateSchema,
     db:Session = Depends(db.get_db)
 ):
     try:
-        product = product_services.find_product_with_id(payload.id,db)
+        review = review_services.find_review_with_id(payload.id,db)
 
-        if not product: 
+        if not review: 
             raise HTTPException(
                 status_code= status.HTTP_400_BAD_REQUEST,
-                detail= api_msgs.PRODUCT_NOT_FOUND
+                detail= api_msgs.REVIEW_NOT_FOUND
             )
         
         data = payload.dict(exclude_unset=True)
 
         for field, value in data.items():
-          if hasattr(product, field) :
-              setattr(product, field, value)
+          if hasattr(review, field) :
+              setattr(review, field, value)
         
         db.commit()
         
@@ -126,23 +139,23 @@ def update_product(
         raise CustomHTTPException(detail= str(e))
 
 
-@protected_router.delete(
-    "/{product_id}",
+@protected_singular.delete(
+    "/{review_id}",
     **get_path_decorator_settings(
-        description= "Successfully delete the product.",
+        description= "Successfully delete the review.",
     )
 )
-def delete_product(product_id: str,db:Session = Depends(db.get_db)):
+def delete_review(review_id: str,db:Session = Depends(db.get_db)):
     try:
-        product = product_services.find_product_with_id(product_id,db)
+        review = review_services.find_review_with_id(review_id,db)
 
-        if not product: 
+        if not review: 
             raise HTTPException(
                 status_code= status.HTTP_400_BAD_REQUEST,
-                detail= api_msgs.PRODUCT_NOT_FOUND
+                detail= api_msgs.REVIEW_NOT_FOUND
             )
         
-        db.delete(product)
+        db.delete(review)
         
         db.commit()
         

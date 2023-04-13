@@ -16,7 +16,7 @@ def get_router_settings(params: RouterSettingParamsSchema ) -> dict:
             "prefix": prefix, 
             "tags": tags, 
             "dependencies": dependencies,
-            "responses": responses 
+            "responses": responses
         }
     
     return {

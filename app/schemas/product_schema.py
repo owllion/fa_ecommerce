@@ -47,6 +47,7 @@ base_keys = list(ProductBaseSchema.__annotations__.keys())
 class ProductUpdateSchema(ProductBaseSchema):
     __annotations__ = {k: Optional[v] for k, v in ProductBaseSchema.__annotations__.items()}
     #must add this,or when you start to add the attr other than id,you'll get the field missing error in a row.
+    #coz this means all the attrs inside the ProductBaseSchema would be optional.
 
     id: str
 
@@ -92,8 +93,7 @@ class PaginateProductsSchema(BaseModel):
         orm_mode = True
 
 class ResponsePaginateProductsSchema(BaseModel):
-    # list: list[ProductSchema]
-    list: list[SingleProductSchema]
+    list: list[ProductSchema]
     total: int
 
     class Config:

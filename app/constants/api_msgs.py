@@ -26,3 +26,10 @@ EMAIL_ALREADY_REGISTERED_WITH_GOOGLE = "this email is already registered with go
 MALFORMED_PAYLOAD = "could not validate credentials"
 
 AUTHENTICATION_REQUIRED = "authentication required"
+
+#response
+API_RESPONSES = {
+     404: {"description": "Not found"},
+     200: {"description": "OK"},
+     500: {"description": "Internal Server Error"},
+}

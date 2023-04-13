@@ -16,25 +16,29 @@ from pydantic import (
 
 
 class ReviewBaseSchema(BaseModel):
-    user_id: str
-    product_id: str
     rating: float = Field(...,min = 0.5, max=5)
     comment: str
     
 
 class ReviewCreateSchema(ReviewBaseSchema):
-    pass
+    user_id: str
+    product_id: str
 
 
 class ReviewUpdateSchema(BaseModel):
+    __annotations__ = {k: Optional[v] for k, v in ReviewBaseSchema.__annotations__.items()}
+
     id: str
-    rating: float | None = None
-    comment: str | None = None
 
     @root_validator(pre=True)
     def check_at_least_one_attribute(cls, values):
-        if not ('rating' in values or 'comment' in values):
-            raise ValueError("At least 'rating' or 'comment' must be provided.")
+        if len(values) < 2 and values.get('id'):
+            raise ValueError("At least one attribute other than 'id' must be provided.")
+
+        for attr in values:
+            if attr != 'id':
+                if attr not in base_keys:
+                    raise ValueError(f"You've passed a non-existing attribute: {attr}")
         return values
     
 class ReviewUserSchema(BaseModel):

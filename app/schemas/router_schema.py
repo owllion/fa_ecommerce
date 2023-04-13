@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class RouterSettingParamsSchema(BaseModel):
-    is_protected: bool
-    prefix: str
+    singular_prefix: str
+    plural_prefix: str
     tags: List[str]
-    responses: Dict[int, Dict[str, str]]
+    # responses: Dict[int, Dict[str, str]]

@@ -25,26 +25,14 @@ from ..utils.dependencies import *
 from ..utils.logger import logger
 from ..utils.router_settings import get_path_decorator_settings, get_router_settings
 
-protected_router = APIRouter(**get_router_settings(
-  {
-    'is_protected': True,
-    'prefix': '/user',
-    'tags': ['user'],
-    'responses': {404: {"description": "Not found"}}
-  }  
-))
-
-public_router = APIRouter(**get_router_settings(
-  {
-    'is_protected': False,
-    'prefix': '/user',
-    'tags': ['user'],
-    'responses': {404: {"description": "Not found"}}
-  }  
-))
+protected_plural,protected_singular,public_plural,public_singular = get_router_settings(
+    singular_prefix = 'user',
+    plural_prefix = 'users',
+    tags = ['user']
+)
 
 
-@protected_router.post(
+@protected_singular.post(
     "/update",
     **get_path_decorator_settings(description= "Successfully update user data")
 )
@@ -79,13 +67,16 @@ def update_user(
         logger.error(e, exc_info=True)
         raise CustomHTTPException(detail= str(e))
 
-@protected_router.get("/{user_id}", response_model=user_schema.UserSchema)
-def read_user(user_id: str, db: Session = Depends(db.get_db)):
+@protected_singular.get(
+    "/{user_id}", 
+    response_model=user_schema.UserSchema
+)
+def get_user(user_id: str, db: Session = Depends(db.get_db)):
     user = user_services.find_user_with_id(user_id,db)
     return user
 
 
-@protected_router.post(
+@protected_singular.post(
     "/reset-password",
     **get_path_decorator_settings(description= "Password has been successfully reset")
 )
@@ -102,7 +93,7 @@ def reset_password(
     
 
 
-@public_router.post(
+@public_singular.post(
     "/forgot-password", 
     **get_path_decorator_settings(description= "Password has been successfully reset")
 )
@@ -139,7 +130,7 @@ async def forgot_password(
         if type(e).__name__ == 'HTTPException': raise e
         raise CustomHTTPException(detail= str(e))
 
-@protected_router.post(
+@protected_singular.post(
     "/upload-avatar", 
     **get_path_decorator_settings(description="Successfully upload your avatar!")
 )

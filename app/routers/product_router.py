@@ -12,25 +12,13 @@ from ..services import product_services
 from ..utils.dependencies import *
 from ..utils.router_settings import get_path_decorator_settings, get_router_settings
 
-protected_router = APIRouter(**get_router_settings(
-  {
-    'is_protected': True,
-    'prefix': '/product',
-    'tags': ['product'],
-    'responses': {404: {"description": "Not found"}}
-  }  
-))
+protected_plural,protected_singular,public_plural,public_singular = get_router_settings(
+    singular_prefix = 'product',
+    plural_prefix = 'products',
+    tags = ['product']
+)
 
-public_router = APIRouter(**get_router_settings(
-  {
-    'is_protected': False,
-    'prefix': '/product',
-    'tags': ['product'],
-    'responses': {404: {"description": "Not found"}}
-  }  
-))
-
-@protected_router.post(
+@protected_singular.post(
     "/", 
     **get_path_decorator_settings(
         description= "Successfully create product.",
@@ -58,7 +46,7 @@ def create_product(payload: product_schema.ProductCreateSchema, db: Session = De
             raise e
         raise CustomHTTPException(detail= str(e))
 
-@public_router.get(
+@public_singular.get(
     "/{product_id}",
     **get_path_decorator_settings(
         description= "Get the data of a single product.",
@@ -87,8 +75,8 @@ def get_product(
         raise CustomHTTPException(detail= str(e))
     
 
-@public_router.post(
-    "/list",
+@public_singular.post(
+    "/",
     **get_path_decorator_settings(
         description= "Get the product list",
         response_model= product_schema.ResponsePaginateProductsSchema
@@ -115,7 +103,7 @@ def get_products(
 
 
 
-@protected_router.put(
+@protected_singular.put(
     "/",
     **get_path_decorator_settings(
         description= "Successfully update the product.",
@@ -148,7 +136,7 @@ def update_product(
         raise CustomHTTPException(detail= str(e))
 
 
-@protected_router.delete(
+@protected_singular.delete(
     "/{product_id}",
     **get_path_decorator_settings(
         description= "Successfully delete the product.",

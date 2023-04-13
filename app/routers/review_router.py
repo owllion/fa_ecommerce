@@ -1,31 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.encoders import jsonable_encoder
 
-from ..constants import api_msgs, exceptions
+from ..constants import api_msgs
 from ..exceptions.http_exception import CustomHTTPException
 from ..schemas import review_schema
 from ..services import review_services
 from ..utils.dependencies import *
 from ..utils.router_settings import get_path_decorator_settings, get_router_settings
-from .api_router_settings import *
 
-# protected_router = APIRouter(**get_router_settings(
-#   {
-#     'is_protected': True,
-#     'prefix': '/review',
-#     'tags': ['review'],
-#     'responses': api_msgs.API_RESPONSES
-#   }  
-# ))
-
-# public_router = APIRouter(**get_router_settings(
-#   {
-#     'is_protected': False,
-#     'prefix': '/review',
-#     'tags': ['review'],
-#     'responses': api_msgs.API_RESPONSES
-#   }  
-# ))
+protected_plural,protected_singular,public_plural,public_singular = get_router_settings(
+    singular_prefix = 'review',
+    plural_prefix = 'reviews',
+    tags = ['review']
+)
 
 @protected_singular.post(
     "/", 
@@ -67,7 +53,7 @@ def get_review(review_id: str,db:Session = Depends(db.get_db)):
         return review
           
     except Exception as e:
-        if isinstance(e, exceptions.HTTPException): raise e
+        if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
     
 @public_plural.get(
@@ -84,7 +70,7 @@ def get_reviews(db:Session = Depends(db.get_db)):
         return reviews
           
     except Exception as e:
-        if isinstance(e, exceptions.HTTPException): raise e
+        if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
     
 
@@ -103,7 +89,7 @@ def get_user_reviews(user_id: str,db:Session = Depends(db.get_db)):
         return reviews
           
     except Exception as e:
-        if isinstance(e, exceptions.HTTPException): raise e
+        if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
 
 
@@ -135,7 +121,7 @@ def update_review(
         db.commit()
         
     except Exception as e:
-        if type(e).__name__ == exceptions.HTTPException: raise e
+        if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
 
 
@@ -160,7 +146,7 @@ def delete_review(review_id: str,db:Session = Depends(db.get_db)):
         db.commit()
         
     except Exception as e:
-        if type(e).__name__ == exceptions.HTTPException: raise e
+        if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
 
 

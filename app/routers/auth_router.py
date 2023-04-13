@@ -1,15 +1,12 @@
 from enum import Enum
-
-#from pydantic import BaseModel,Field,EmailStr
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends, FastAPI, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from ..database import db
 from ..exceptions.http_exception import CustomHTTPException
-from ..models.user import user_model
 from ..schemas import user_schema
 from ..services import user_services
 from ..utils import security
@@ -23,9 +20,6 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-
-    # response_model= user_schema.UserWithTokenSchema,
-    # response_model_by_alias=False
 @router.post(
     '/register', 
     status_code= status.HTTP_201_CREATED,
@@ -37,14 +31,12 @@ async def create_user(
 ):
     try:
         user = user_services.find_user_with_email(payload.email, db)
-        
 
         if user:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,detail='Account already exist'
             )
 
-        print(payload, '這是payload')
         new_user = user_services.save_data_then_return(payload,db)
 
         link_params = {
@@ -116,7 +108,9 @@ def login(
         raise CustomHTTPException(detail= str(e))
 
     
-@router.post('/refresh-token', response_model=user_schema.AccessAndRefreshTokenSchema)
+@router.post(
+    '/refresh-token', response_model=user_schema.AccessAndRefreshTokenSchema
+)
 def get_refresh_token(
     payload: user_schema.TokenSchema,
     db: Session = Depends(db.get_db)
@@ -169,44 +163,6 @@ def verify_token_from_email_link(
             'user': decoded_data,
         }
 
-
-
     except Exception as e:
         if type(e).__name__ == 'HTTPException': raise e
         raise CustomHTTPException(detail= str(e))
-
-
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

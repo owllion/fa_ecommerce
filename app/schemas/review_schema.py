@@ -16,7 +16,7 @@ from pydantic import (
 
 
 class ReviewBaseSchema(BaseModel):
-    rating: float = Field(...,min = 0.5, max=5)
+    rating: float = Field(...,ge = 0.5, le=5)
     comment: str
     
 
@@ -24,7 +24,7 @@ class ReviewCreateSchema(ReviewBaseSchema):
     user_id: str
     product_id: str
 
-
+base_keys = list(ReviewBaseSchema.__annotations__.keys())
 class ReviewUpdateSchema(BaseModel):
     __annotations__ = {k: Optional[v] for k, v in ReviewBaseSchema.__annotations__.items()}
 

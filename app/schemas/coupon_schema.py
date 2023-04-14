@@ -1,5 +1,4 @@
 from datetime import datetime
-from decimal import Decimal
 from typing import Optional
 
 from pydantic import BaseModel, root_validator
@@ -8,9 +7,9 @@ from pydantic import BaseModel, root_validator
 class CouponBaseSchema(BaseModel):
     code: str
     description: str = ""
-    amount: Decimal
+    amount: float
     expiry_date: datetime
-    minimum_amount: Decimal
+    minimum_amount: float
     discount_type: str
 
 class CouponCreateSchema(CouponBaseSchema):
@@ -44,5 +43,5 @@ class CouponSchema(CouponBaseSchema):
         orm_mode = True
 
 class AppliedCouponResultSchema(BaseModel):
-    final_price_after_discount: Decimal
-    discountedAmount: Decimal
+    final_price_after_discount: float
+    discountedAmount: float

@@ -11,16 +11,16 @@ PRODUCT_ALREADY_EXISTS = "product already exists"
 REVIEW_NOT_FOUND = "review not found"
 
 #order
-ORDER_ALREADY_EXISTS = "Order already exists"
-ORDER_NOT_FOUND = "Order not found"
+ORDER_ALREADY_EXISTS = "order already exists"
+ORDER_NOT_FOUND = "order not found"
 
 #coupon
 COUPON_NOT_FOUND = "coupon not found"
 COUPON_EXPIRED = "coupon expired"
 MINIMUM_THRESHOLD_NOT_MET = "minimum threshold not met"
+COUPON_ALREADY_EXISTS = "coupon already exists"
 
 #auth/token
-
 INCORRECT_LOGIN_INPUT = "incorrect email or password"
 
 EMAIL_ALREADY_REGISTERED_WITH_GOOGLE = "this email is already registered with google login"

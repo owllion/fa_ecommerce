@@ -176,6 +176,33 @@ def apply_coupon(
         if isinstance(e, (HTTPException,)): 
             raise e
         raise CustomHTTPException(detail= str(e))
+    
 
+@protected_singular.post(
+    "/redeem-coupon",
+    **get_path_decorator_settings(
+        description= "Successfully redeem a coupon."
+    )
+)
+def redeem_coupon(
+    req: Request,
+    payload: coupon_schema.RedeemCouponSchema,
+    db: Session = Depends(db.get_db)
+):
+    try:
+        coupon = coupon_services.find_coupon_with_code(payload.code, db)
+
+        if not coupon:
+            raise HTTPException(
+                status_code= status.HTTP_400_BAD_REQUEST,
+                detail= api_msgs.COUPON_NOT_FOUND
+            )
+        
+        coupon_services.add_coupon_to_user_coupon_list(req,coupon, db)
+
+    except Exception as e:
+        if isinstance(e, (HTTPException,)): 
+            raise e
+        raise CustomHTTPException(detail= str(e))
     
 

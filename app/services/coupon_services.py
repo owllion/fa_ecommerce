@@ -94,6 +94,18 @@ def get_final_price_and_discounted_amount(
     
     return (final_price_after_discount,discounted_amount)
 
+def add_coupon_to_user_coupon_list(req: Request, coupon: coupon_model.Coupon, db: Session):
+
+    found_coupon = get_coupon_from_req_user(req,coupon.code)
+
+    if found_coupon:
+        raise HTTPException(
+            status_code= status.HTTP_409_CONFLICT,
+            detail=  api_msgs.COUPON_ALREADY_EXISTS
+        )
+    
+    req.state.mydata.coupons.append(coupon)
+    db.commit()
 
 
 def save_to_db_then_return(

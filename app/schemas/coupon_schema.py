@@ -54,6 +54,9 @@ class AppliedCouponResultSchema(BaseModel):
     discounted_amount: float
     used_code: str
 
-class ApplyCouponSchema(BaseModel):
+class CodeRelatedSchema(BaseModel):
     code: str 
+class ApplyCouponSchema(BaseModel):
     total_price: float 
+class RedeemCouponSchema(CodeRelatedSchema):
+    pass

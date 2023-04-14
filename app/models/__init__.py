@@ -7,5 +7,6 @@ from .product.product_image_url_model import ProductImageUrl
 from .product.product_model import Product
 from .product.thumbnail_url_model import ThumbnailUrl
 from .review.review_model import Review
-from .user.favorite_item_model import FavoriteItem
+from .user.user_coupon_model import UserCoupon
+from .user.user_favorite_model import UserFavorite
 from .user.user_model import User

@@ -13,7 +13,12 @@ from app.models.product import (
     thumbnail_url_model,
 )
 from app.models.review import review_model
-from app.models.user import favorite_item_model, user_model
+from app.models.user import (
+    favorite_item_model,
+    user_coupon_model,
+    user_favorite_model,
+    user_model,
+)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

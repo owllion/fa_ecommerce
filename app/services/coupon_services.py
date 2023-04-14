@@ -1,7 +1,8 @@
-import datetime
+from datetime import datetime
 from decimal import Decimal
 
-from fastapi import HTTPException, status
+from fastapi import HTTPException, Request, status
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from ..constants import api_msgs
@@ -12,7 +13,10 @@ from ..schemas import coupon_schema
 def is_valid_coupon(expiry_date: datetime):
     print(expiry_date,'這是expire date')
     print(type(expiry_date),'這是expire date')
-    if expiry_date - datetime.datetime.now() > 0: return True
+
+    expiry_datetime = datetime.strptime(expiry_date, '%Y-%m-%dT%H:%M:%S')
+
+    if (expiry_datetime - datetime.now()).total_seconds() > 0 : return True
 
     raise HTTPException(
         status_code= status.HTTP_400_BAD_REQUEST,
@@ -37,8 +41,9 @@ def get_price_and_discount(
 
     return {
         "final_price_after_discount": final_price,
-        "discounted_amount": total_price - final_price,
+        "discounted_amount": total_price - final_price
     }
+
 
 def find_coupon_with_id(
     id: str,
@@ -57,12 +62,39 @@ def find_coupon_with_code(
     return coupon
 
 def get_coupons(db: Session):
-    coupons = db.query(coupon_model.Coupon).all()
-    return coupons
+    return db.query(coupon_model.Coupon).all()
 
 def get_user_coupons(user_id: str,db: Session):
     coupons = db.query(coupon_model.Coupon).filter(coupon_model.Coupon.user_id == user_id).all()
     return coupons
+
+def get_coupon_from_req_user(req: Request, code: str):
+
+    coupon = list(filter(lambda x:x.code == code,req.state.mydata.coupons))
+
+    return coupon[0] if coupon else None
+
+def get_final_price_and_discounted_amount(
+    coupon: coupon_model.Coupon, 
+    total_price: float
+):
+     
+    COUPON_FIELDS = (
+        "expiry_date",
+        "minimum_amount",
+        "discount_type",
+        "amount"
+    )
+
+    expiry_date,minimum_amount,discount_type,amount = [jsonable_encoder(coupon)[k] for k in COUPON_FIELDS]
+    
+
+    if is_valid_coupon(expiry_date) and is_threshold_met(minimum_amount,total_price):
+        final_price_after_discount, discounted_amount = get_price_and_discount(discount_type,total_price,amount).values()
+    
+    return (final_price_after_discount,discounted_amount)
+
+
 
 def save_to_db_then_return(
     payload: coupon_schema.CouponCreateSchema,

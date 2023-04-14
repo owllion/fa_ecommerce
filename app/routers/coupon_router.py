@@ -76,18 +76,16 @@ def get_coupons(db:Session = Depends(db.get_db)):
     
 
 
-@public_plural.get(
-    "/user/{user_id}",
+@protected_plural.get(
+    "/user",
     **get_path_decorator_settings(
         description= "Get the specific user's coupon list",
         response_model= list[coupon_schema.CouponSchema]
     )
 )
-def get_user_coupons(user_id: str, db: Session = Depends(db.get_db)):
+def get_user_coupons(req: Request, db: Session = Depends(db.get_db)):
     try:
-        coupons = coupon_services.get_user_coupons(user_id,db)
-
-        return coupons
+        return req.state.mydata.coupons
           
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e
@@ -144,6 +142,7 @@ def delete_coupon(coupon_id: str, db: Session = Depends(db.get_db)):
         if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
 
+
 @protected_singular.post(
     "/apply-coupon",
     **get_path_decorator_settings(
@@ -152,33 +151,31 @@ def delete_coupon(coupon_id: str, db: Session = Depends(db.get_db)):
     )
 )
 def apply_coupon(
-    code: str, 
-    total_price: float, 
+    req: Request,
+    payload: coupon_schema.ApplyCouponSchema,
     db: Session = Depends(db.get_db)
 ):
-    coupon = coupon_services.find_coupon_with_code(code)
+    try:
+        coupon = coupon_services.get_coupon_from_req_user(req, payload.code)
 
-    if not coupon:
-        raise HTTPException(
-            status_code= status.HTTP_400_BAD_REQUEST,
-            detail= api_msgs.COUPON_NOT_FOUND
-        )
-    
-    expiry_date,minimum_amount,discount_type,amount = jsonable_encoder(coupon).values()
+        if not coupon:
+            raise HTTPException(
+                status_code= status.HTTP_400_BAD_REQUEST,
+                detail= api_msgs.COUPON_NOT_FOUND
+            )
 
-    if \
-        coupon_services.is_valid_coupon(expiry_date)\
-        and\
-        coupon_services.is_threshold_met(minimum_amount,total_price):
-        
-        final_price_after_discount, discounted_amount =  coupon_services.get_price_and_discount(discount_type,total_price,amount).values()
+        final_price_after_discount,discounted_amount = coupon_services.get_final_price_and_discounted_amount(coupon,payload.total_price)
 
         return {
-            "used_code": code,
-            "final_price_after_discount":final_price_after_discount,
+            "used_code": payload.code,
+            "final_price_after_discount": final_price_after_discount,
             "discounted_amount": discounted_amount
         }
         
+    except Exception as e:
+        if isinstance(e, (HTTPException,)): 
+            raise e
+        raise CustomHTTPException(detail= str(e))
 
     
 

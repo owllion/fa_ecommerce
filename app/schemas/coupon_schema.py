@@ -1,19 +1,27 @@
 from datetime import datetime
+from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel, root_validator
 
 
+class DiscountType(str, Enum):
+    fixed_amount = "fixed_amount"
+    percentage = "percentage"
+
+
 class CouponBaseSchema(BaseModel):
     code: str
     description: str = ""
-    discount_type: str
+    discount_type: DiscountType
     amount: float
     minimum_amount: float
     expiry_date: datetime
+    class Config:
+        orm_mode = True
 
 class CouponCreateSchema(CouponBaseSchema):
-    user_id: int
+    pass
 
 
 base_keys = list(CouponBaseSchema.__annotations__.keys())
@@ -36,8 +44,7 @@ class CouponUpdateSchema(BaseModel):
 
 class CouponSchema(CouponBaseSchema):
     id: str
-    user_id: int
-    is_used: bool
+    is_used: bool = False
 
     class Config:
         orm_mode = True
@@ -46,3 +53,7 @@ class AppliedCouponResultSchema(BaseModel):
     final_price_after_discount: float
     discounted_amount: float
     used_code: str
+
+class ApplyCouponSchema(BaseModel):
+    code: str 
+    total_price: float 

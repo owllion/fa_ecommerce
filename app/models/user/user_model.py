@@ -19,7 +19,7 @@ class User(Base):
 
     last_name = Column(String(30), index=True)
 
-    phone = Column(String(15), nullable=True,default='')
+    phone = Column(String(50), nullable=True,default='')
 
     password = Column(String(80))
     upload_avatar = Column(String(350), nullable=True,default='')

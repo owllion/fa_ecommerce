@@ -7,10 +7,10 @@ from pydantic import BaseModel, root_validator
 class CouponBaseSchema(BaseModel):
     code: str
     description: str = ""
-    amount: float
-    expiry_date: datetime
-    minimum_amount: float
     discount_type: str
+    amount: float
+    minimum_amount: float
+    expiry_date: datetime
 
 class CouponCreateSchema(CouponBaseSchema):
     user_id: int
@@ -44,4 +44,5 @@ class CouponSchema(CouponBaseSchema):
 
 class AppliedCouponResultSchema(BaseModel):
     final_price_after_discount: float
-    discountedAmount: float
+    discounted_amount: float
+    used_code: str

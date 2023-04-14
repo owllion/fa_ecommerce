@@ -28,25 +28,39 @@ class User(Base):
 
     verified = Column(Boolean, nullable=False,default=False)
 
-    #######################
-    cart = relationship("Cart", back_populates="relate_user",cascade="all, delete",passive_deletes=True)
+    cart = relationship(
+        "Cart", 
+        back_populates="relate_user",cascade="all, delete",passive_deletes=True
+    )
 
-    favorites = relationship("FavoriteItem", backref="owner",cascade="all, delete",passive_deletes=True)
+    favorites = relationship(
+        "Product", 
+        backref="users", secondary="user_favorite",cascade="all, delete",passive_deletes=True
+    )
 
-    coupons = relationship("Coupon", backref="owner",cascade="all, delete",passive_deletes=True)
+    coupons = relationship(
+        "Coupon", 
+        backref="users",
+        secondary="user_coupon",
+        cascade="all, delete",passive_deletes=True
+    )
 
-    orders = relationship("Order", back_populates="owner",cascade="all, delete",passive_deletes=True)
+    orders = relationship(
+        "Order", 
+        back_populates="owner",
+        cascade="all, delete",passive_deletes=True
+    )
 
-    reviews = relationship("Review", back_populates="user",cascade="all, delete",passive_deletes=True)
-    ###########################
+    reviews = relationship(
+        "Review", 
+        back_populates="user",
+        cascade="all, delete",passive_deletes=True
+    )
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
     
     updated_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))
 
-    # items = relationship("Item", back_populates="owner")
-
-    
 
 @event.listens_for(User, 'before_insert')
 @event.listens_for(User, 'before_update')

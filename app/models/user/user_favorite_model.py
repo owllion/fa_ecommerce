@@ -17,14 +17,26 @@ from sqlalchemy.orm import relationship
 from ...database.db import Base
 
 
-class FavoriteItem(Base):
-    __tablename__ = "favorite_item"
+class UserFavorite(Base):
+    __tablename__ = "user_favorite"
 
-    user_id = Column(String(80), ForeignKey('user.id', ondelete="CASCADE"), primary_key=True)
+    user_id = Column(
+        String(80), 
+        ForeignKey(
+            'user.id', 
+            ondelete="CASCADE"
+        ), 
+        primary_key=True
+    )
 
-    product_id = Column(String(80), ForeignKey('product.id',ondelete="CASCADE"), primary_key=True)
-    
-    # product = relationship('Product', backref='likes')
+    product_id = Column(
+        String(80), 
+        ForeignKey(
+            'product.id',
+            ondelete="CASCADE"
+        ), 
+        primary_key=True
+    )
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
     

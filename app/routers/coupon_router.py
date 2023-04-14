@@ -156,8 +156,6 @@ def apply_coupon(
     total_price: float, 
     db: Session = Depends(db.get_db)
 ):
-    #1.找到coupon 2.確認有沒有過期 3.確認金額有無到達門檻 4.都符合才去用getPriceAndDiscount獲得discountTotal, discount
-
     coupon = coupon_services.find_coupon_with_code(code)
 
     if not coupon:
@@ -172,6 +170,14 @@ def apply_coupon(
         coupon_services.is_valid_coupon(expiry_date)\
         and\
         coupon_services.is_threshold_met(minimum_amount,total_price):
+        
+        final_price_after_discount, discounted_amount =  coupon_services.get_price_and_discount(discount_type,total_price,amount).values()
+
+        return {
+            "used_code": code,
+            "final_price_after_discount":final_price_after_discount,
+            "discounted_amount": discounted_amount
+        }
         
 
     

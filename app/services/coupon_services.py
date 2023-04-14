@@ -1,9 +1,13 @@
-from sqlalchemy.orm import Session
 import datetime
+from decimal import Decimal
+
+from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
+
+from ..constants import api_msgs
 from ..models.coupon import coupon_model
 from ..schemas import coupon_schema
-from fastapi import HTTPException,status
-from ..constants import api_msgs
+
 
 def is_valid_coupon(expiry_date: datetime):
     print(expiry_date,'這是expire date')
@@ -24,20 +28,17 @@ def is_threshold_met(min_amount: float, total_price: float):
     )
 
 def get_price_and_discount(
-  discountType: str,
-  totalPrice: float,
-  amount: float
+  discount_type: str,
+  total_price: float,
+  amount: float 
 ):
-  const finalPrice =
-    discountType === "debate"
-      ? totalPrice - amount
-      : Math.round(totalPrice * (amount * 0.01));
 
-  return {
-    discountTotal: finalPrice,
-    discount: totalPrice - finalPrice,
-  };
-};
+    final_price = total_price - amount if discount_type == "fix_amount" else round(total_price * (amount * 0.01))
+
+    return {
+        "final_price_after_discount": final_price,
+        "discounted_amount": total_price - final_price,
+    }
 
 def find_coupon_with_id(
     id: str,
@@ -89,4 +90,3 @@ def update_coupon_with(
         
     db.commit()
 
-def apply_coupn():

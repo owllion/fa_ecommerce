@@ -100,7 +100,9 @@ class UserUpdateSchema(BaseModel):
 class UserUploadAvatarSchema(BaseModel):
     url: HttpUrl
 
-
-class AddToCartSchema(BaseModel):
+class CartOperationSchema(BaseModel):
     product_id: str
+class AddToCartSchema(CartOperationSchema):
     qty: int | None = Field(1, ge=1,le=99)
+class RemoveFromCartSchema(CartOperationSchema):
+    pass

@@ -167,7 +167,7 @@ def add_to_cart(
         
         if cart_item:
             cart_item.quantity += payload.qty
-            
+
         else:
             product = product_services.find_product_with_id(payload.product_id, db)
 
@@ -188,6 +188,27 @@ def add_to_cart(
             user_cart.cart_items.append(new_cart_item)
 
         db.commit()
+
+    except Exception as e:
+        if isinstance(e, (HTTPException,)): raise e
+        raise CustomHTTPException(detail= str(e))
+    
+
+
+@protected_singular.post(
+    "/remove-from-cart", 
+    **get_path_decorator_settings(description="Successfully remove the product from the cart.")
+)
+def remove_from_cart(
+    req: Request,
+    payload: user_schema.RemoveFromCartSchema,
+    db: Session = Depends(db.get_db)
+):
+    print("remove!!")
+    try:
+        cart_item = user_services.find_item_from_cart(req, payload.product_id, db)
+
+        user_services.delete_item(db, cart_item)
 
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e

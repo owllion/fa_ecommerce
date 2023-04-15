@@ -4,10 +4,14 @@ from pydantic import EmailStr
 from sqlalchemy.orm import Session
 
 from ..database import db
+from ..models.cart import cart_item_model
 from ..models.user import user_model
 from ..schemas import email_schema, user_schema
 from ..utils import security
 from ..utils.email import email
+
+from..constants import api_msgs
+
 
 
 def find_user_with_email(
@@ -79,3 +83,34 @@ def get_item_from_user_cart(req: Request, product_id: str):
     cart_item = list(filter(lambda x: x.product_id == product_id, req.state.mydata.cart.cart_items))
 
     return cart_item[0] if cart_item else None
+
+
+def get_user_cart_id(req: Request):
+    return req.state.mydata.cart.id
+
+def find_item_from_cart(req: Request, product_id: str, db: Session):
+    user_cart_id = get_user_cart_id(req)
+    print(user_cart_id,'這是id')
+    print(product_id,'商品Id')
+
+    cart_item =\
+        db\
+            .query(cart_item_model.CartItem)\
+            .filter(
+                cart_item_model.CartItem.product_id == product_id,
+                cart_item_model.CartItem.cart_id == user_cart_id
+            )\
+            .first()
+    print(cart_item,'這是cart_item')
+
+    if not cart_item:
+        raise HTTPException(
+            status_code= status.HTTP_400_BAD_REQUEST,
+            detail= api_msgs.CART_ITEM_NOT_FOUND
+        )
+    return cart_item
+
+def delete_item(db: Session, cart_item: cart_item_model.CartItem):
+    db.delete(cart_item)
+    db.commit()
+

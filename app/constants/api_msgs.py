@@ -20,6 +20,10 @@ COUPON_EXPIRED = "coupon expired"
 MINIMUM_THRESHOLD_NOT_MET = "minimum threshold not met"
 COUPON_ALREADY_EXISTS = "coupon already exists"
 
+#cart_item
+CART_ITEM_NOT_FOUND = "cart item not found"
+
+
 #auth/token
 INCORRECT_LOGIN_INPUT = "incorrect email or password"
 

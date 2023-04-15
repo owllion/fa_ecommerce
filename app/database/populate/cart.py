@@ -5,6 +5,7 @@ import string
 from datetime import timedelta
 
 from faker import Faker
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import and_, create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -77,10 +78,11 @@ def get_user_cart():
     user = get_user()
     # print(user.cart[0].cart_items[0].quantity,'這是user的cart數量')
     # print(user.cart,'這是user的cart')
-    for cart in user.cart:
-        for item in cart.cart_items:
-            print(cart.id,'cart id喔@')
-            print(item.product.product_name,'名稱')
+    # for cart in user.cart:
+    #     for item in cart.cart_items:
+    #         print(cart.id,'cart id喔@')
+    #         print(item.product.product_name,'名稱')
+    print(jsonable_encoder(user.cart.cart_items),'第一個')
 
 
 def remove_from_cart():
@@ -99,5 +101,5 @@ def remove_from_cart():
 
     
 # add_item_to_cart()
-remove_from_cart()
+#remove_from_cart()
 get_user_cart()

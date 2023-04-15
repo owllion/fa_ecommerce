@@ -1,5 +1,5 @@
 from decouple import config
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
 
@@ -74,3 +74,8 @@ async def send_verify_or_reset_link(params: email_schema.SendVerifyOrResetLinkSc
         'email': user_email 
     })
 
+def get_item_from_user_cart(req: Request, product_id: str):
+
+    cart_item = list(filter(lambda x: x.product_id == product_id, req.state.mydata.cart.cart_items))
+
+    return cart_item[0] if cart_item else None

@@ -16,11 +16,13 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
+from ..constants import api_msgs
 from ..database import db
 from ..exceptions.http_exception import CustomHTTPException
-from ..schemas import item_schema, user_schema
+from ..models.cart import cart_item_model
+from ..schemas import user_schema
 from ..schemas.user_schema import SupportedField, VerifiedValue
-from ..services import user_services
+from ..services import product_services, user_services
 from ..utils.dependencies import *
 from ..utils.logger import logger
 from ..utils.router_settings import get_path_decorator_settings, get_router_settings
@@ -144,9 +146,52 @@ def get_uploaded_avatar_url(
         db.commit()
 
     except Exception as e:
-         raise CustomHTTPException(
-            detail= str(e)
-        )
+        if isinstance(e, (HTTPException,)): raise e
+        raise CustomHTTPException(detail= str(e))
+    
+
+@protected_singular.post(
+    "/add-to-cart", 
+    **get_path_decorator_settings(description="Successfully add the product to the cart.")
+)
+def add_to_cart(
+    req: Request,
+    payload: user_schema.AddToCartSchema,
+    db: Session = Depends(db.get_db)
+):
+    try:
+
+        user_cart = req.state.mydata.cart
+
+        cart_item = user_services.get_item_from_user_cart(req, payload.product_id)
+        
+        if cart_item:
+            cart_item.quantity += payload.qty
+            
+        else:
+            product = product_services.find_product_with_id(payload.product_id, db)
+
+            if not product:
+                raise HTTPException(
+                    status_code= status.HTTP_400_BAD_REQUEST,
+                    detail = api_msgs.PRODUCT_NOT_FOUND
+                )
+
+            new_cart_item = cart_item_model.CartItem(
+                quantity= payload.qty,
+                product_id = product.id, 
+                cart_id = user_cart.id
+            )
+
+            db.add(new_cart_item)
+
+            user_cart.cart_items.append(new_cart_item)
+
+        db.commit()
+
+    except Exception as e:
+        if isinstance(e, (HTTPException,)): raise e
+        raise CustomHTTPException(detail= str(e))
 
 
 

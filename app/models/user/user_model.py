@@ -30,7 +30,8 @@ class User(Base):
 
     cart = relationship(
         "Cart", 
-        back_populates="relate_user",cascade="all, delete",passive_deletes=True
+        back_populates="relate_user",cascade="all, delete",passive_deletes=True,
+        uselist=False
     )
 
     favorites = relationship(

@@ -33,28 +33,8 @@ class EmailBaseSchema(BaseModel):
     email: EmailStr
 class GoogleLoginSchema(EmailBaseSchema):
     pass
-
-# class ReviewUserSchema(BaseModel):
-#     first_name: str
-#     last_name: str
-#     default_avatar: str
-#     upload_avatar: str
-
-#     class Config:
-#         orm_mode = True
-# class ReviewSchemaTest(BaseModel):
-#     id: str
-#     user: ReviewUserSchema
-#     user_id: str
-#     product_id: str
-#     rating: float
-#     comment: str
-#     created_at: datetime
-#     updated_at: datetime
-#     class Config:
-#         orm_mode = True
     
-class UserSchema(UserBaseSchema): #used to return data
+class UserSchema(UserBaseSchema):
     id: str
     phone: str = ""
     verified: bool = False
@@ -121,7 +101,6 @@ class UserUploadAvatarSchema(BaseModel):
     url: HttpUrl
 
 
-
-
-
-
+class AddToCartSchema(BaseModel):
+    product_id: str
+    qty: int | None = Field(1, ge=1,le=99)

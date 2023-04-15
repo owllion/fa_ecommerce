@@ -21,13 +21,13 @@ from ...utils.generate_id import gen_id
 class CartItem(Base):
     __tablename__ = "cart_item"
     
-    id = Column(String(80), primary_key=True, index=True,default= gen_id)
+    # id = Column(String(80), primary_key=True, index=True,default= gen_id)
 
-    cart_id = Column(String(80), ForeignKey("cart.id", ondelete="CASCADE"), nullable=False)
+    cart_id = Column(String(80), ForeignKey("cart.id", ondelete="CASCADE"), primary_key=True, nullable=False)
 
     parent_cart = relationship("Cart", back_populates="cart_items")
 
-    product_id = Column(String(80), ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
+    product_id = Column(String(80), ForeignKey("product.id",ondelete="CASCADE"),primary_key=True, nullable=False)
 
     quantity = Column(Integer, default=1)
 

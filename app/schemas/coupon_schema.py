@@ -60,3 +60,4 @@ class ApplyCouponSchema(BaseModel):
     total_price: float 
 class RedeemCouponSchema(CodeRelatedSchema):
     pass
+

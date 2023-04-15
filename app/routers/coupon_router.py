@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from ..constants import api_msgs
 from ..exceptions.http_exception import CustomHTTPException
 from ..schemas import coupon_schema
-from ..services import coupon_services
+from ..services import coupon_services, user_services
 from ..utils.dependencies import *
 from ..utils.router_settings import get_path_decorator_settings, get_router_settings
 
@@ -117,6 +117,40 @@ def update_coupon(
         if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
 
+@protected_singular.delete(
+    "/{coupon_id}/user/{user_id}",
+    **get_path_decorator_settings(
+        description= "Successfully delete the coupon from user's coupon list.",
+    )
+)
+def delete_user_coupon(user_id: str, coupon_id: str, db: Session = Depends(db.get_db)):
+    try:
+        user = user_services.find_user_with_id(user_id,db)
+        if not user:
+            raise HTTPException(
+                status_code= status.HTTP_400_BAD_REQUEST,
+                detail= api_msgs.USER_NOT_FOUND
+            )
+        
+        coupon = coupon_services.find_coupon_with_id(coupon_id,db)
+
+        if not coupon: 
+            raise HTTPException(
+                status_code= status.HTTP_400_BAD_REQUEST,
+                detail= api_msgs.COUPON_NOT_FOUND
+            )
+        
+        user.coupons.remove(coupon)
+        
+        db.commit()
+        
+    except Exception as e:
+        if isinstance(e, (HTTPException,)): raise e
+        raise CustomHTTPException(detail= str(e))
+
+
+
+
 
 @protected_singular.delete(
     "/{coupon_id}",
@@ -125,6 +159,7 @@ def update_coupon(
     )
 )
 def delete_coupon(coupon_id: str, db: Session = Depends(db.get_db)):
+    print("這是刪除全部優惠之一")
     try:
         coupon = coupon_services.find_coupon_with_id(coupon_id,db)
 

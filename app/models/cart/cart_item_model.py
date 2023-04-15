@@ -31,7 +31,7 @@ class CartItem(Base):
 
     quantity = Column(Integer, default=1)
 
-    product = relationship("Product", backref="relate_cart_item")
+    product = relationship("Product", backref="related_cart_item")
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
     

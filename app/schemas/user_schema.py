@@ -38,7 +38,7 @@ class UserSchema(UserBaseSchema):
     id: str
     phone: str = ""
     verified: bool = False
-    items: list[Item] = []
+    # items: list[Item] = []
     upload_avatar: str = Field("", alias='avatarUpload')
     default_avatar: str = Field(config('DEFAULT_AVATAR_URL'), alias='avatarDefault')
     created_at: datetime
@@ -101,14 +101,24 @@ class UserUploadAvatarSchema(BaseModel):
     url: HttpUrl
 
 #cart
-class ProductIdSchema(BaseModel):
+class SizeValue(str,Enum):
+    xs = 'XS'
+    s = 'S'
+    m = 'M'
+    l = 'L'
+class OperationType(str, Enum):
+    INC = 'inc'
+    DEC = 'dec'
+
+class CartBaseSchema(BaseModel):
     product_id: str
+    size: SizeValue
 class ItemQtySchema(BaseModel):
     qty: int | None = Field(1, ge=1,le=99)
 
-class AddToCartSchema(ProductIdSchema,ItemQtySchema):
-    pass
-class RemoveFromCartSchema(ProductIdSchema):
-    pass
-class UpdateItemQtySchema(ProductIdSchema,ItemQtySchema):
-    pass
+class AddToCartSchema(CartBaseSchema,ItemQtySchema):
+    pass 
+class RemoveFromCartSchema(CartBaseSchema):
+    pass 
+class UpdateItemQtySchema(CartBaseSchema):
+    operation_type: OperationType

@@ -82,7 +82,12 @@ def get_user_cart():
     #     for item in cart.cart_items:
     #         print(cart.id,'cart id喔@')
     #         print(item.product.product_name,'名稱')
-    print(jsonable_encoder(user.cart.cart_items),'第一個')
+
+    # print(jsonable_encoder(user.cart.cart_items[0].product),'cart_items第一個')
+    print(jsonable_encoder(user.cart.cart_items),'cart_items')
+
+    # print(jsonable_encoder(user.cart),'cart')
+    # print(jsonable_encoder(user),'第一個')
 
 
 def remove_from_cart():

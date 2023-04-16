@@ -20,7 +20,7 @@ from ..constants import api_msgs
 from ..database import db
 from ..exceptions.http_exception import CustomHTTPException
 from ..models.cart import cart_item_model
-from ..schemas import user_schema
+from ..schemas import cart_schema, product_schema, user_schema
 from ..schemas.user_schema import SupportedField, VerifiedValue
 from ..services import product_services, user_services
 from ..utils.dependencies import *
@@ -69,13 +69,6 @@ def update_user(
         logger.error(e, exc_info=True)
         raise CustomHTTPException(detail= str(e))
 
-@protected_singular.get(
-    "/{user_id}", 
-    response_model=user_schema.UserSchema
-)
-def get_user(user_id: str, db: Session = Depends(db.get_db)):
-    user = user_services.find_user_with_id(user_id,db)
-    return user
 
 
 @protected_singular.post(
@@ -163,7 +156,7 @@ def add_to_cart(
 
         user_cart = req.state.mydata.cart
 
-        cart_item = user_services.get_item_from_user_cart(req, payload.product_id)
+        cart_item = user_services.get_item_from_user_cart(req, payload.product_id, payload.size)
         
         if cart_item:
             cart_item.quantity += payload.qty
@@ -206,7 +199,8 @@ def remove_from_cart(
 ):
     print("remove!!")
     try:
-        cart_item = user_services.find_item_from_cart(req, payload.product_id, db)
+        # cart_item = user_services.get_item_from_cart_item_table(req, payload.product_id, db)
+        cart_item = user_services.get_item_from_user_cart(req, payload.product_id, payload.size)
 
         user_services.delete_item(db, cart_item)
 
@@ -217,24 +211,64 @@ def remove_from_cart(
 
 @protected_singular.post(
     "/upate-cart-item-qty", 
-    **get_path_decorator_settings(description="Successfully update items' quantity.")
+    **get_path_decorator_settings(description="Successfully update item's quantity.")
 )
 def update_item_qty(
     req: Request,
-    payload: user_schema.RemoveFromCartSchema,
+    payload: user_schema.UpdateItemQtySchema,
     db: Session = Depends(db.get_db)
 ):
-    print("remove!!")
     try:
-        cart_item = user_services.find_item_from_cart(req, payload.product_id, db)
+        cart_item = user_services.get_item_from_user_cart( req, payload.product_id, payload.size)
 
-        user_services.delete_item(db, cart_item)
+        if not cart_item:
+            raise HTTPException(
+                status_code= status.HTTP_400_BAD_REQUEST,
+                detail= api_msgs.CART_ITEM_NOT_FOUND
+            )
+        
+        user_services.update_qty(cart_item, payload.operation_type)
+
+    except Exception as e:
+        if isinstance(e, (HTTPException,)): raise e
+        raise CustomHTTPException(detail= str(e))
+
+
+@protected_singular.get(
+    "/cart", 
+    **get_path_decorator_settings(
+        description="Get user's cart",
+        response_model= list[product_schema.ProductSchema]
+    )
+)
+def get_user_cart(
+    req: Request,
+    db: Session = Depends(db.get_db)
+):
+    print("取得user購物車")
+    try:
+       items = jsonable_encoder(req.state.mydata.cart.cart_items)
+       first_p = jsonable_encoder(req.state.mydata.cart.cart_items[0].product)
+    #    print(first_p,'首個商品')
+    #    print(items)
+    #    print(len(req.state.mydata.cart.cart_items),"長度")
+       
+       for item in items:
+            item = jsonable_encoder(item)
+            print(jsonable_encoder(item.product))
+       return [product for item in items for product in item]
 
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
     
+    
 
-
-
-
+@protected_singular.get(
+    "/{user_id}", 
+    response_model=user_schema.UserSchema
+)
+def get_user(user_id: str, db: Session = Depends(db.get_db)):
+    print("呼叫user data")
+    user = user_services.find_user_with_id(user_id,db)
+    return user

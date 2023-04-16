@@ -31,6 +31,8 @@ class CartItem(Base):
 
     quantity = Column(Integer, default=1)
 
+    size = Column(String(5), nullable= False)
+
     product = relationship("Product", backref="related_cart_item")
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))

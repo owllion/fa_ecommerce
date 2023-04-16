@@ -7,6 +7,7 @@ from ..database import db
 from ..models.cart import cart_item_model
 from ..models.user import user_model
 from ..schemas import email_schema, user_schema
+from ..schemas.user_schema import OperationType
 from ..utils import security
 from ..utils.email import email
 
@@ -78,9 +79,18 @@ async def send_verify_or_reset_link(params: email_schema.SendVerifyOrResetLinkSc
         'email': user_email 
     })
 
-def get_item_from_user_cart(req: Request, product_id: str):
+def get_item_from_user_cart(req: Request, product_id: str, size: str):
+    
+    def find_item(
+        item: cart_item_model.CartItem,
+        id: str,
+        size: str
+    ):
+        if item.product_id == id and item.size == size:
+            return True  
+        return False
 
-    cart_item = list(filter(lambda x: x.product_id == product_id, req.state.mydata.cart.cart_items))
+    cart_item = list(filter(lambda x: find_item(x, product_id, size) , req.state.mydata.cart.cart_items))
 
     return cart_item[0] if cart_item else None
 
@@ -88,7 +98,7 @@ def get_item_from_user_cart(req: Request, product_id: str):
 def get_user_cart_id(req: Request):
     return req.state.mydata.cart.id
 
-def find_item_from_cart(req: Request, product_id: str, db: Session):
+def get_item_from_cart_item_table(req: Request, product_id: str, db: Session):
     user_cart_id = get_user_cart_id(req)
     print(user_cart_id,'這是id')
     print(product_id,'商品Id')
@@ -112,5 +122,14 @@ def find_item_from_cart(req: Request, product_id: str, db: Session):
 
 def delete_item(db: Session, cart_item: cart_item_model.CartItem):
     db.delete(cart_item)
+    db.commit()
+
+def update_qty(
+    cart_item: cart_item_model.CartItem, 
+    operation_type: str 
+):
+    cart_item.qty += 1 if operation_type == OperationType.INC else -1 
+    #在購物車裡面做更新，qty只會是+1(因為不給手動輸入)
+
     db.commit()
 

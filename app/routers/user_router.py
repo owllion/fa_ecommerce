@@ -215,7 +215,24 @@ def remove_from_cart(
         raise CustomHTTPException(detail= str(e))
 
 
+@protected_singular.post(
+    "/upate-cart-item-qty", 
+    **get_path_decorator_settings(description="Successfully update items' quantity.")
+)
+def update_item_qty(
+    req: Request,
+    payload: user_schema.RemoveFromCartSchema,
+    db: Session = Depends(db.get_db)
+):
+    print("remove!!")
+    try:
+        cart_item = user_services.find_item_from_cart(req, payload.product_id, db)
 
+        user_services.delete_item(db, cart_item)
+
+    except Exception as e:
+        if isinstance(e, (HTTPException,)): raise e
+        raise CustomHTTPException(detail= str(e))
     
 
 

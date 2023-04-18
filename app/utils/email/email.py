@@ -1,11 +1,11 @@
-from fastapi import HTTPException,status
-from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 from decouple import config
+from fastapi import HTTPException, status
+from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 
-from .set_template import set_template
-from .get_mail_text import get_mail_text
-from ...exceptions.http_exception import CustomHTTPException
+from ...exceptions.custom_http_exception import CustomHTTPException
 from ...schemas import email_schema
+from .get_mail_text import get_mail_text
+from .set_template import set_template
 
 conf = ConnectionConfig(
     MAIL_USERNAME= config("MAIL_FROM"),

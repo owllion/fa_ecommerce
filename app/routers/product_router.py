@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy import func
 
 from ..constants import api_msgs, exceptions
-from ..exceptions.http_exception import CustomHTTPException
+from ..exceptions.custom_http_exception import CustomHTTPException
 from ..models.product import product_item_model, product_model, size_model
 from ..schemas import product_schema
 from ..services import product_services

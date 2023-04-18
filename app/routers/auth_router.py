@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from ..database import db
-from ..exceptions.http_exception import CustomHTTPException
+from ..exceptions.custom_http_exception import CustomHTTPException
 from ..schemas import user_schema
 from ..services import user_services
 from ..utils import security

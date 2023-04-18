@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 
 from ..constants import api_msgs
 from ..database import db
-from ..exceptions.http_exception import CustomHTTPException
+from ..exceptions.custom_http_exception import CustomHTTPException
 from ..models.cart import cart_item_model
 from ..schemas import cart_schema, product_schema, user_schema
 from ..schemas.user_schema import SupportedField, VerifiedValue
@@ -162,14 +162,22 @@ def add_to_cart(
         #取庫存、新增cart_item使用
         product = product_services.find_product_with_id(payload.product_id,db)
 
+        
         if not product:
             raise HTTPException(
                 status_code= status.HTTP_400_BAD_REQUEST,
                 detail = api_msgs.PRODUCT_NOT_FOUND
             )
+        
+        res = list(filter(lambda x: x.product_id == product.id and x.size.value == payload.size,product.product_items))
+        stock = res[0].stock if res else None
+        print(stock,'這是stock')
+        print(res,'這是res')
+
+        
 
         if cart_item: #如果商品存在
-            is_available = cart_item.qty + payload.qty < product.stock
+            is_available = cart_item.qty + payload.qty < stock
             if is_available: #判斷現在傳入的qty是否<庫存
                 #不用再判斷qty是否>1了 只要最後結果是<stock就可以
                 cart_item.qty += payload.qty
@@ -183,8 +191,8 @@ def add_to_cart(
         else: #商品不存在 新增一個
             #也要先判斷數字是否<庫存
             print(payload.qty,'qty!!')
-            print(product.stock, 'stock')
-            is_available = payload.qty < product.stock
+            # print(product.stock, 'stock')
+            is_available = payload.qty < stock
             if is_available:
                 new_cart_item = cart_item_model.CartItem(
                     qty = payload.qty,
@@ -232,7 +240,7 @@ def remove_from_cart(
 
 
 @protected_singular.post(
-    "/upate-cart-item-qty", 
+    "/update-cart-item-qty", 
     **get_path_decorator_settings(description="Successfully update item's quantity.")
 )
 def update_item_qty(
@@ -249,7 +257,31 @@ def update_item_qty(
                 detail= api_msgs.CART_ITEM_NOT_FOUND
             )
         
-        user_services.update_qty(cart_item, payload.operation_type, db)
+
+        #------
+        #取庫存、新增cart_item使用
+        product = product_services.find_product_with_id(payload.product_id,db)
+
+        
+        if not product:
+            raise HTTPException(
+                status_code= status.HTTP_400_BAD_REQUEST,
+                detail = api_msgs.PRODUCT_NOT_FOUND
+            )
+        
+        res = list(filter(lambda x: x.product_id == product.id and x.size.value == payload.size,product.product_items))
+
+        stock = res[0].size.value if res else None
+
+        print(stock,res)
+        #------
+        
+        user_services.update_qty(
+            cart_item,
+            stock,
+            payload.operation_type, 
+            db
+        )
 
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e

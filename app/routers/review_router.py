@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, status
 
 from ..constants import api_msgs
-from ..exceptions.http_exception import CustomHTTPException
+from ..exceptions.custom_http_exception import CustomHTTPException
 from ..schemas import review_schema
 from ..services import review_services
 from ..utils.dependencies import *

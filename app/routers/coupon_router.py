@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 
 from ..constants import api_msgs
-from ..exceptions.http_exception import CustomHTTPException
+from ..exceptions.custom_http_exception import CustomHTTPException
 from ..schemas import coupon_schema
 from ..services import coupon_services, user_services
 from ..utils.dependencies import *

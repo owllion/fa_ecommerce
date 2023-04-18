@@ -182,21 +182,29 @@ def update_product_item(
             detail= str(e)
         )
     
-@protected_plural.get(
-    "/",
+@public_plural.get(
+    "/all",
     **get_path_decorator_settings(
     description= "get the product item list",
     response_model= list[product_item_schema.ProductItemSchema]
     )
 )
-def get_product_items(db: Session = Depends(db.get_db)):
-    print("取得所有items")
+def get_all_product_items(db: Session = Depends(db.get_db)):
     items = db.query(product_item_model.ProductItem).all()
-    # for item in items:
-    #     print(jsonable_encoder(item.size),'這是item.size')
-    #     print(item.size,'這是size')
-    return [item for item in items]
+    return items
 
+
+@public_plural.get(
+    "/product/{product_id}",
+    **get_path_decorator_settings(
+    description= "get all the product items of specified product.",
+    response_model= list[product_item_schema.ProductItemSchema]
+    )
+)
+def get_product_items(product_id: str,db: Session = Depends(db.get_db)):
+    items = db.query(product_item_model.ProductItem).filter(product_item_model.ProductItem.product_id == product_id).all()
+
+    return items
 
 
 

@@ -19,7 +19,7 @@ sizes = ['XS','S','M','L','XL']
 
 for s in sizes:
     size = size_model.Size(
-        size=s 
+        value=s 
     )
     session.add(size)
 

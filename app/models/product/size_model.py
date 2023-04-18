@@ -23,7 +23,9 @@ class Size(Base):
 
     id = Column(String(80), primary_key=True, index=True,default=gen_id)
 
-    size = Column(String(5), nullable= False)
+    value = Column(String(5), nullable= False)
+
+    related_product_item = relationship("ProductItem", back_populates= "size",cascade="all, delete",passive_deletes=True)
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
     

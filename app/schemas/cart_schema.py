@@ -18,6 +18,7 @@ class SizeValue(str,Enum):
     s = 'S'
     m = 'M'
     l = 'L'
+    xl = 'XL'
 class OperationType(str, Enum):
     INC = 'inc'
     DEC = 'dec'

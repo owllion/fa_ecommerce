@@ -42,6 +42,11 @@ class ProductItemUpdateSchema(ProductItemBaseSchema,ProductIdSchema):
 class ProductItemDeleteSchema(ProductIdSchema):
     size_id: str
 
-class ProductItemSchema(ProductItemBaseSchema,ProductIdSchema):
+class SizeSchema(BaseModel):
+    value: str
     class Config:
-            orm_mode = True
+        orm_mode = True
+class ProductItemSchema(ProductItemBaseSchema,ProductIdSchema):
+    size: SizeSchema
+    class Config:
+        orm_mode = True

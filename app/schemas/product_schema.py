@@ -22,17 +22,12 @@ class ProductImageUrlSchema(BaseModel):
 
 class ProductBaseSchema(BaseModel):
     product_name: str = Field(...,max_length=50)
+    description: str = Field(None, max_length=800)
     thumbnail: str
     price: float = Field(..., ge=0.0)
     brand: str = Field(...,max_length=30)
     category: str = Field(...,max_length=30)
-    size: str = Field("F")
     color: str = Field(...,max_length=20)
-    description: str = Field(None, max_length=800)
-    stock: int = Field(..., ge=0)
-    availability: bool 
-    sales: int = Field(..., ge=0)
-
     class Config:
         orm_mode = True
     

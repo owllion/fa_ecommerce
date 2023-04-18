@@ -136,7 +136,6 @@ def update_product_item(
     payload: product_item_schema.ProductItemUpdateSchema,
     db: Session = Depends(db.get_db)
 ):
-    print("ddd")
     try:
         
         product = product_services.find_product_with_id(payload.product_id,db)
@@ -182,3 +181,40 @@ def update_product_item(
         raise CustomHTTPException(
             detail= str(e)
         )
+    
+@protected_plural.get(
+    "/",
+    **get_path_decorator_settings(
+    description= "get the product item list",
+    response_model= list[product_item_schema.ProductItemSchema]
+    )
+)
+def get_product_items(db: Session = Depends(db.get_db)):
+    print("取得所有items")
+    items = db.query(product_item_model.ProductItem).all()
+    # for item in items:
+    #     print(jsonable_encoder(item.size),'這是item.size')
+    #     print(item.size,'這是size')
+    return [item for item in items]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

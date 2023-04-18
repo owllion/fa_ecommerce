@@ -26,7 +26,8 @@ class ProductItem(Base):
 
     size_id = Column(String(80), ForeignKey("size.id",ondelete="CASCADE"),primary_key= True,nullable=False)
     
-    size = relationship("Size",backref="related_product_item")
+    size = relationship("Size",back_populates="related_product_item", uselist=False)
+    #這邊用bp是因為 1.需要這個size欄位 2.size model也必須得寫一個欄位，因為要設定cascade之類的 -> 兩邊都各自需要寫個關聯欄位
 
     stock = Column(Integer, nullable=False)
 

@@ -66,7 +66,7 @@ def delete_product_item(
 
                 product_item = product_item_services.get_product_item_or_raise_not_found(payload.product_id, payload.size_id, db)
 
-                product_item_services.save_to_db(product_item, db)
+                product_item_services.delete_item(product_item, db)
 
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e

@@ -14,6 +14,10 @@ def save_to_db(item: product_item_schema.ProductItemSchema,db: Session):
     db.add(item)
     db.commit()
 
+def delete_item(item: product_item_schema.ProductItemSchema,db: Session):
+    db.delete(item)
+    db.commit()
+
 #general-----
 
 
@@ -72,7 +76,7 @@ db: Session):
 def get_product_item_or_raise_not_found(product_id: str,size_id: str,
 db: Session):
     product_item = find_product_item(product_id,size_id,db)
-    if product_item: return True 
+    if product_item: return product_item
 
     raise_http_exception(
         status.HTTP_400_BAD_REQUEST,

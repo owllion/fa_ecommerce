@@ -27,6 +27,11 @@ base_keys = list(ProductItemBaseSchema.__annotations__.keys())
 
 class ProductItemUpdateSchema(ProductItemBaseSchema,ProductIdSchema):
     __annotations__ = {k: Optional[v] for k, v in ProductItemBaseSchema.__annotations__.items()}
+    #沒有Field的才用這，其餘有需要驗證的還是只能自己寫
+
+
+    stock: int | None = Field(None, ge=1)
+    sales: int | None = Field(None, ge=1)
 
     @root_validator(pre=True)
     def check_at_least_one_attribute(cls, values):

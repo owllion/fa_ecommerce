@@ -9,7 +9,9 @@ from app.models.coupon import coupon_model
 from app.models.order import order_item_model, order_model
 from app.models.product import (
     product_image_url_model,
+    product_item_model,
     product_model,
+    size_model,
     thumbnail_url_model,
 )
 from app.models.review import review_model

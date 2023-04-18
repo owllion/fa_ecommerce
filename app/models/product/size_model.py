@@ -19,7 +19,7 @@ from ...utils.generate_id import gen_id
 
 
 class Size(Base):
-    __tablename__ = 'Size'
+    __tablename__ = 'size'
 
     id = Column(String(80), primary_key=True, index=True,default=gen_id)
 

@@ -20,9 +20,11 @@ from ...utils.generate_id import gen_id
 
 #每個product的5個size的資料
 class ProductItem(Base):
-    __tablename__ = 'ProductItem'
+    __tablename__ = 'product_item'
+    
+    product_id = Column(String(80), ForeignKey("product.id",ondelete="CASCADE"),primary_key= True,nullable=False)
 
-    size_id = Column(String(80), ForeignKey("size.id",ondelete="CASCADE"),nullable=False)
+    size_id = Column(String(80), ForeignKey("size.id",ondelete="CASCADE"),primary_key= True,nullable=False)
     
     size = relationship("Size",backref="related_product_item")
 
@@ -30,7 +32,7 @@ class ProductItem(Base):
 
     sales = Column(Integer, nullable=False)
 
-    product_id = Column(String(80), ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
+    
 
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))

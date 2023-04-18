@@ -36,6 +36,8 @@ class Product(Base):
     color = Column(String(20),nullable=False)
     
     description = Column(String(800), default="")
+
+    product_items = relationship("ProductItem", backref="parent_product",cascade="all, delete",passive_deletes=True )
     
     # size = Column(String(10), default="F")
 

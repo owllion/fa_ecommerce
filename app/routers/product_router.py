@@ -6,7 +6,7 @@ from sqlalchemy import func
 
 from ..constants import api_msgs, exceptions
 from ..exceptions.http_exception import CustomHTTPException
-from ..models.product import product_model
+from ..models.product import product_item_model, product_model, size_model
 from ..schemas import product_schema
 from ..services import product_services
 from ..utils.dependencies import *
@@ -154,12 +154,10 @@ def delete_product(product_id: str,db:Session = Depends(db.get_db)):
         db.delete(product)
         
         db.commit()
-        
+     
     except Exception as e:
         if type(e).__name__ == exceptions.HTTPException: raise e
         raise CustomHTTPException(detail= str(e))
-
-
 
 # @public_router.put("/{product_id}")
 # async def update_item(product_id: str):

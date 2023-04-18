@@ -14,13 +14,12 @@ from pydantic import (
 from .review_schema import ReviewSchema
 
 
+#for image url
 class ProductImageUrlSchema(BaseModel):
-    # id: str
     url: HttpUrl
-    # product_id: str
-
     class Config:
         orm_mode = True
+
 class ProductBaseSchema(BaseModel):
     product_name: str = Field(...,max_length=50)
     thumbnail: str
@@ -72,6 +71,7 @@ class ProductSchema(ProductBaseSchema):
         #自動去populate而不是原本的lazy loading
         #也可讓pydantic model去讀取db model
 
+#for detail page
 class SingleProductSchema(ProductSchema):
     reviews: list[ReviewSchema] = []
     images: list[ProductImageUrlSchema] = []
@@ -79,6 +79,7 @@ class SingleProductSchema(ProductSchema):
     class Config:
         orm_mode = True
 
+#for query product list
 class PaginateProductsSchema(BaseModel):
     page: int = 1
     limit: int = 10
@@ -95,7 +96,6 @@ class PaginateProductsSchema(BaseModel):
 class ResponsePaginateProductsSchema(BaseModel):
     list: list[ProductSchema]
     total: int
-
     class Config:
         orm_mode = True
 

@@ -25,10 +25,13 @@ COUPON_ALREADY_EXISTS = "coupon already exists"
 CART_ITEM_NOT_FOUND = "cart item not found"
 CART_ITEM_QUANTITY_LIMITS_ERROR = "cart item quantity should be greater than 1"
 
+#product_item
+PRODUCT_ITEM_ALREADY_EXISTS = "product item already exists"
+PRODUCT_ITEM_NOT_FOUND = "product item not found"
 
-
-
-
+#size
+SIZE_ALREADY_EXISTS = "size already exists"
+SIZE_NOT_FOUND = "size not found"
 
 #auth/token
 INCORRECT_LOGIN_INPUT = "incorrect email or password"
@@ -42,6 +45,6 @@ AUTHENTICATION_REQUIRED = "authentication required"
 #response
 API_RESPONSES = {
      404: {"description": "Not found"},
-     200: {"description": "OK"},
+     # 200: {"description": "OK"},
      500: {"description": "Internal Server Error"},
 }

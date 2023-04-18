@@ -1,6 +1,13 @@
 from fastapi import APIRouter
 
-from . import auth_router, coupon_router, product_router, review_router, user_router
+from . import (
+    auth_router,
+    coupon_router,
+    product_item_router,
+    product_router,
+    review_router,
+    user_router,
+)
 
 router = APIRouter()
 
@@ -17,13 +24,18 @@ router.include_router(product_router.protected_singular)
 router.include_router(product_router.public_plural)
 router.include_router(product_router.public_singular)
 
+#product_item
+router.include_router(product_item_router.protected_plural)
+router.include_router(product_item_router.protected_singular)
+router.include_router(product_item_router.public_plural)
+router.include_router(product_item_router.public_singular)
+
+
 #reivew
 router.include_router(review_router.protected_plural)
 router.include_router(review_router.protected_singular)
 router.include_router(review_router.public_plural)
 router.include_router(review_router.public_singular)
-
-#cart
 
 #order
 

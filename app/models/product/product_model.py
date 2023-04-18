@@ -32,25 +32,24 @@ class Product(Base):
     brand = Column(String(30), nullable=False)
 
     category = Column(String(30), nullable=False)
-    size = Column(String(10), default="F")
+
     color = Column(String(20),nullable=False)
+    
     description = Column(String(800), default="")
+    
+    # size = Column(String(10), default="F")
 
-    stock = Column(Integer, nullable=False)
+    # stock = Column(Integer, nullable=False)
 
-    availability = Column(Boolean, nullable=False)
-
-    sales = Column(Integer, nullable=False)
-
-    qty = Column(Integer, default=1)
-
-    is_checked = Column(Boolean, default=False)
+    # sales = Column(Integer, nullable=False)
 
     images = relationship("ProductImageUrl", backref="parent_product", cascade="all, delete",passive_deletes=True)
 
     thumbnails = relationship("ThumbnailUrl", backref="parent_product",cascade="all, delete",passive_deletes=True)
 
     reviews = relationship("Review", back_populates="product",cascade="all, delete",passive_deletes=True)
+
+    related_cart_item = relationship("CartItem", back_populates= "product", cascade="all, delete",passive_deletes=True)
 
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))

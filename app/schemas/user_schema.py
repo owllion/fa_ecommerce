@@ -100,25 +100,3 @@ class UserUpdateSchema(BaseModel):
 class UserUploadAvatarSchema(BaseModel):
     url: HttpUrl
 
-#cart
-class SizeValue(str,Enum):
-    xs = 'XS'
-    s = 'S'
-    m = 'M'
-    l = 'L'
-class OperationType(str, Enum):
-    INC = 'inc'
-    DEC = 'dec'
-
-class CartBaseSchema(BaseModel):
-    product_id: str
-    size: SizeValue
-class ItemQtySchema(BaseModel):
-    qty: int | None = Field(1, ge=1,le=99)
-
-class AddToCartSchema(CartBaseSchema,ItemQtySchema):
-    pass 
-class RemoveFromCartSchema(CartBaseSchema):
-    pass 
-class UpdateItemQtySchema(CartBaseSchema):
-    operation_type: OperationType

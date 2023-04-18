@@ -7,7 +7,7 @@ from ..database import db
 from ..models.cart import cart_item_model
 from ..models.user import user_model
 from ..schemas import email_schema, user_schema
-from ..schemas.user_schema import OperationType
+from ..schemas.cart_schema import OperationType
 from ..utils import security
 from ..utils.email import email
 
@@ -126,10 +126,19 @@ def delete_item(db: Session, cart_item: cart_item_model.CartItem):
 
 def update_qty(
     cart_item: cart_item_model.CartItem, 
-    operation_type: str 
+    operation_type: str ,
+    db: Session
 ):
-    cart_item.qty += 1 if operation_type == OperationType.INC else -1 
-    #在購物車裡面做更新，qty只會是+1(因為不給手動輸入)
+    if cart_item.quantity > 1 and cart_item.quantity < 99:
+        cart_item.quantity += 1 if operation_type == OperationType.INC else -1
+        db.commit() 
+        #在購物車裡面做更新，qty只會是+1(因為不給手動輸入)
+    else:
+        raise HTTPException(
+            status_code= status.HTTP_400_BAD_REQUEST,
+            detail= api_msgs.CART_ITEM_QUANTITY_LIMITS_ERROR
+        )
+    
 
-    db.commit()
+    
 

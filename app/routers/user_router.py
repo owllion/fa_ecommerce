@@ -149,36 +149,58 @@ def get_uploaded_avatar_url(
 )
 def add_to_cart(
     req: Request,
-    payload: user_schema.AddToCartSchema,
+    payload: cart_schema.CartItemBaseSchema,
     db: Session = Depends(db.get_db)
 ):
     try:
 
         user_cart = req.state.mydata.cart
 
+        #沒有的話，會是{}
         cart_item = user_services.get_item_from_user_cart(req, payload.product_id, payload.size)
         
-        if cart_item:
-            cart_item.quantity += payload.qty
+        #取庫存、新增cart_item使用
+        product = product_services.find_product_with_id(payload.product_id,db)
 
-        else:
-            product = product_services.find_product_with_id(payload.product_id, db)
-
-            if not product:
-                raise HTTPException(
-                    status_code= status.HTTP_400_BAD_REQUEST,
-                    detail = api_msgs.PRODUCT_NOT_FOUND
-                )
-
-            new_cart_item = cart_item_model.CartItem(
-                quantity= payload.qty,
-                product_id = product.id, 
-                cart_id = user_cart.id
+        if not product:
+            raise HTTPException(
+                status_code= status.HTTP_400_BAD_REQUEST,
+                detail = api_msgs.PRODUCT_NOT_FOUND
             )
 
-            db.add(new_cart_item)
+        if cart_item: #如果商品存在
+            is_available = cart_item.qty + payload.qty < product.stock
+            if is_available: #判斷現在傳入的qty是否<庫存
+                #不用再判斷qty是否>1了 只要最後結果是<stock就可以
+                cart_item.qty += payload.qty
+                #是-> 就直接加
+            else: #不足，就說庫存不足
+                raise HTTPException(
+                    status_code= status.HTTP_400_BAD_REQUEST,
+                    detail= api_msgs.PRODUCT_IS_NOT_AVAILABLE_ERROR
+                )
+            
+        else: #商品不存在 新增一個
+            #也要先判斷數字是否<庫存
+            print(payload.qty,'qty!!')
+            print(product.stock, 'stock')
+            is_available = payload.qty < product.stock
+            if is_available:
+                new_cart_item = cart_item_model.CartItem(
+                    qty = payload.qty,
+                    product_id = product.id, 
+                    cart_id = user_cart.id,
+                    size = payload.size
+                )
 
-            user_cart.cart_items.append(new_cart_item)
+                db.add(new_cart_item)
+
+                user_cart.cart_items.append(new_cart_item)
+            else:
+                raise HTTPException(
+                    status_code= status.HTTP_400_BAD_REQUEST,
+                    detail= api_msgs.PRODUCT_IS_NOT_AVAILABLE_ERROR
+                )
 
         db.commit()
 
@@ -194,7 +216,7 @@ def add_to_cart(
 )
 def remove_from_cart(
     req: Request,
-    payload: user_schema.RemoveFromCartSchema,
+    payload: cart_schema.RemoveFromCartSchema,
     db: Session = Depends(db.get_db)
 ):
     print("remove!!")
@@ -215,7 +237,7 @@ def remove_from_cart(
 )
 def update_item_qty(
     req: Request,
-    payload: user_schema.UpdateItemQtySchema,
+    payload: cart_schema.UpdateItemQtySchema,
     db: Session = Depends(db.get_db)
 ):
     try:
@@ -227,7 +249,7 @@ def update_item_qty(
                 detail= api_msgs.CART_ITEM_NOT_FOUND
             )
         
-        user_services.update_qty(cart_item, payload.operation_type)
+        user_services.update_qty(cart_item, payload.operation_type, db)
 
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e
@@ -238,25 +260,25 @@ def update_item_qty(
     "/cart", 
     **get_path_decorator_settings(
         description="Get user's cart",
-        response_model= list[product_schema.ProductSchema]
+        response_model= list[cart_schema.CartItemSchema]
     )
 )
 def get_user_cart(
     req: Request,
     db: Session = Depends(db.get_db)
 ):
-    print("取得user購物車")
     try:
-       items = jsonable_encoder(req.state.mydata.cart.cart_items)
-       first_p = jsonable_encoder(req.state.mydata.cart.cart_items[0].product)
-    #    print(first_p,'首個商品')
-    #    print(items)
-    #    print(len(req.state.mydata.cart.cart_items),"長度")
-       
-       for item in items:
-            item = jsonable_encoder(item)
-            print(jsonable_encoder(item.product))
-       return [product for item in items for product in item]
+        items = jsonable_encoder(req.state.mydata.cart.cart_items)
+        first_p = jsonable_encoder(req.state.mydata.cart.cart_items[0].product)
+        #    print(first_p,'首個商品')
+        #    print(items)
+        #    print(len(req.state.mydata.cart.cart_items),"長度")
+        cart_items = req.state.mydata.cart.cart_items 
+        for item in req.state.mydata.cart.cart_items:
+                res = jsonable_encoder(item.product)
+                print(res,'這是res')
+                # print(jsonable_encoder(item.product))
+        return [item for item in cart_items]
 
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e

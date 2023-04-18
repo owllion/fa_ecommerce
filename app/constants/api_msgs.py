@@ -6,6 +6,7 @@ USER_ALREADY_EXISTS = "user already exists"
 #product
 PRODUCT_NOT_FOUND = "product not found"
 PRODUCT_ALREADY_EXISTS = "product already exists"
+PRODUCT_IS_NOT_AVAILABLE_ERROR = "the product is not available"
 
 #review
 REVIEW_NOT_FOUND = "review not found"
@@ -22,6 +23,11 @@ COUPON_ALREADY_EXISTS = "coupon already exists"
 
 #cart_item
 CART_ITEM_NOT_FOUND = "cart item not found"
+CART_ITEM_QUANTITY_LIMITS_ERROR = "cart item quantity should be greater than 1"
+
+
+
+
 
 
 #auth/token

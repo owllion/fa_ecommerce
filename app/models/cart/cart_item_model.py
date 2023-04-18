@@ -29,11 +29,12 @@ class CartItem(Base):
 
     product_id = Column(String(80), ForeignKey("product.id",ondelete="CASCADE"),primary_key=True, nullable=False)
 
-    quantity = Column(Integer, default=1)
+    product = relationship("Product", back_populates= "related_cart_item")
 
-    size = Column(String(5), nullable= False)
+    size = Column(String(5), primary_key=True,nullable= False)
 
-    product = relationship("Product", backref="related_cart_item")
+    qty = Column(Integer, default=1)
+
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
     

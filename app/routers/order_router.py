@@ -24,9 +24,11 @@ async def create_order(
     payload: order_schema.OrderCreateSchema, 
     db: Session = Depends(db.get_db)
 ):
+    print("crate order??")
     
     try:
         await order_services.create_order(payload, db)
+        print("有執行到這嗎")
         await order_services.create_order_item(payload.order_items, db)
 
     except Exception as e:

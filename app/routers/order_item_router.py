@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, status
 from ..constants import api_msgs
 from ..exceptions.custom_http_exception import CustomHTTPException
 from ..schemas import order_schema
-from ..services import order_item_services, order_services,product_item_services
+from ..services import order_item_services, order_services, product_item_services
 from ..utils.dependencies import *
 from ..utils.router_settings import get_path_decorator_settings, get_router_settings
 
@@ -79,7 +79,7 @@ async def get_order_items(
     db:Session = Depends(db.get_db)
 ):
     try:
-       order = order_services.get_order_or_raise_not_found(order_id, db)
+        order = order_services.get_order_or_raise_not_found(order_id, db)
         return order.order_items
           
     except Exception as e:

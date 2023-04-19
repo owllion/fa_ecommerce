@@ -4,6 +4,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, root_validator
 
+from ..models.order.order_model import OrderStatus, PaymentStatus
 from . import product_schema, user_schema
 from .cart_schema import ProductInfoInCartSchema, SizeValue
 
@@ -20,7 +21,7 @@ class OrderItemCreateSchema(OrderItemBaseSchema):
 class OrderItemUpdateSchema(OrderItemBaseSchema):
     pass
 class OrderItemSchema(OrderItemBaseSchema): 
-    product: ProductInfoInCartSchema
+    product_info: ProductInfoInCartSchema
     class Config:
         orm_mode = True
 
@@ -30,13 +31,6 @@ class OrderItemDeleteSchema(BaseModel):
     size: SizeValue 
 
 #Order
-class OrderStatus(str, Enum):
-    COMPLETED = 'completed'
-    CANCELED = 'canceled'
-
-class PaymentStatus(str, Enum):
-    PAID = 'paid'
-
 class OrderBaseSchema(BaseModel):
     delivery_address: str
     discount: float = 0
@@ -46,8 +40,8 @@ class OrderBaseSchema(BaseModel):
     shipping: float
     receiver_name: str 
     payment_method: str = "credit_card"
-    payment_status: PaymentStatus = PaymentStatus.PAID
-    order_status: OrderStatus = OrderStatus.COMPLETED
+    payment_status: PaymentStatus = Field(PaymentStatus.PAID, description= "0 -> paid")
+    order_status: OrderStatus = Field(OrderStatus.COMPLETED, description= "0-> completed, 1-> canceled")
 
     class Config:
         orm_mode = True

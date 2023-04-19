@@ -40,7 +40,7 @@ class OrderItem(Base):
         back_populates="order_items"
     )
 
-    product = relationship(
+    product_info = relationship(
         "Product", 
         backref="order_items"
     )

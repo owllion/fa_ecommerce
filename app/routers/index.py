@@ -3,6 +3,8 @@ from fastapi import APIRouter
 from . import (
     auth_router,
     coupon_router,
+    order_item_router,
+    order_router,
     product_item_router,
     product_router,
     review_router,
@@ -30,7 +32,6 @@ router.include_router(product_item_router.protected_singular)
 router.include_router(product_item_router.public_plural)
 router.include_router(product_item_router.public_singular)
 
-
 #reivew
 router.include_router(review_router.protected_plural)
 router.include_router(review_router.protected_singular)
@@ -38,6 +39,17 @@ router.include_router(review_router.public_plural)
 router.include_router(review_router.public_singular)
 
 #order
+router.include_router(order_router.protected_plural)
+router.include_router(order_router.protected_singular)
+router.include_router(order_router.public_plural)
+router.include_router(order_router.public_singular)
+
+#order_item
+router.include_router(order_item_router.protected_plural)
+router.include_router(order_item_router.protected_singular)
+router.include_router(order_item_router.public_plural)
+router.include_router(order_item_router.public_singular)
+
 
 #coupon
 router.include_router(coupon_router.protected_plural)

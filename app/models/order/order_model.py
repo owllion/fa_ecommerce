@@ -29,7 +29,7 @@ class Order(Base):
 
     id = Column(String(80), primary_key=True, index=True,default=gen_id)
 
-    order_status = Column(Integer, default=OrderStatus.COMPLETED) 
+    order_status = Column(Integer, default=OrderStatus.COMPLETED.value,nullable= False) 
 
     # order_id = Column(String(10), unique=True, nullable=False)
 
@@ -53,10 +53,10 @@ class Order(Base):
     shipping = Column(Float, nullable=False)
 
     receiver_name = Column(String(50), nullable=False)
+    
+    payment_method = Column(String(20), default="credit_card",nullable= False)
 
-    payment_method = Column(String(20), default="credit_card")
-
-    payment_status = Column(Integer, default=PaymentStatus.PAID) 
+    payment_status = Column(Integer, default=PaymentStatus.PAID.value,nullable= False) 
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
     

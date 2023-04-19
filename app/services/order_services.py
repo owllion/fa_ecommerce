@@ -22,16 +22,20 @@ def delete_item(item: product_item_schema.ProductItemSchema,db: Session):
 #general-----
 #----------order
 async def create_order(payload: order_schema.OrderCreateSchema,db: Session):
-    order = order_model.Order(**payload.dict())
+    order_data = {k: v for k, v in payload.dict().items() if k != 'order_items'}
+    order = order_model.Order(**order_data)
+    # order = order_model.Order(**payload.dict())
     db.add(order)
     db.commit()
+    db.refresh(order)  # 從資料庫中重新加載對象
+    print("cdreate order最後")
 
 async def find_order_with_id(id: str, db: Session):
     order = db.query(order_model.Order).filter_by(id=id).first()
     return order
 
 async def order_exists(order_id: str, db: Session):
-    order = find_order_with_id(order_id)
+    order = find_order_with_id(order_id, db)
     if order: return True
     raise raise_http_exception(
         status.HTTP_400_BAD_REQUEST,
@@ -77,14 +81,22 @@ async def delete_order_record(order_id: str, db: Session):
 #----------order---
 
 #------order_item----
-async def create_order_item(order_items: list[order_schema.OrderItemCreateSchema],db: Session):
-    print(order_items,'this is payload in c_o_i')
+async def create_order_item(
+    order_items: list[order_schema.OrderItemCreateSchema],
+    db: Session
+):
+    print(order_items,'這是新增 order_item')
 
     for item in order_items:
         order_item = order_item_model.OrderItem(**item.dict())
         print(order_item,'this is order_item')
         db.add(order_item)
+        # db.refresh(order_item)
+       
     db.commit()
+    print(order_items,'這是commit order_item')
+     
+
 #------order_item----
 
 

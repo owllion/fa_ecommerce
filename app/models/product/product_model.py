@@ -38,12 +38,6 @@ class Product(Base):
     description = Column(String(800), default="")
 
     product_items = relationship("ProductItem", backref="parent_product",cascade="all, delete",passive_deletes=True )
-    
-    # size = Column(String(10), default="F")
-
-    # stock = Column(Integer, nullable=False)
-
-    # sales = Column(Integer, nullable=False)
 
     images = relationship("ProductImageUrl", backref="parent_product", cascade="all, delete",passive_deletes=True)
 
@@ -52,7 +46,6 @@ class Product(Base):
     reviews = relationship("Review", back_populates="product",cascade="all, delete",passive_deletes=True)
 
     related_cart_item = relationship("CartItem", back_populates= "product", cascade="all, delete",passive_deletes=True)
-
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
     

@@ -11,23 +11,25 @@ from .cart_schema import ProductInfoInCartSchema, SizeValue
 
 # #OrderItem
 class OrderItemBaseSchema(BaseModel):
-    product_id: int
+    product_id: str
     qty: int | None = Field(None, ge=1, le=99)
     size: SizeValue 
     class Config:
         orm_mode = True
 class OrderItemCreateSchema(OrderItemBaseSchema):
-    order_id: int
+    order_id: str
 class OrderItemUpdateSchema(OrderItemBaseSchema):
     pass
-class OrderItemSchema(OrderItemBaseSchema): 
+class OrderItemSchema(OrderItemBaseSchema):
+    order_id: str
     product_info: ProductInfoInCartSchema
     class Config:
         orm_mode = True
 
+
 class OrderItemDeleteSchema(BaseModel):
-    product_id: int
-    order_id: int
+    product_id: str
+    order_id: str
     size: SizeValue 
 
 #Order
@@ -48,9 +50,9 @@ class OrderBaseSchema(BaseModel):
 
 
 class OrderCreateSchema(OrderBaseSchema):
-    owner_id: int
+    owner_id: str
     #can not be modified, so that when updating,that schema can directly inherit base schema.
-    order_items: list[OrderItemSchema]
+    order_items: list[OrderItemCreateSchema]
 
 
 base_keys = list(OrderBaseSchema.__annotations__.keys())

@@ -16,19 +16,17 @@ protected_plural,protected_singular,public_plural,public_singular = get_router_s
 @protected_singular.post(
     "/", 
     **get_path_decorator_settings(
-        description= "Successfully create the order.",
-        response_model= order_schema.OrderSchema
+        description= "Successfully create the order."
     )
 )
 async def create_order(
     payload: order_schema.OrderCreateSchema, 
     db: Session = Depends(db.get_db)
 ):
-    print("crate order??")
     
     try:
         await order_services.create_order(payload, db)
-        print("有執行到這嗎")
+        await order_services.update_stock_and_sales_for_all_order_items(payload.order_items, db)
         await order_services.create_order_item(payload.order_items, db)
 
     except Exception as e:
@@ -104,7 +102,7 @@ async def update_order(
     try:
         order = await order_services.get_order_or_raise_not_found(payload.id, db)
         
-        order_services.update_order_record(payload, order, db)
+        await order_services.update_order_record(payload, order, db)
         
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e
@@ -117,9 +115,9 @@ async def update_order(
         description= "Successfully delete the order.",
     )
 )
-def delete_order(order_id: str,db:Session = Depends(db.get_db)):
+async def delete_order(order_id: str,db:Session = Depends(db.get_db)):
     try:
-        order_services.delete_order_record(order_id, db)
+        await order_services.delete_order_record(order_id, db)
         
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e

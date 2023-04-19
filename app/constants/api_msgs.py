@@ -15,6 +15,10 @@ REVIEW_NOT_FOUND = "review not found"
 ORDER_ALREADY_EXISTS = "order already exists"
 ORDER_NOT_FOUND = "order not found"
 
+#order_item
+ORDER_ITEM_NOT_FOUND = "order item not found"
+
+
 #coupon
 COUPON_NOT_FOUND = "coupon not found"
 COUPON_EXPIRED = "coupon expired"

@@ -7,7 +7,7 @@ from .product_schema import ProductSchema
 
 
 #-----
-class ProductInfoForCartItemSchema(BaseModel):
+class ProductInfoInCartSchema(BaseModel):
     thumbnail: str
     product_name: str
     class Config:
@@ -37,7 +37,7 @@ class CartItemUpdateSchema(CartItemBaseSchema):
     pass
 
 class CartItemSchema(CartItemBaseSchema): 
-    product: ProductInfoForCartItemSchema
+    product: ProductInfoInCartSchema
     class Config:
         orm_mode = True
 

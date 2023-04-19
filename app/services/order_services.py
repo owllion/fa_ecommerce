@@ -4,9 +4,9 @@ from sqlalchemy.orm import Session
 from ..constants import api_msgs
 from ..database import db
 from ..exceptions.get_exception import raise_http_exception
-from ..models.order import order_model
+from ..models.order import order_item_model, order_model
 from ..models.product import product_item_model, product_model, size_model
-from ..schemas import product_item_schema
+from ..schemas import order_schema, product_item_schema
 from . import product_services
 
 #general-----
@@ -20,6 +20,73 @@ def delete_item(item: product_item_schema.ProductItemSchema,db: Session):
     db.commit()
 
 #general-----
+#----------order
+async def create_order(payload: order_schema.OrderCreateSchema,db: Session):
+    order = order_model.Order(**payload.dict())
+    db.add(order)
+    db.commit()
+
+async def find_order_with_id(id: str, db: Session):
+    order = db.query(order_model.Order).filter_by(id=id).first()
+    return order
+
+async def order_exists(order_id: str, db: Session):
+    order = find_order_with_id(order_id)
+    if order: return True
+    raise raise_http_exception(
+        status.HTTP_400_BAD_REQUEST,
+        api_msgs.ORDER_NOT_FOUND
+    )
+
+async def get_order_or_raise_not_found(id: str, db: Session):
+    order = await find_order_with_id(id, db)
+    if not order:
+        raise raise_http_exception(
+            status_code= status.HTTP_400_BAD_REQUEST,
+            detail= api_msgs.ORDER_NOT_FOUND
+        )
+    
+    return order
+
+async def get_all_orders(db: Session):
+    return db.query(order_model.Order).all()
+
+async def get_orders_by_user_id(user_id: str, db: Session):
+    return db.query(order_model.Order).filter_by(owner_id=user_id).all()
+
+
+async def update_order_record(
+    payload: order_schema.OrderUpdateSchema, 
+    order: order_model.Order,
+    db: Session
+):
+    data = payload.dict(exclude_unset=True)
+
+    for field,value in data.items():
+        if hasattr(order, field):
+            setattr(order, field, value)
+    
+    db.commit()
+
+async def delete_order_record(order_id: str, db: Session):
+    order = await get_order_or_raise_not_found(order_id, db)
+    db.delete(order)
+    db.commit()
+
+
+#----------order---
+
+#------order_item----
+async def create_order_item(order_items: list[order_schema.OrderItemCreateSchema],db: Session):
+    print(order_items,'this is payload in c_o_i')
+
+    for item in order_items:
+        order_item = order_item_model.OrderItem(**item.dict())
+        print(order_item,'this is order_item')
+        db.add(order_item)
+    db.commit()
+#------order_item----
+
 
 
 #---product_item---

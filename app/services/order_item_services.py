@@ -8,10 +8,8 @@ from ..schemas import order_schema
 
 
 async def create_order_item(payload: order_schema.OrderItemCreateSchema,db: Session):
-    print(payload,'this is payload in c_o_i')
 
     order_item = order_item_model.OrderItem(**payload.dict())
-    print(order_item,'this is order_item')
     
     db.add(order_item)
     db.commit()
@@ -58,14 +56,8 @@ def get_order_item_or_raise_not_found(
     raise_http_exception(api_msgs.ORDER_ITEM_NOT_FOUND)
 
 def delete_order_item_record(
-    order_id: str,
-    product_id: str,
-    size: str,
+    order_item: order_item_model.OrderItem,
     db: Session
 ):
-    print("這是delete_order+item record")
-    order_item = get_order_item_or_raise_not_found(order_id,product_id,size,db)
-    print(order_item,'這是order_item')
-
     db.delete(order_item)
     db.commit()

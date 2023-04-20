@@ -45,8 +45,9 @@ def delete_order_item(
     product_id, order_id, size = payload.product_id, payload.order_id, payload.size.value
 
     try:
-        if order_item_services.order_item_exists:
-            order_item_services.delete_order_item_record(order_id,product_id,size,db)
+        order_item = order_item_services.get_order_item_or_raise_not_found(order_id, product_id, size, db)
+
+        order_item_services.delete_order_item_record(order_item,db)
         
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e

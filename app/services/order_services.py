@@ -1,4 +1,5 @@
-from fastapi import Depends, status
+from fastapi import Depends, Request, status
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from ..constants import api_msgs
@@ -7,7 +8,7 @@ from ..exceptions.get_exception import raise_http_exception
 from ..models.order import order_item_model, order_model
 from ..models.product import product_item_model, product_model, size_model
 from ..schemas import order_schema, product_item_schema
-from . import product_item_services, product_services
+from . import coupon_services, product_item_services, product_services
 
 
 def find_corresponding_size_id_with(size: str, db: Session):
@@ -32,7 +33,7 @@ async def update_stock_and_sales_for_all_order_items(order_items: list[order_sch
         await update_stock_and_sales(item, db)
 
 
-async def create_order(payload: order_schema.OrderCreateSchema,db: Session):
+async def create_order_and_return_id(payload: order_schema.OrderCreateSchema,db: Session):
 
     payload.payment_status = payload.payment_status.value
     payload.order_status = payload.order_status.value
@@ -45,6 +46,8 @@ async def create_order(payload: order_schema.OrderCreateSchema,db: Session):
     db.add(order)
     db.commit()
     db.refresh(order)  #從資料庫中重新加載對象
+
+    return order.id
 
 async def find_order_with_id(id: str, db: Session):
     order = db.query(order_model.Order).filter_by(id=id).first()
@@ -98,11 +101,24 @@ async def delete_order_record(order_id: str, db: Session):
 
 async def create_order_item(
     order_items: list[order_schema.OrderItemCreateSchema],
+    order_id: str,
     db: Session
 ):
+    order_items = [jsonable_encoder(item) for item in order_items]
+
     for item in order_items:
-        order_item = order_item_model.OrderItem(**item.dict())
+
+        item['order_id'] = order_id
+
+        order_item = order_item_model.OrderItem(**item)
 
         db.add(order_item)
         db.commit() 
-        db.refresh(order_item)     
+        db.refresh(order_item) 
+         
+def set_coupon_as_used(req: Request, code: str, db: Session):
+    coupon = coupon_services.get_coupon_or_raise_not_found(req, code, db)
+
+    coupon.is_used = True
+
+    db.commit()

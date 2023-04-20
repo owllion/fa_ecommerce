@@ -6,6 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from ..constants import api_msgs
+from ..exceptions.get_exception import raise_http_exception
 from ..models.coupon import coupon_model
 from ..schemas import coupon_schema
 
@@ -73,6 +74,18 @@ def get_coupon_from_req_user(req: Request, code: str):
     coupon = list(filter(lambda x:x.code == code,req.state.mydata.coupons))
 
     return coupon[0] if coupon else None
+    
+def get_coupon_or_raise_not_found(
+    req: Request, 
+    code: str, 
+    db: Session
+):
+    coupon = get_coupon_from_req_user(req, code)
+
+    if not coupon:
+        raise_http_exception(api_msgs.COUPON_NOT_FOUND)
+
+    return coupon
 
 def get_final_price_and_discounted_amount(
     coupon: coupon_model.Coupon, 
@@ -126,10 +139,10 @@ def update_coupon_with(
 ):
 
     data = payload.dict(exclude_unset=True)
-    #convert pydantic instance to dictionary to use py's items()
+    #convert pydantic instance to dictionary for using py's items()
 
     for field, value in data.items():
-        if hasattr(coupon, field) :
+        if hasattr(coupon, field):
             setattr(coupon, field, value)
         
     db.commit()

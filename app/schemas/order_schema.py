@@ -16,9 +16,7 @@ class OrderItemBaseSchema(BaseModel):
     size: SizeValue 
     class Config:
         orm_mode = True
-class OrderItemCreateSchema(OrderItemBaseSchema):
-    order_id: str
-class OrderItemUpdateSchema(OrderItemBaseSchema):
+class OrderItemCreateSchema(OrderItemBaseSchema): #front end doesn't have to pass order_id
     pass
 class OrderItemSchema(OrderItemBaseSchema):
     order_id: str

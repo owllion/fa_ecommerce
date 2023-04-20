@@ -20,14 +20,21 @@ protected_plural,protected_singular,public_plural,public_singular = get_router_s
     )
 )
 async def create_order(
+    req: Request,
     payload: order_schema.OrderCreateSchema, 
     db: Session = Depends(db.get_db)
 ):
     
     try:
-        await order_services.create_order(payload, db)
+        order_id = await order_services.create_order_and_return_id(payload, db)
+
+        await order_services.create_order_item(payload.order_items,order_id,db)
+
+        if payload.discount_code:
+            order_services.set_coupon_as_used(req, payload.discount_code, db)
+
         await order_services.update_stock_and_sales_for_all_order_items(payload.order_items, db)
-        await order_services.create_order_item(payload.order_items, db)
+        
 
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e

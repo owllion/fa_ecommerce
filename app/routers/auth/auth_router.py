@@ -5,14 +5,14 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
-from ..database import db
-from ..exceptions.custom_http_exception import CustomHTTPException
-from ..schemas import user_schema
-from ..services import user_services
-from ..utils import security
-from ..utils.dependencies import *
-from ..utils.logger import logger
-from ..utils.router_settings import get_path_decorator_settings
+from ...database import db
+from ...exceptions.custom_http_exception import CustomHTTPException
+from ...schemas import user_schema
+from ...services import user_services
+from ...utils import security
+from ...utils.dependencies import *
+from ...utils.logger import logger
+from ...utils.router_settings import get_path_decorator_settings
 
 router = APIRouter(
     prefix="/auth",

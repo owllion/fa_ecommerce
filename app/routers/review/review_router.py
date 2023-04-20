@@ -1,11 +1,11 @@
 from fastapi import Depends, HTTPException, status
 
-from ..constants import api_msgs
-from ..exceptions.custom_http_exception import CustomHTTPException
-from ..schemas import review_schema
-from ..services import review_services
-from ..utils.dependencies import *
-from ..utils.router_settings import get_path_decorator_settings, get_router_settings
+from ...constants import api_msgs
+from ...exceptions.custom_http_exception import CustomHTTPException
+from ...schemas import review_schema
+from ...services import review_services
+from ...utils.dependencies import *
+from ...utils.router_settings import get_path_decorator_settings, get_router_settings
 
 protected_plural,protected_singular,public_plural,public_singular = get_router_settings(
     singular_prefix = 'review',

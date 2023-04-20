@@ -4,13 +4,13 @@ from fastapi import status
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import func
 
-from ..constants import api_msgs, exceptions
-from ..exceptions.custom_http_exception import CustomHTTPException
-from ..models.product import product_item_model, product_model, size_model
-from ..schemas import product_item_schema
-from ..services import product_item_services, product_services
-from ..utils.dependencies import *
-from ..utils.router_settings import get_path_decorator_settings, get_router_settings
+from ...constants import api_msgs, exceptions
+from ...exceptions.custom_http_exception import CustomHTTPException
+from ...models.product import product_item_model, product_model, size_model
+from ...schemas import product_item_schema
+from ...services import product_item_services, product_services
+from ...utils.dependencies import *
+from ...utils.router_settings import get_path_decorator_settings, get_router_settings
 
 protected_plural,protected_singular,public_plural,public_singular = get_router_settings(
     singular_prefix = 'product-item',

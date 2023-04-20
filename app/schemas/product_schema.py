@@ -100,3 +100,5 @@ class FavoriteItemCreateSchema(ProductSchema):
     user_id: str
     product_id: str
 
+class ToggleFavoriteSchema(BaseModel):
+    product_id: str

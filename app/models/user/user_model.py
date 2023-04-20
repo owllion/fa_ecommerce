@@ -36,7 +36,9 @@ class User(Base):
 
     favorites = relationship(
         "Product", 
-        backref="users", secondary="user_favorite",cascade="all, delete",passive_deletes=True
+        backref="users", 
+        secondary="user_favorite",
+        cascade="all, delete",passive_deletes=True
     )
 
     coupons = relationship(

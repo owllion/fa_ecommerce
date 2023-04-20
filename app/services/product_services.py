@@ -1,10 +1,13 @@
-from fastapi import Depends
+from fastapi import Depends, Request
 from sqlalchemy import and_, asc, desc, func
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.query import Query
 
+from ..constants import api_msgs
 from ..database import db
+from ..exceptions.get_exception import raise_http_exception
 from ..models.product import product_model
+from ..models.user import user_favorite_model, user_model
 from ..schemas import product_schema
 
 
@@ -18,11 +21,35 @@ def find_product_with_name(
 
 def find_product_with_id(
     id: str,
-    db: Session = Depends(db.get_db)
+    db: Session
 ):
     product = db.query(product_model.Product).filter(product_model.Product.id == id).first()
 
     return product
+
+def get_product_or_raise_not_found(product_id: str, db: Session):
+    product = find_product_with_id(product_id, db)
+    if not product:
+        raise_http_exception(api_msgs.PRODUCT_NOT_FOUND)
+
+    return product
+
+def find_user_fav(user_id: str, product_id: str,db: Session):
+    product = db\
+        .query(user_favorite_model.UserFavorite)\
+        .filter_by(
+            user_id = user_id,
+            product_id = product_id
+        )\
+        .first()
+    
+    return product
+
+def product_in_user_fav(user_id: str, product_id: str,db: Session):
+    product = find_user_fav(user_id, product_id, db)
+    
+    return True if product else False
+
 
 def save_to_db_then_return(
     payload: product_schema.ProductCreateSchema, 
@@ -37,10 +64,22 @@ def save_to_db_then_return(
 
 
 def get_price_range(price: str):
-  return {
-    'min_': int(price[:price.index("-")]) or 0,
-    'max_': int(price[price.index("-") + 1:]) or 0,
-  }
+    """
+    This function is used to get the minimum and maximum price range from a string input that represents a price range.
+    The input string should be in the format of '100-200'. The index('-') function is used to find the position of the '-' character
+    to split the string into the lower and upper bounds of the price range.
+    """
+    
+    try:
+        min_price,max_price = price.split("-")
+
+        return {
+            'min_': int(min_price.strip()) if max_price else 0,
+            'max_': int(max_price.strip()) if min_price else 0,
+        }
+    
+    except (ValueError, AttributeError):
+        return {'min_': 0, 'max_': 0}
 
 def get_filters(payload: product_schema.PaginateProductsSchema):
     filters = []
@@ -100,8 +139,6 @@ def filter_products(query: Query, payload: product_schema.PaginateProductsSchema
                 order_by_fn(getattr(product_model.Product,payload.sort_by))
             )\
             
-            
-
         return {
             'total': sorted_results.count(),
             'list': sorted_results\
@@ -111,10 +148,8 @@ def filter_products(query: Query, payload: product_schema.PaginateProductsSchema
         }
         
     else:
-    
         unsorted_results = query\
             .filter(*filters)\
-            .offset(offset)\
 
         return {
             'total': unsorted_results.count(),

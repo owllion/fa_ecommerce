@@ -32,3 +32,51 @@ protected_plural,protected_singular,public_plural,public_singular = get_router_s
     plural_prefix = 'user-favorites',
     tags = ['user-favorite']
 )
+
+@protected_singular.post(
+    "/",
+    **get_path_decorator_settings(
+        description= "Add or remove a product to/from user's list of favorites"
+    )
+)
+def toggle_fav(
+    req: Request,
+    payload: product_schema.ToggleFavoriteSchema,
+    db: Session = Depends(db.get_db)
+):
+    try:
+        user = req.state.mydata
+
+        product = product_services.get_product_or_raise_not_found(payload.product_id,db)
+
+        if product_services.product_in_user_fav(user, payload.product_id, db):
+            user.favorites.remove(product)
+        else:
+            user.favorites.append(product)
+        
+        db.commit()
+        
+
+    except Exception as e:
+        if isinstance(e, (HTTPException,)): raise e
+        raise CustomHTTPException(detail= str(e))
+    
+# @protected_singular(
+#     **get_path_decorator_settings(
+#         description= "Remove the product from user's fav list"
+#     )
+# )
+# def remove_from_fav(req: Request,product_id: str, db: Session = Depends(db.get_db)):
+#     try:
+#         user = req.state.mydata
+
+#         product = product_services.get_product_or_raise_not_found(product_id, db)
+
+#         user.favorites.remove(product)
+
+#         db.commit()
+        
+
+#     except Exception as e:
+#         if isinstance(e, (HTTPException,)): raise e
+#         raise CustomHTTPException(detail= str(e))

@@ -15,7 +15,7 @@ def find_corresponding_size_id_with(size: str, db: Session):
     return db.query(size_model.Size).filter_by(value= size).first().id
 
 
-async def update_stock_and_sales(item: order_schema.OrderItemSchema, db: Session):
+def update_stock_and_sales(item: order_schema.OrderItemSchema, db: Session):
     item.size = item.size.value
     size_id = find_corresponding_size_id_with(item.size, db)
 
@@ -28,12 +28,12 @@ async def update_stock_and_sales(item: order_schema.OrderItemSchema, db: Session
     db.commit()
 
 
-async def update_stock_and_sales_for_all_order_items(order_items: list[order_schema.OrderItemSchema], db: Session):
+def update_stock_and_sales_for_all_order_items(order_items: list[order_schema.OrderItemSchema], db: Session):
     for item in order_items:
-        await update_stock_and_sales(item, db)
+        update_stock_and_sales(item, db)
 
 
-async def create_order_and_return_id(payload: order_schema.OrderCreateSchema,db: Session):
+def create_order_and_return_id(payload: order_schema.OrderCreateSchema,db: Session):
 
     payload.payment_status = payload.payment_status.value
     payload.order_status = payload.order_status.value
@@ -49,36 +49,33 @@ async def create_order_and_return_id(payload: order_schema.OrderCreateSchema,db:
 
     return order.id
 
-async def find_order_with_id(id: str, db: Session):
+def find_order_with_id(id: str, db: Session):
     order = db.query(order_model.Order).filter_by(id=id).first()
     return order
 
-async def order_exists(order_id: str, db: Session):
+def order_exists(order_id: str, db: Session):
     order = find_order_with_id(order_id, db)
     if order: return True
-    raise raise_http_exception(
-        status.HTTP_400_BAD_REQUEST,
+
+    raise_http_exception(
         api_msgs.ORDER_NOT_FOUND
     )
 
-async def get_order_or_raise_not_found(id: str, db: Session):
-    order = await find_order_with_id(id, db)
+def get_order_or_raise_not_found(id: str, db: Session):
+    order = find_order_with_id(id, db)
     if not order:
-        raise raise_http_exception(
-            status_code= status.HTTP_400_BAD_REQUEST,
-            detail= api_msgs.ORDER_NOT_FOUND
-        )
+        raise_http_exception(api_msgs.ORDER_NOT_FOUND)
     
     return order
 
-async def get_all_orders(db: Session):
+def get_all_orders(db: Session):
     return db.query(order_model.Order).all()
 
-async def get_orders_by_user_id(user_id: str, db: Session):
+def get_orders_by_user_id(user_id: str, db: Session):
     return db.query(order_model.Order).filter_by(owner_id=user_id).all()
 
 
-async def update_order_record(
+def update_order_record(
     payload: order_schema.OrderUpdateSchema, 
     order: order_model.Order,
     db: Session
@@ -94,12 +91,12 @@ async def update_order_record(
     
     db.commit()
 
-async def delete_order_record(order_id: str, db: Session):
-    order = await get_order_or_raise_not_found(order_id, db)
+def delete_order_record(order_id: str, db: Session):
+    order = get_order_or_raise_not_found(order_id, db)
     db.delete(order)
     db.commit()
 
-async def create_order_item(
+def create_order_item(
     order_items: list[order_schema.OrderItemCreateSchema],
     order_id: str,
     db: Session

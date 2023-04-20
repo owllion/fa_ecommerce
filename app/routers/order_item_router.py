@@ -38,18 +38,15 @@ async def get_order_items(
         description= "Successfully delete the order item.",
     )
 )
-async def delete_order_item(
+def delete_order_item(
     payload: order_schema.OrderItemDeleteSchema,
     db:Session = Depends(db.get_db)
 ):    
-    product_id,order_id,size = payload
+    product_id, order_id, size = payload.product_id, payload.order_id, payload.size.value
 
     try:
-        if\
-            product_item_services.product_exists(product_id, db)\
-                and\
-            order_services.order_exists(order_id, db):
-                order_item_services.delete_order_item_record(order_id,product_id,size,db)
+        if order_item_services.order_item_exists:
+            order_item_services.delete_order_item_record(order_id,product_id,size,db)
         
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e

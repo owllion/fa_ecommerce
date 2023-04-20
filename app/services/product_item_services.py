@@ -97,10 +97,7 @@ def product_exists(product_id: int, db: Session):
     product = get_product(product_id, db)
     if product: return True
 
-    raise_http_exception(
-        status.HTTP_400_BAD_REQUEST,
-        api_msgs.PRODUCT_NOT_FOUND
-    )
+    raise_http_exception(api_msgs.PRODUCT_NOT_FOUND)
  
 
 #---product---

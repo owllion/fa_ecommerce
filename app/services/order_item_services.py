@@ -17,7 +17,7 @@ async def create_order_item(payload: order_schema.OrderItemCreateSchema,db: Sess
     db.commit()
 
 
-async def find_order_item(
+def find_order_item(
     order_id: str,
     product_id: str,
     size: str,
@@ -29,28 +29,24 @@ async def find_order_item(
             order_item_model.OrderItem.product_id == product_id,
             order_item_model.OrderItem.order_id == order_id,
             order_item_model.OrderItem.size == size
-
         )\
         .first()
 
     return order_item
         
 
-async def order_item_not_exists(
+def order_item_exists(
     order_id: str,
     product_id: str,
     size: str,
     db: Session
 ):
     order_item = find_order_item(order_id,product_id, size,db)
-    if not order_item: return True 
+    if order_item: return True 
 
-    raise_http_exception(
-        status.HTTP_400_BAD_REQUEST,
-        api_msgs.ORDER_ITEM_NOT_FOUND
-    )
+    raise_http_exception(api_msgs.ORDER_ITEM_NOT_FOUND)
 
-async def get_order_item_or_raise_not_found(
+def get_order_item_or_raise_not_found(
     order_id: str,
     product_id: str,
     size: str,
@@ -59,18 +55,17 @@ async def get_order_item_or_raise_not_found(
     order_item = find_order_item(order_id,product_id,size,db)
     if order_item: return order_item
 
-    raise_http_exception(
-        status.HTTP_400_BAD_REQUEST,
-        api_msgs.ORDER_ITEM_NOT_FOUND
-    )
+    raise_http_exception(api_msgs.ORDER_ITEM_NOT_FOUND)
 
-async def delete_order_item_record(
+def delete_order_item_record(
     order_id: str,
     product_id: str,
     size: str,
     db: Session
 ):
+    print("這是delete_order+item record")
     order_item = get_order_item_or_raise_not_found(order_id,product_id,size,db)
+    print(order_item,'這是order_item')
 
     db.delete(order_item)
     db.commit()

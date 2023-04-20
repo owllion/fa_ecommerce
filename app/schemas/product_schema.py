@@ -11,6 +11,7 @@ from pydantic import (
     validator,
 )
 
+from . import cart_schema
 from .review_schema import ReviewSchema
 
 
@@ -94,7 +95,7 @@ class ResponsePaginateProductsSchema(BaseModel):
     class Config:
         orm_mode = True
 
-class FavoriteItemSchema(ProductSchema):
+class FavoriteItemSchema(cart_schema.ProductInfoInCartSchema):
     pass
 class FavoriteItemCreateSchema(ProductSchema):
     user_id: str

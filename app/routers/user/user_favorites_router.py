@@ -20,7 +20,7 @@ from ...constants import api_msgs
 from ...database import db
 from ...exceptions.custom_http_exception import CustomHTTPException
 from ...models.cart import cart_item_model
-from ...schemas import cart_schema, product_schema, user_schema
+from ...schemas import cart_schema, common_schema, product_schema, user_schema
 from ...schemas.user_schema import SupportedField, VerifiedValue
 from ...services import product_services, user_services
 from ...utils.dependencies import *
@@ -49,11 +49,11 @@ def toggle_fav(
 
         product = product_services.get_product_or_raise_not_found(payload.product_id,db)
 
-        if product_services.product_in_user_fav(user, payload.product_id, db):
-            user.favorites.remove(product)
+        if product_services.product_in_user_fav(user.id, payload.product_id, db):
+            product_services.remove_from_fav(user, product)
         else:
-            user.favorites.append(product)
-        
+            product_services.add_to_fav(user, product)
+
         db.commit()
         
 
@@ -61,22 +61,16 @@ def toggle_fav(
         if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
     
-# @protected_singular(
-#     **get_path_decorator_settings(
-#         description= "Remove the product from user's fav list"
-#     )
-# )
-# def remove_from_fav(req: Request,product_id: str, db: Session = Depends(db.get_db)):
-#     try:
-#         user = req.state.mydata
-
-#         product = product_services.get_product_or_raise_not_found(product_id, db)
-
-#         user.favorites.remove(product)
-
-#         db.commit()
-        
-
-#     except Exception as e:
-#         if isinstance(e, (HTTPException,)): raise e
-#         raise CustomHTTPException(detail= str(e))
+@protected_plural.get(
+    "/",
+    **get_path_decorator_settings(
+        description= "get user's fav list",
+        response_model= list[common_schema.ProductInfoInCartSchema]
+    )
+)
+def get_user_favs(req: Request,db: Session = Depends(db.get_db)):
+    try:
+        return req.state.mydata.favorites 
+    except Exception as e:
+        if isinstance(e, (HTTPException,)): raise e
+        raise CustomHTTPException(detail= str(e))

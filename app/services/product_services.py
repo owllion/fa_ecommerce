@@ -50,6 +50,12 @@ def product_in_user_fav(user_id: str, product_id: str,db: Session):
     
     return True if product else False
 
+def add_to_fav(user: user_model.User, product: product_model.Product):
+    user.favorites.append(product)
+
+def remove_from_fav(user: user_model.User, product: product_model.Product):
+    user.favorites.remove(product)
+
 
 def save_to_db_then_return(
     payload: product_schema.ProductCreateSchema, 

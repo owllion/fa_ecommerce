@@ -3,16 +3,10 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 
+from .common_schema import ProductInfoInCartSchema
 from .product_schema import ProductSchema
 
 
-#-----
-class ProductInfoInCartSchema(BaseModel):
-    thumbnail: str
-    product_name: str
-    class Config:
-        orm_mode = True
-#----
 class SizeValue(str,Enum):
     xs = 'XS'
     s = 'S'

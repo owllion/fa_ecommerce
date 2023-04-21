@@ -33,7 +33,10 @@ def update_stock_and_sales_for_all_order_items(order_items: list[order_schema.Or
         update_stock_and_sales(item, db)
 
 
-def create_order_and_return_id(payload: order_schema.OrderCreateSchema,db: Session):
+def create_order_and_return_id(
+    payload: order_schema.OrderCreateSchema,
+    db: Session
+):
 
     payload.payment_status = payload.payment_status.value
     payload.order_status = payload.order_status.value
@@ -96,6 +99,7 @@ def delete_order_record(order_id: str, db: Session):
     db.delete(order)
     db.commit()
 
+
 def create_order_item(
     order_items: list[order_schema.OrderItemCreateSchema],
     order_id: str,
@@ -106,6 +110,7 @@ def create_order_item(
     for item in order_items:
 
         item['order_id'] = order_id
+        #add id to each o_item after creating the order
 
         order_item = order_item_model.OrderItem(**item)
 
@@ -119,3 +124,21 @@ def set_coupon_as_used(req: Request, code: str, db: Session):
     coupon.is_used = True
 
     db.commit()
+
+
+def create_order(
+    req: Request,
+    payload: order_schema.OrderCreateSchema,
+    db: Session,
+    need_id: bool = False
+):
+    order_id = create_order_and_return_id(payload, db)
+
+    create_order_item(payload.order_items,order_id,db)
+
+    if payload.discount_code:
+        set_coupon_as_used(req, payload.discount_code, db)
+
+    update_stock_and_sales_for_all_order_items(payload.order_items, db)
+
+    return order_id if need_id else None

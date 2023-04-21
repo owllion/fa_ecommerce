@@ -24,6 +24,7 @@ COUPON_NOT_FOUND = "coupon not found"
 COUPON_EXPIRED = "coupon expired"
 MINIMUM_THRESHOLD_NOT_MET = "minimum threshold not met"
 COUPON_ALREADY_EXISTS = "coupon already exists"
+COUPON_ALREADY_USED = "coupon has already been used"
 
 #cart_item
 CART_ITEM_NOT_FOUND = "cart item not found"

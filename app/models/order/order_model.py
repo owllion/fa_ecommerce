@@ -23,6 +23,11 @@ class OrderStatus(int,Enum):
     CANCELED = 1
 class PaymentStatus(int,Enum):
     PAID = 0
+    PENDING_PAYMENT = 1
+
+class PaymentMethods(str, Enum):
+    credit_card = 'credit_card'
+    line_pay = 'line_pay'
 
 class Order(Base):
     __tablename__ = 'order'
@@ -54,7 +59,7 @@ class Order(Base):
 
     receiver_name = Column(String(50), nullable=False)
     
-    payment_method = Column(String(20), default="credit_card",nullable= False)
+    payment_method = Column(String(20), default=PaymentMethods.credit_card,nullable= False)
 
     payment_status = Column(Integer, default=PaymentStatus.PAID.value,nullable= False) 
 

@@ -198,6 +198,12 @@ def apply_coupon(
                 status_code= status.HTTP_400_BAD_REQUEST,
                 detail= api_msgs.COUPON_NOT_FOUND
             )
+        
+        if coupon.is_used:
+            raise HTTPException(
+                status_code= status.HTTP_400_BAD_REQUEST,
+                detail= api_msgs.COUPON_ALREADY_USED
+            )
 
         final_price_after_discount,discounted_amount = coupon_services.get_final_price_and_discounted_amount(coupon,payload.total_price)
 

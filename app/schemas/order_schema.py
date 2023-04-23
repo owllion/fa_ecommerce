@@ -4,7 +4,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, root_validator
 
-from ..models.order.order_model import OrderStatus, PaymentStatus
+from ..models.order.order_model import OrderStatus, PaymentMethods, PaymentStatus
 from . import product_schema, user_schema
 from .cart_schema import ProductInfoInCartSchema, SizeValue
 
@@ -39,8 +39,8 @@ class OrderBaseSchema(BaseModel):
     discount_total: float = 0
     shipping: float
     receiver_name: str 
-    payment_method: str = "credit_card"
-    payment_status: PaymentStatus = Field(PaymentStatus.PAID, description= "0 -> paid")
+    payment_method: PaymentMethods = Field(PaymentMethods.credit_card)
+    payment_status: PaymentStatus = Field(PaymentStatus.PAID, description= "0 -> paid, 1-> Pending payment")
     order_status: OrderStatus = Field(OrderStatus.COMPLETED, description= "0-> completed, 1-> canceled")
 
     class Config:

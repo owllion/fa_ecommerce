@@ -8,7 +8,10 @@ from ..schemas import order_schema
 
 
 async def create_order_item(payload: order_schema.OrderItemCreateSchema,db: Session):
-
+    """
+    create a order_item, the other same name function in the order_services is used to create the bunch of order_items.
+    """
+    
     order_item = order_item_model.OrderItem(**payload.dict())
     
     db.add(order_item)

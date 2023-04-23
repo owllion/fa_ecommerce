@@ -59,7 +59,7 @@ class Order(Base):
 
     receiver_name = Column(String(50), nullable=False)
     
-    payment_method = Column(String(20), default=PaymentMethods.credit_card,nullable= False)
+    payment_method = Column(String(20), default=PaymentMethods.credit_card.value,nullable= False)
 
     payment_status = Column(Integer, default=PaymentStatus.PAID.value,nullable= False) 
 

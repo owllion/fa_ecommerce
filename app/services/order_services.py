@@ -15,13 +15,22 @@ def find_corresponding_size_id_with(size: str, db: Session):
     return db.query(size_model.Size).filter_by(value= size).first().id
 
 
-def update_stock_and_sales(item: order_schema.OrderItemSchema, db: Session):
+
+
+def get_product_item(item, db):
     item.size = item.size.value
     size_id = find_corresponding_size_id_with(item.size, db)
 
     product_item = product_item_services.get_product_item_or_raise_not_found(item.product_id, size_id, db)
+
+    return product_item
+
+def update_stock_and_sales(item: order_schema.OrderItemSchema, db: Session):
+    product_item = get_product_item(item, db)
+
     # print(product_item.stock,'這是stock')
     # print(product_item.sales,'這是sales')
+
     product_item.stock -= item.qty
     product_item.sales += item.qty
 
@@ -32,25 +41,36 @@ def update_stock_and_sales_for_all_order_items(order_items: list[order_schema.Or
     for item in order_items:
         update_stock_and_sales(item, db)
 
+def assign_enum_values(payload: order_schema.OrderCreateSchema):
+    """
+    Assigns the value attribute of each Enum field to the corresponding field in the payload.
+    """
+    payload.payment_status = payload.payment_status.value
+    payload.order_status = payload.order_status.value
 
-def create_order_and_return_id(
+    return payload
+
+def get_order_data_except_order_items(payload: order_schema.OrderCreateSchema):
+    order_data = {k: v for k, v in payload.dict().items() if k != 'order_items'}
+
+    return order_data
+
+
+def create_order_then_return(
     payload: order_schema.OrderCreateSchema,
     db: Session
 ):
 
-    payload.payment_status = payload.payment_status.value
-    payload.order_status = payload.order_status.value
+    payload = assign_enum_values(payload)
 
-    order_data = {k: v for k, v in payload.dict().items() if k != 'order_items'}
-    print(order_data)
+    order_data = get_order_data_except_order_items(payload)
 
     order = order_model.Order(**order_data)
-
     db.add(order)
     db.commit()
-    db.refresh(order)  #從資料庫中重新加載對象
+    db.refresh(order)#從資料庫中重新加載對象
 
-    return order.id
+    return order
 
 def find_order_with_id(id: str, db: Session):
     order = db.query(order_model.Order).filter_by(id=id).first()
@@ -130,15 +150,15 @@ def create_order(
     req: Request,
     payload: order_schema.OrderCreateSchema,
     db: Session,
-    need_id: bool = False
+    need_order: bool = False
 ):
-    order_id = create_order_and_return_id(payload, db)
+    order = create_order_then_return(payload, db)
 
-    create_order_item(payload.order_items,order_id,db)
+    create_order_item(payload.order_items,order.id,db)
 
     if payload.discount_code:
         set_coupon_as_used(req, payload.discount_code, db)
 
     update_stock_and_sales_for_all_order_items(payload.order_items, db)
 
-    return order_id if need_id else None
+    return order if need_order else None

@@ -25,7 +25,7 @@ def gen_package_products(order_items: list[OrderItemSchema]):
         item = {
             "name": item.product_info.product_name,
             "quantity": item.qty,
-            "price": item.product_info.price,
+            "price": int(item.product_info.price),
             "imageUrl": item.product_info.thumbnail
         }
         res.append(item)
@@ -38,15 +38,17 @@ def get_req_body(
     order_id: str,
     order_items: list[OrderItemSchema]
 ):
-    confirm_url = f"config('LINEPAY_RETURN_HOST')/config('LINEPAY_RETURN_CONFIRM_URL')"
+    confirm_url = f"{config('LINEPAY_RETURN_HOST')}/{config('LINEPAY_RETURN_CONFIRM_URL')}"
+    
+    print(total,'這是total')
 
     body = {
-        "amount": total,
+        "amount": int(total),
         "currency": 'TWD',
         "orderId": order_id,
         "packages": [{
             "id": str(uuid.uuid4()),
-            "amount": total,
+            "amount": int(total),
             "name": config("SHOP_NAME")
         }],
         "redirectUrls": {
@@ -130,13 +132,14 @@ def get_redirect_url(data):
     return url
 
 def do_request_payment(
-        total: str,
+        total: float,
         order_id: str,
-        order_items: OrderItemSchema,
+        order_items: list[OrderItemSchema],
         nonce: str
     ):
-
+    print("進入 do_request_payment")
     json_body = json.dumps(get_req_body(total, order_id, order_items))
+    print(json_body,'這是jsonbody喔')
 
     headers['X-LINE-Authorization-Nonce'] = nonce
     headers['X-LINE-Authorization'] = get_auth_signature(secret=channel_secret, uri = uri, body=json_body, nonce=nonce)
@@ -154,9 +157,9 @@ def get_transaction_id(data):
 def line_pay_request_payment(
     order_id: str, 
     total: float, 
-    order_items: OrderItemSchema
+    order_items: list[OrderItemSchema]
 ):
-
+    print("進入line_pay_request_payment")
     response = do_request_payment(
         total,
         order_id,
@@ -165,7 +168,8 @@ def line_pay_request_payment(
     )
 
     data = get_dict_data(response)
-
+    print(data,'這是data')
+    print(data.get("returnCode"),'這是回傳code')
     if data.get("returnCode") == '0000':
         url = get_redirect_url(data)
         transaction_id = get_transaction_id(data)
@@ -202,7 +206,7 @@ def line_pay_request_payment(
 #         print(f"付款web_url:{web_url}")
 #         print(f"交易序號:{transaction_id}")
 
-def check_state(transaction_id: str, conf_data: dict[str, str| float]):
+def check_status(transaction_id: str, conf_data: dict[str, str| float]):
     
     # conf_data = """{"amount": 2000, "currency": "TWD"}"""
     
@@ -218,7 +222,7 @@ def check_state(transaction_id: str, conf_data: dict[str, str| float]):
     print(response.text)
 
     response = json.loads(response.text)
-    
+
     if str(response.get('returnCode')) == "0110":
         return True
     return False
@@ -235,7 +239,7 @@ def do_confirm(transaction_id):
     return response.get('returnMessage')
 
 if __name__ == "__main__":
-
+    print('ee')
     # # do_request_payment2() # 向linepay請求付款
 
     # line_pay_checkout() # 向linepay請求付款
@@ -248,5 +252,3 @@ if __name__ == "__main__":
     
     # if status :
     #     print(do_confirm(transaction_id))  # 確認訂單
-
-

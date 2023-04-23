@@ -5,6 +5,7 @@ from fastapi.responses import RedirectResponse
 from ...constants import api_msgs
 from ...exceptions.custom_http_exception import CustomHTTPException
 from ...schemas import order_schema
+from ...schemas.order_schema import PaymentMethods, PaymentStatus
 from ...services import order_item_services, order_services, product_item_services
 from ...utils.dependencies import *
 from ...utils.line_pay.line_pay import check_status, line_pay_request_payment
@@ -28,15 +29,17 @@ def line_pay_payment(
     db:Session = Depends(db.get_db)
 ):
     try:
-        order_id = order_services.create_order(req, payload, db, need_id= True)
+        order = order_services.create_order(req, payload, db, need_order= True)
+        print(order.id,'這是order_idddd')
+        #去query這筆訂單所有的orderItems就好啦
 
         url = line_pay_request_payment(
-            order_id,
+            order.id,
             payload.total,
-            payload.order_items
+            order.order_items
         )
-
-        RedirectResponse(url=url)
+        print(url,'這是下面url')
+        return RedirectResponse(url=url)
 
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e
@@ -64,8 +67,14 @@ def line_pay_check_payment_status(
             "amount": total,
             "currency": "TWD"
         }
-        check_status(transaction_id, conf_data)
-          
+        has_paid = check_status(transaction_id, conf_data)
+
+        if not has_paid:
+            order.payment_status = PaymentStatus.PENDING_PAYMENT.value
+        order.payment_method = PaymentMethods.line_pay
+
+        db.commit()
+
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))

@@ -20,12 +20,12 @@ protected_plural,protected_singular,public_plural,public_singular = get_router_s
         response_model= list[order_schema.OrderItemSchema]
     )
 )
-async def get_order_items(
+def get_order_items(
     order_id: str,
     db:Session = Depends(db.get_db)
 ):
     try:
-        order = await order_services.get_order_or_raise_not_found(order_id, db)
+        order = order_services.get_order_or_raise_not_found(order_id, db)
         return order.order_items
           
     except Exception as e:

@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field, root_validator
+from pydantic import BaseModel, Field, HttpUrl, root_validator
 
 from ..models.order.order_model import OrderStatus, PaymentMethods, PaymentStatus
 from . import product_schema, user_schema
@@ -73,6 +73,7 @@ class OrderUpdateSchema(OrderBaseSchema):
 
 class OrderSchema(OrderBaseSchema):
     id: str
+    payment_url: HttpUrl
     order_items: list[OrderItemSchema]
     created_at: datetime
     updated_at: datetime

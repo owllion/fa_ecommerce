@@ -9,12 +9,14 @@ import requests
 from decouple import config
 
 from ...schemas.order_schema import OrderCreateSchema, OrderItemSchema
+from .generate_nonce import gen_nonce
 from .get_signature import get_signature
 
 channel_id = config('LINEPAY_CHANNEL_ID')
 channel_secret = config('LINEPAY_CHANNEL_SECRET_KEY')
 uri = "/v3/payments/request"
 nonce = str(round(time.time() * 1000))  # nonce = str(uuid.uuid4())
+print(nonce,'nonce被呼叫!')
 transaction_id = ''
 
 
@@ -118,7 +120,6 @@ def get_signature(secret, uri, body, nonce):
 headers = {
     'Content-Type': 'application/json',
     'X-LINE-ChannelId': channel_id,
-    'X-LINE-Authorization-Nonce': nonce
 }
 
 
@@ -137,10 +138,12 @@ def do_request_payment(
         order_items: list[OrderItemSchema],
         nonce: str
     ):
+
+    nonce = gen_nonce()
     print("進入 do_request_payment")
     json_body = json.dumps(get_req_body(total, order_id, order_items))
     print(json_body,'這是jsonbody喔')
-
+    print(nonce,'這是nonce(在耕莘header之前)')
     headers['X-LINE-Authorization-Nonce'] = nonce
     headers['X-LINE-Authorization'] = get_auth_signature(secret=channel_secret, uri = uri, body=json_body, nonce=nonce)
 
@@ -208,18 +211,21 @@ def line_pay_request_payment(
 
 def check_payment_status(transaction_id: str, conf_data: dict[str, str| float]):
     
-    # conf_data = """{"amount": 2000, "currency": "TWD"}"""
-    
+    # conf_data = """{"amount": 450, "currency": "TWD"}"""
+    nonce = gen_nonce()
     checkout_url = f"/v3/payments/requests/{transaction_id}/check"
+    
+    print(json.dumps(conf_data),'這是json畫之後的')
 
-    headers['X-LINE-Authorization'] = get_signature(channel_secret, checkout_url, conf_data, nonce)
+    headers['X-LINE-Authorization-Nonce'] = nonce
+    headers['X-LINE-Authorization'] = get_auth_signature(secret=channel_secret, uri = checkout_url, body=json.dumps(conf_data),nonce=nonce)
 
     response = requests.get(
         "https://sandbox-api-pay.line.me"+ checkout_url, headers=headers, 
-        data=conf_data
+        data=json.dumps(conf_data)
     )
 
-    print(response.text)
+    print(response.text,'這是response.text')
 
     response = json.loads(response.text)
 
@@ -252,3 +258,4 @@ if __name__ == "__main__":
     
     # if status :
     #     print(do_confirm(transaction_id))  # 確認訂單
+# check_payment_status("2023042301213859810")

@@ -12,7 +12,7 @@ from ...utils.dependencies import *
 from ...utils.line_pay.line_pay import check_payment_status, line_pay_request_payment
 from ...utils.router_settings import get_path_decorator_settings, get_router_settings
 
-_,protected_singular,_,_ = get_router_settings(
+_,protected_singular,_,public_singular = get_router_settings(
     singular_prefix = 'line-pay',
     plural_prefix = 'line-pays',
     tags = ['line-pay']
@@ -53,7 +53,7 @@ def line_pay_payment(
         )
         db.add(payment_url)
         db.commit()
-        db.refresh()
+        db.refresh(payment_url)
 
         return RedirectResponse(url=url)
     
@@ -64,11 +64,10 @@ def line_pay_payment(
 
 
 
-@protected_singular.get(
+@public_singular.get(
     "/check-payment-status",
     **get_path_decorator_settings(
         description= "after successfully paid,the page will be directed to this url,and it will check if the order has been paid or not.",
-        response_model= list[order_schema.OrderItemSchema]
     )
 )
 def line_pay_check_payment_status(
@@ -81,16 +80,21 @@ def line_pay_check_payment_status(
         total = order.total
 
         conf_data = {
-            "amount": total,
+            "amount": int(total),
             "currency": "TWD"
         }
+        print(conf_data,'這是conf_data')
         
-        has_paid = check_payment_status(transaction_id, conf_data)
-
+        has_paid = check_payment_status(transaction_id,conf_data)
+        print(has_paid,"這是has_paid")
         #update_order_status
         if has_paid:
             order.payment_status = PaymentStatus.PAID.value
-        db.commit()
+                        
+            db.commit()
+
+        #導回首頁
+        return RedirectResponse("http://localhost:3000/")
 
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e

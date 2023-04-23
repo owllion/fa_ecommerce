@@ -22,4 +22,5 @@ order_item_router.include_router(order_item.public_singular)
 
 #line_pay
 line_pay_router.include_router(line_pay.protected_singular)
+line_pay_router.include_router(line_pay.public_singular)
 

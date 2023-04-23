@@ -63,6 +63,8 @@ class Order(Base):
 
     payment_status = Column(Integer, default=PaymentStatus.PENDING_PAYMENT.value,nullable= False) 
 
+    payment_url = relationship("PaymentUrl", backref="related_order")
+
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
     
     updated_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))

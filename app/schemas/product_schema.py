@@ -78,7 +78,7 @@ class SingleProductSchema(ProductSchema):
 #for query product list
 class PaginateProductsSchema(BaseModel):
     page: int = 1
-    limit: int = 10
+    limit: int = 12
     keyword: str = ""
     price: str = ""
     brands: list[str] | str = ""

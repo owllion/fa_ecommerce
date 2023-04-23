@@ -4,11 +4,12 @@ from fastapi.responses import RedirectResponse
 
 from ...constants import api_msgs
 from ...exceptions.custom_http_exception import CustomHTTPException
+from ...models.order import paymant_url_model
 from ...schemas import order_schema
 from ...schemas.order_schema import PaymentMethods, PaymentStatus
 from ...services import order_item_services, order_services, product_item_services
 from ...utils.dependencies import *
-from ...utils.line_pay.line_pay import check_status, line_pay_request_payment
+from ...utils.line_pay.line_pay import check_payment_status, line_pay_request_payment
 from ...utils.router_settings import get_path_decorator_settings, get_router_settings
 
 _,protected_singular,_,_ = get_router_settings(
@@ -29,17 +30,33 @@ def line_pay_payment(
     db:Session = Depends(db.get_db)
 ):
     try:
+        #建立訂單
         order = order_services.create_order(req, payload, db, need_order= True)
         print(order.id,'這是order_idddd')
-        #去query這筆訂單所有的orderItems就好啦
+        
+        #改paymentMethod
+        #要在這改，不然他沒付款就直接跑去看訂單就會變成credit card
+        order.payment_method = PaymentMethods.line_pay
 
+        #取得付款連結
         url = line_pay_request_payment(
             order.id,
             payload.total,
             order.order_items
         )
         print(url,'這是下面url')
+
+        #新增payment_url
+        payment_url = paymant_url_model.PaymentUrl(
+            order_id = order.id,
+            url = url
+        )
+        db.add(payment_url)
+        db.commit()
+        db.refresh()
+
         return RedirectResponse(url=url)
+    
 
     except Exception as e:
         if isinstance(e, (HTTPException,)): raise e
@@ -67,12 +84,12 @@ def line_pay_check_payment_status(
             "amount": total,
             "currency": "TWD"
         }
-        has_paid = check_status(transaction_id, conf_data)
+        
+        has_paid = check_payment_status(transaction_id, conf_data)
 
-        if not has_paid:
-            order.payment_status = PaymentStatus.PENDING_PAYMENT.value
-        order.payment_method = PaymentMethods.line_pay
-
+        #update_order_status
+        if has_paid:
+            order.payment_status = PaymentStatus.PAID.value
         db.commit()
 
     except Exception as e:

@@ -206,7 +206,7 @@ def line_pay_request_payment(
 #         print(f"付款web_url:{web_url}")
 #         print(f"交易序號:{transaction_id}")
 
-def check_status(transaction_id: str, conf_data: dict[str, str| float]):
+def check_payment_status(transaction_id: str, conf_data: dict[str, str| float]):
     
     # conf_data = """{"amount": 2000, "currency": "TWD"}"""
     

@@ -22,8 +22,8 @@ class OrderStatus(int,Enum):
     COMPLETED = 0
     CANCELED = 1
 class PaymentStatus(int,Enum):
-    PAID = 0
-    PENDING_PAYMENT = 1
+    PENDING_PAYMENT = 0
+    PAID = 1
 
 class PaymentMethods(str, Enum):
     credit_card = 'credit_card'
@@ -61,7 +61,7 @@ class Order(Base):
     
     payment_method = Column(String(20), default=PaymentMethods.credit_card.value,nullable= False)
 
-    payment_status = Column(Integer, default=PaymentStatus.PAID.value,nullable= False) 
+    payment_status = Column(Integer, default=PaymentStatus.PENDING_PAYMENT.value,nullable= False) 
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
     

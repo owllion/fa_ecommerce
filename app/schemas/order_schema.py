@@ -40,7 +40,7 @@ class OrderBaseSchema(BaseModel):
     shipping: float
     receiver_name: str 
     payment_method: PaymentMethods = Field(PaymentMethods.credit_card)
-    payment_status: PaymentStatus = Field(PaymentStatus.PAID, description= "0 -> paid, 1-> Pending payment")
+    payment_status: PaymentStatus = Field(PaymentStatus.PAID, description= "0 -> Pending payment, 1-> paid ")
     order_status: OrderStatus = Field(OrderStatus.COMPLETED, description= "0-> completed, 1-> canceled")
 
     class Config:

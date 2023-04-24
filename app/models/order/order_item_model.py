@@ -56,3 +56,10 @@ class OrderItem(Base):
     created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
     
     updated_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))
+
+    def copy(self):
+        new = OrderItem()
+        new.product_info = self.product_info
+        new.qty = self.qty
+        new.size = self.size
+        return new

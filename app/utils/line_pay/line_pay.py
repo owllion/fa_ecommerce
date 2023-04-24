@@ -22,15 +22,19 @@ transaction_id = ''
 
 
 def gen_package_products(order_items: list[OrderItemSchema]):
+    # print(json.dumps(order_items),'把收到的order_items印出來看')
     res = []
     for item in order_items:
+        print(item.size,'這是size')
+        print(item.product_info.price,'這是price')
         item = {
             "name": item.product_info.product_name,
             "quantity": item.qty,
-            "price": int(item.product_info.price),
+            "price": round(item.product_info.price,1),
             "imageUrl": item.product_info.thumbnail
         }
         res.append(item)
+    print(res,'這是產生req.body的產品')
 
     return res
 
@@ -45,12 +49,12 @@ def get_req_body(
     print(total,'這是total')
 
     body = {
-        "amount": int(total),
-        "currency": 'TWD',
+        "amount": total,
+        "currency": 'USD',
         "orderId": order_id,
         "packages": [{
             "id": str(uuid.uuid4()),
-            "amount": int(total),
+            "amount": total,
             "name": config("SHOP_NAME")
         }],
         "redirectUrls": {
@@ -60,9 +64,14 @@ def get_req_body(
     }
 
     body['packages'][0]['products'] = gen_package_products(order_items)
-
+    temp = 0
     print(body['packages'][0]['products'],'這是products')
-
+    for i in order_items:
+        t = i.product_info.price * i.qty
+        print(t,'這是單個商品最終總價') 
+        temp += t
+    print(temp,'這是temp')
+    print(temp == total,'是否相等')
     return body
         
 
@@ -140,10 +149,10 @@ def do_request_payment(
     ):
 
     nonce = gen_nonce()
-    print("進入 do_request_payment")
+    # print("進入 do_request_payment")
     json_body = json.dumps(get_req_body(total, order_id, order_items))
-    print(json_body,'這是jsonbody喔')
-    print(nonce,'這是nonce(在耕莘header之前)')
+    # print(json_body,'這是jsonbody喔')
+    # print(nonce,'這是nonce(在耕莘header之前)')
     headers['X-LINE-Authorization-Nonce'] = nonce
     headers['X-LINE-Authorization'] = get_auth_signature(secret=channel_secret, uri = uri, body=json_body, nonce=nonce)
 

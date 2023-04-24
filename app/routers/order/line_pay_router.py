@@ -1,10 +1,12 @@
+# import copy
+
 from decouple import config
 from fastapi import Depends, HTTPException, Query, status
 from fastapi.responses import RedirectResponse
 
 from ...constants import api_msgs
 from ...exceptions.custom_http_exception import CustomHTTPException
-from ...models.order import paymant_url_model
+from ...models.order import payment_url_model
 from ...schemas import order_schema
 from ...schemas.order_schema import PaymentMethods, PaymentStatus
 from ...services import order_item_services, order_services, product_item_services
@@ -33,7 +35,7 @@ def line_pay_payment(
         #建立訂單
         order = order_services.create_order(req, payload, db, need_order= True)
         print(order.id,'這是order_idddd')
-        
+
         #改paymentMethod
         #要在這改，不然他沒付款就直接跑去看訂單就會變成credit card
         order.payment_method = PaymentMethods.line_pay
@@ -41,21 +43,21 @@ def line_pay_payment(
         #取得付款連結
         url = line_pay_request_payment(
             order.id,
-            payload.total,
-            order.order_items
+            order.discount_total if order.discount else payload.total,
+            new_items.order_items
         )
         print(url,'這是下面url')
+        if url:
+            #新增payment_url
+            payment_url = payment_url_model.PaymentUrl(
+                order_id = order.id,
+                url = url
+            )
+            db.add(payment_url)
+            db.commit()
+            db.refresh(payment_url)
 
-        #新增payment_url
-        payment_url = paymant_url_model.PaymentUrl(
-            order_id = order.id,
-            url = url
-        )
-        db.add(payment_url)
-        db.commit()
-        db.refresh(payment_url)
-
-        return RedirectResponse(url=url)
+            return RedirectResponse(url=url)
     
 
     except Exception as e:

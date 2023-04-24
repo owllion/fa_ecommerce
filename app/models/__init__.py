@@ -3,7 +3,7 @@ from .cart.cart_model import Cart
 from .coupon.coupon_model import Coupon
 from .order.order_item_model import OrderItem
 from .order.order_model import Order
-from .order.paymant_url_model import PaymentUrl
+from .order.payment_url_model import PaymentUrl
 from .product.product_image_url_model import ProductImageUrl
 from .product.product_item_model import ProductItem
 from .product.product_model import Product

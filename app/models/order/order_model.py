@@ -69,3 +69,26 @@ class Order(Base):
     
     updated_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))
 
+    def copy(self):
+        print("呼叫copy")
+        new = Order()
+        new.delivery_address = self.delivery_address
+        new.discount = self.discount
+        new.discount_code = self.discount_code
+        new.order_status = self.order_status
+        new.owner_id = self.owner_id
+        
+        for item in self.order_items:
+            new.order_items.append(item.copy())
+        return new
+    
+    def clone(self):
+        d = dict(self.__dict__)
+        d.pop("id") # get rid of id
+        d.pop("_sa_instance_state") # get rid of SQLAlchemy special attr
+        copy = self.__class__(**d)
+        for item in self.order_items:
+            copy.order_items.append(item.copy())
+        
+        return copy
+

@@ -1,9 +1,14 @@
 from enum import Enum
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from authlib.integrations.starlette_client import OAuth, OAuthError
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
+
+# from starlette.requests import Request
+from starlette.config import Config
 
 from ...database import db
 from ...exceptions.custom_http_exception import CustomHTTPException
@@ -19,6 +24,56 @@ router = APIRouter(
     tags=["auth"],
     responses={404: {"description": "Not found"}},
 )
+ 
+config = Config('...env')
+oauth = OAuth(config)
+
+#Authlib will fetch this server_metadata_url to configure the OAuth client for you
+CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
+oauth.register(
+    name='google',
+    server_metadata_url=CONF_URL,
+    client_kwargs={
+        'scope': 'openid email profile'
+    }
+)
+
+
+
+@router.get(
+    "/google-login", 
+    description=" redirect user to Google account website.When you grant access from Google website, Google will redirect back to your given redirect_uri, which is request.url_for('auth')."
+)
+async def google_login(request: Request):
+    # Redirect Google OAuth back to our application
+    redirect_uri = request.url_for('auth')
+    return await oauth.google.authorize_redirect(request, redirect_uri)
+
+@router.get('/auth')
+async def auth(request: Request):
+    try:
+        #get the authrization code or related data from the req
+        token = await oauth.google.authorize_access_token(request)
+        user = token.get('userinfo')
+
+        if user:
+            request.session['user'] = dict(user)
+
+        return RedirectResponse(url='/')
+    
+    except OAuthError as e:
+        raise HTTPException(
+            status_code= status.HTTP_401_UNAUTHORIZED,
+            detail= e.error
+        )
+
+
+@router.get('/logout')
+async def logout(request: Request):
+    request.session.pop('user', None)
+    return RedirectResponse(url='/')
+#------------------
+
 
 @router.post(
     '/register', 
@@ -107,7 +162,10 @@ def login(
         if type(e).__name__ == 'HTTPException': raise e
         raise CustomHTTPException(detail= str(e))
 
+
     
+
+
 @router.post(
     '/refresh-token', response_model=user_schema.AccessAndRefreshTokenSchema
 )

@@ -43,8 +43,8 @@ def line_pay_payment(
         #取得付款連結
         url = line_pay_request_payment(
             order.id,
-            order.discount_total if order.discount else payload.total,
-            new_items.order_items
+            payload.total,
+            order.order_items
         )
         print(url,'這是下面url')
         if url:

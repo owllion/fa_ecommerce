@@ -30,7 +30,7 @@ def gen_package_products(order_items: list[OrderItemSchema]):
         item = {
             "name": item.product_info.product_name,
             "quantity": item.qty,
-            "price": round(item.product_info.price,1),
+            "price": int(item.product_info.price),
             "imageUrl": item.product_info.thumbnail
         }
         res.append(item)
@@ -49,12 +49,12 @@ def get_req_body(
     print(total,'這是total')
 
     body = {
-        "amount": total,
-        "currency": 'USD',
+        "amount": int(total),
+        "currency": 'TWD',
         "orderId": order_id,
         "packages": [{
             "id": str(uuid.uuid4()),
-            "amount": total,
+            "amount": int(total),
             "name": config("SHOP_NAME")
         }],
         "redirectUrls": {
@@ -64,14 +64,7 @@ def get_req_body(
     }
 
     body['packages'][0]['products'] = gen_package_products(order_items)
-    temp = 0
-    print(body['packages'][0]['products'],'這是products')
-    for i in order_items:
-        t = i.product_info.price * i.qty
-        print(t,'這是單個商品最終總價') 
-        temp += t
-    print(temp,'這是temp')
-    print(temp == total,'是否相等')
+   
     return body
         
 

@@ -10,21 +10,19 @@ from .item_schema import Item
 from .review_schema import ReviewSchema
 
 
-class UserBaseSchema(BaseModel):
-    email: EmailStr
+class EmailBaseSchema(BaseModel):
+    email: EmailStr 
+class UserBaseSchema(EmailBaseSchema,BaseModel):
     first_name: str 
     last_name: str
-
     class Config:
         orm_mode = True
         
 class UserCreateSchema(UserBaseSchema):
-    password: constr(min_length=8)
-class GoogleUserCreateSchema(UserBaseSchema):
-    pass
-    
-class LoginUserSchema(BaseModel):
-    email: EmailStr
+    password: constr(min_length=8) | None = None
+    #google login doesn't need the pwd
+
+class LoginUserSchema(EmailBaseSchema,BaseModel):
     password: str
 
 class CreatePasswordSchema(BaseModel):
@@ -41,20 +39,20 @@ class UserSchema(UserBaseSchema):
 
     class Config:
         orm_mode = True
-    
-class UserWithTokenSchema(UserSchema):
+
+class TokenBaseSchema(BaseModel):
     token: str
     refresh_token: str
+class UserWithTokenSchema(UserSchema,TokenBaseSchema):
+    pass
+    #complete user data with token
 class TokenSchema(BaseModel):
     token: str
-class AccessAndRefreshTokenSchema(BaseModel):
-    token: str
-    refresh_token: str
-
-
-class BaseResultSchema(BaseModel):
-    token: str
-    refresh_token: str
+    #for verification 
+class AccessAndRefreshTokenSchema(TokenBaseSchema):
+    pass
+    #only return token pair
+class BaseResultSchema(TokenBaseSchema):
     user: UserSchema
 class LoginResultSchema(BaseResultSchema):
     cart_length: int

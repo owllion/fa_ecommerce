@@ -32,9 +32,9 @@ def find_user_with_id(
     
     return user
 
-def save_data_then_return(
+def create_user(
     payload: user_schema.UserCreateSchema, 
-    db: Session = Depends(db.get_db)
+    db: Session
 ):
     new_user = user_model.User(**payload.dict())
     db.add(new_user)
@@ -43,16 +43,8 @@ def save_data_then_return(
 
     return new_user
 
-def create_google_user(
-    payload: user_schema.GoogleUserCreateSchema, 
-    db: Session = Depends(db.get_db)
-):
-    new_user = user_model.User(**payload.dict())
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
 
-    return new_user
+
 
 
 def get_updated_payload_data(payload: user_schema.UserCreateSchema):

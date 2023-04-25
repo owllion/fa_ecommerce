@@ -57,7 +57,10 @@ async def google_login(request: Request):
     return await oauth.google.authorize_redirect(request, str(redirect_uri))
 
 @router.get('/google-auth')
-async def google_auth(request: Request, db: Session = Depends(db.get_db)):
+async def google_auth(
+    request: Request, 
+    db: Session = Depends(db.get_db)
+):
     try:
         print('auth被呼叫嗎?!')
         #get the authrization code or related data from the req
@@ -74,13 +77,21 @@ async def google_auth(request: Request, db: Session = Depends(db.get_db)):
                 api_msgs.USER_ALREADY_EXISTS
             )
         
+        payload = {
+            'email' : user.email,
+            'first_name': user.firstName,
+            'last_name': user.lastName
+        }
+        new_user = user_services.create_user(payload, db)
+        
+        
         #2.如果建好user了，就拿id去新創一個access_token
-        token =  security.create_token(
-                decoded_data.id,
-                'access'
-            ),
+        token = security.create_token(new_user.id,'access')
 
         #3.redirect到前端的callback葉面，附上query param(token)
+        return RedirectResponse(
+            f'{config("GOOGLE_LOGIN_CALLBACK")}/{token}'
+        )
 
 
 
@@ -130,7 +141,7 @@ async def create_user(
                 status_code=status.HTTP_409_CONFLICT,detail='Account already exist'
             )
 
-        new_user = user_services.save_data_then_return(payload,db)
+        new_user = user_services.create_user(payload,db)
 
         link_params = {
             'user_id': new_user.id,

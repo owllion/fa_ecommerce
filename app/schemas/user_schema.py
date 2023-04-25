@@ -20,7 +20,8 @@ class UserBaseSchema(BaseModel):
         
 class UserCreateSchema(UserBaseSchema):
     password: constr(min_length=8)
-    
+class GoogleUserCreateSchema(UserBaseSchema):
+    pass
     
 class LoginUserSchema(BaseModel):
     email: EmailStr
@@ -28,17 +29,11 @@ class LoginUserSchema(BaseModel):
 
 class CreatePasswordSchema(BaseModel):
     password: constr(min_length=8) 
-
-class EmailBaseSchema(BaseModel):
-    email: EmailStr
-class GoogleLoginSchema(EmailBaseSchema):
-    pass
     
 class UserSchema(UserBaseSchema):
     id: str
     phone: str = ""
     verified: bool = False
-    # items: list[Item] = []
     upload_avatar: str = Field("", alias='avatarUpload')
     default_avatar: str = Field(config('DEFAULT_AVATAR_URL'), alias='avatarDefault')
     created_at: datetime

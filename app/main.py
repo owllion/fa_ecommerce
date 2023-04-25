@@ -8,18 +8,19 @@ from starlette.responses import RedirectResponse
 from .routers import index
 
 app = FastAPI()
+ALLOWED_HOSTS = ["*"]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=['*'],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 #We need this SessionMiddleware, because Authlib will use request.session to store temporary codes and states.
 app.add_middleware(SessionMiddleware, secret_key=config("SESSION_MIDDLEWARE_SECRET"))
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_HOSTS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(router=index.router, prefix="/api")
 

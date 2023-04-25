@@ -19,7 +19,7 @@ class OperationType(str, Enum):
 
 class CartItemBaseSchema(BaseModel):
     product_id: str
-    qty: int | None = Field(1, ge=1, le=99)
+    qty: int | None = Field(1)
     size: SizeValue 
     class Config:
         orm_mode = True

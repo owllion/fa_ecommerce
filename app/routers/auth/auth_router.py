@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Annotated
 
 from authlib.integrations.starlette_client import OAuth, OAuthError
+from decouple import config
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import RedirectResponse
@@ -10,14 +11,17 @@ from sqlalchemy.orm import Session
 # from starlette.requests import Request
 from starlette.config import Config
 
+from ...constants import api_msgs
 from ...database import db
 from ...exceptions.custom_http_exception import CustomHTTPException
+from ...exceptions.get_exception import raise_http_exception
 from ...schemas import user_schema
 from ...services import user_services
 from ...utils import security
 from ...utils.dependencies import *
 from ...utils.logger import logger
 from ...utils.router_settings import get_path_decorator_settings
+from ..product.product_router import get_products
 
 router = APIRouter(
     prefix="/auth",
@@ -25,17 +29,19 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
  
-config = Config('...env')
-oauth = OAuth(config)
+config_data = {
+    'GOOGLE_CLIENT_ID': config('GOOGLE_CLIENT_ID'), 'GOOGLE_CLIENT_SECRET': config('GOOGLE_CLIENT_SECRET')
+}
+
+starlette_config = Config(environ=config_data)
+
+oauth = OAuth(starlette_config)
 
 #Authlib will fetch this server_metadata_url to configure the OAuth client for you
-CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
 oauth.register(
     name='google',
-    server_metadata_url=CONF_URL,
-    client_kwargs={
-        'scope': 'openid email profile'
-    }
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_kwargs={'scope': 'openid email profile'},
 )
 
 
@@ -46,20 +52,50 @@ oauth.register(
 )
 async def google_login(request: Request):
     # Redirect Google OAuth back to our application
-    redirect_uri = request.url_for('auth')
-    return await oauth.google.authorize_redirect(request, redirect_uri)
+    redirect_uri = request.url_for('google_auth')
+    print(redirect_uri,'這是redirect_uri')
+    return await oauth.google.authorize_redirect(request, str(redirect_uri))
 
-@router.get('/auth')
-async def auth(request: Request):
+@router.get('/google-auth')
+async def google_auth(request: Request, db: Session = Depends(db.get_db)):
     try:
+        print('auth被呼叫嗎?!')
         #get the authrization code or related data from the req
         token = await oauth.google.authorize_access_token(request)
+        print(token,'這是token')
         user = token.get('userinfo')
+        print(user,'這是user')
 
-        if user:
-            request.session['user'] = dict(user)
+        #1.拿到user後，先取email看是否找到，沒有就新建，反之error
+        found_user = user_services.find_user_with_email(user.email)
 
-        return RedirectResponse(url='/')
+        if found_user:
+            raise_http_exception(
+                api_msgs.USER_ALREADY_EXISTS
+            )
+        
+        #2.如果建好user了，就拿id去新創一個access_token
+        token =  security.create_token(
+                decoded_data.id,
+                'access'
+            ),
+
+        #3.redirect到前端的callback葉面，附上query param(token)
+
+
+
+        # if user:
+        #     request.session['user'] = dict(user)
+
+        
+        # user_cart_length = len(user.cart.cart_items)
+
+        # return { 
+        #     'token': security.create_token(user.id,"access"),
+        #     'refresh_token': security.create_token(user.id,"refresh"),
+        #     'user': user,
+        #     'cart_length': user_cart_length      
+        # }
     
     except OAuthError as e:
         raise HTTPException(
@@ -68,11 +104,13 @@ async def auth(request: Request):
         )
 
 
-@router.get('/logout')
-async def logout(request: Request):
-    request.session.pop('user', None)
-    return RedirectResponse(url='/')
-#------------------
+
+
+# @router.get('/logout')
+# async def logout(request: Request):
+#     request.session.pop('user', None)
+#     return RedirectResponse(url='/')
+# #------------------
 
 
 @router.post(
@@ -113,12 +151,13 @@ async def create_user(
         # return_data['token'] = security.create_token(new_user.id,'access')
         # return_data['refresh_token'] = security.create_token(new_user.id,'refresh')
 
-
-        return {
-            'token': security.create_token(new_user.id,'access'),
-            'refresh_token': security.create_token(new_user.id,'refresh'),
-            'user': return_data,
-        }
+        #註冊後根本不用船任何東西，因為沒認證email仕進不去的
+        # return {
+        #     'token': security.create_token(new_user.id,'access'),
+        #     'refresh_token': security.create_token(new_user.id,'refresh'),
+        #     'user': return_data,
+        # }
+        
 
     except Exception as e:
         logger.error(e, exc_info=True)
@@ -153,7 +192,7 @@ def login(
                 'token': security.create_token(user.id,"access"),
                 'refresh_token': security.create_token(user.id,"refresh"),
                 'user': user,
-                'cart_length': 2      
+                'cart_length': len(user.cart.cart_items)     
             }
 
 
@@ -194,13 +233,13 @@ def get_refresh_token(
 
 
 @router.post(
-    "/verify-email-token", 
+    "/verify-token", 
     **get_path_decorator_settings(
         response_model= user_schema.RegisterResultSchema,
-        description="Verify user email with the token extracted from the link provided in the email. Returns a success message if the token is valid."
+        description="Verify the token extracted from the link(email verification or google login callback)."
     )
 )
-def verify_token_from_email_link(
+def verify_token_from_link(
     payload: user_schema.TokenSchema,
     db: Session = Depends(db.get_db)
 ):

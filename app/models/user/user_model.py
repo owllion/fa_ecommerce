@@ -21,7 +21,7 @@ class User(Base):
 
     phone = Column(String(50), nullable=True,default='')
 
-    password = Column(String(80))
+    password = Column(String(80), nullable=True)
     upload_avatar = Column(String(350), nullable=True,default='')
 
     default_avatar = Column(String(350), default= config('DEFAULT_AVATAR_URL'))

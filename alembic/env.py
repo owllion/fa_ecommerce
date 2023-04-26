@@ -17,8 +17,10 @@ from app.models.product import (
 from app.models.review import review_model
 from app.models.user import (
     favorite_item_model,
+    login_type_model,
     user_coupon_model,
     user_favorite_model,
+    user_login_type_model,
     user_model,
 )
 

@@ -6,6 +6,7 @@ from typing import Dict
 from decouple import config
 from pydantic import BaseModel, EmailStr, Field, HttpUrl, constr, validator
 
+from ..models.user.login_type_model import LoginTypeValue
 from .item_schema import Item
 from .review_schema import ReviewSchema
 
@@ -25,8 +26,17 @@ class UserCreateSchema(UserBaseSchema):
     upload_avatar: HttpUrl | None = None
     #google&github login will have avatar
 
+
 class LoginUserSchema(EmailBaseSchema,BaseModel):
     password: str
+#每個user都要創一個欸 但拿值的時候就是value: str沒錯
+
+class LoginTypeCreateSchema(BaseModel):
+    value: LoginTypeValue | None  = Field(LoginTypeValue.EMAIL)
+class LoginTypeSchema(BaseModel):
+    value: str
+    class Config:
+        orm_mode = True
 
 class CreatePasswordSchema(BaseModel):
     password: constr(min_length=8) 

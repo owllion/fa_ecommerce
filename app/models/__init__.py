@@ -10,6 +10,8 @@ from .product.product_model import Product
 from .product.size_model import Size
 from .product.thumbnail_url_model import ThumbnailUrl
 from .review.review_model import Review
+from .user.login_type_model import LoginType
 from .user.user_coupon_model import UserCoupon
 from .user.user_favorite_model import UserFavorite
+from .user.user_login_type_model import UserLoginType
 from .user.user_model import User

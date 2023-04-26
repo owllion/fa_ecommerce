@@ -18,7 +18,6 @@ from ...database.db import Base
 from ...utils.generate_id import gen_id
 
 
-#每個product的5個size的資料
 class ProductItem(Base):
     __tablename__ = 'product_item'
     

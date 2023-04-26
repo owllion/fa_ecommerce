@@ -1,17 +1,16 @@
 import json
+import os
 from enum import Enum
 from typing import Annotated
 
 import requests
-from authlib.integrations.starlette_client import OAuth, OAuthError
+from authlib.integrations.starlette_client import OAuthError
 from decouple import config
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import RedirectResponse
+from requests_oauthlib import OAuth2Session
 from sqlalchemy.orm import Session
-
-# from starlette.requests import Request
-from starlette.config import Config
 
 from ...constants import api_msgs
 from ...database import db
@@ -23,13 +22,95 @@ from ...utils import security
 from ...utils.dependencies import *
 from ...utils.logger import logger
 from ...utils.router_settings import get_path_decorator_settings
-from ..product.product_router import get_products
+
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 router = APIRouter(
     prefix="/auth",
     tags=["auth"],
     responses={404: {"description": "Not found"}},
 )
+
+
+client_id = config("GITHUB_CLIENT_ID")
+client_secret = config("GITHUB_CLIENT_SECRET")
+
+github = OAuth2Session(client_id)
+
+# OAuth endpoints given in the GitHub API documentation
+authorization_base_url = 'https://github.com/login/oauth/authorize'
+token_url = 'https://github.com/login/oauth/access_token'
+
+
+
+@router.get('/github-login')
+async def github_login(
+    request: Request,
+    db: Session = Depends(db.get_db)
+):
+    url, state = github.authorization_url(authorization_base_url)
+    print(url,'這是auth url')
+
+    return {"url": url}
+
+
+@router.get('/github-auth')
+async def github_auth(
+    request: Request,
+    db: Session = Depends(db.get_db)
+):
+    print("githubauth進乳")
+    print(request.url,'這是req.url')
+    try:
+        github.fetch_token(
+            token_url, 
+            client_secret=client_secret,
+            authorization_response=str(request.url)
+        )
+
+        res = github.get('https://api.github.com/user')
+        print(res.content,'this is r.content')
+
+        user_data = json.loads(res.text)
+
+        print(user_data,'這是userdata')
+        # print(user_data.email,'這是email .')
+        print(user_data['email'],'這是email []')
+
+        #github user可能不公開email，所以高機率會是空的
+        #但因為在這資料庫中name是可以重複的，且還分first、last,因此除了id和email，沒有其他東西可以拿來做身份辨識
+        #因此現階段就是，只要是github登入，依樣先取取看有無email，有舊用user的->做一班find user
+        #沒有的話，就用它的
+        
+        #建立新的user
+        found_user = user_services.find_user_with_email(user_data['email'],db)
+
+        if found_user:
+            raise_http_exception(api_msgs.USER_ALREADY_EXISTS)
+        
+        payload = {
+            'email' : user_data['email'],
+            'first_name': user_data['given_name'],
+            'last_name': user_data['family_name'] if 'family_name' in user_data else '',
+            'upload_avatar': user_data['picture']
+        }
+
+        # new_user = user_services.create_user_service(payload, db)
+    
+        # return {
+        #     'token': security.create_token(new_user.id,'access'),
+        #     'refresh_token': security.create_token(new_user.id,'refresh'),
+        #     'user': new_user,
+        # }
+        return {"msg": 'wpw'}
+
+    except OAuthError as e:
+        raise_http_exception(
+            detail= e.description,
+            status_code= status.HTTP_401_UNAUTHORIZED
+        )
+
+
 
 @router.get('/google-login')
 async def google_auth(

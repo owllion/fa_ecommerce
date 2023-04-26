@@ -28,6 +28,7 @@ class User(Base):
 
     verified = Column(Boolean, nullable=False,default=False)
 
+
     cart = relationship(
         "Cart", 
         back_populates="relate_user",cascade="all, delete",passive_deletes=True,

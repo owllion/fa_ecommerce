@@ -1,6 +1,8 @@
+import json
 from enum import Enum
 from typing import Annotated
 
+import requests
 from authlib.integrations.starlette_client import OAuth, OAuthError
 from decouple import config
 from fastapi import APIRouter, Depends, HTTPException, Request, status
@@ -28,100 +30,48 @@ router = APIRouter(
     tags=["auth"],
     responses={404: {"description": "Not found"}},
 )
- 
-config_data = {
-    'GOOGLE_CLIENT_ID': config('GOOGLE_CLIENT_ID'), 'GOOGLE_CLIENT_SECRET': config('GOOGLE_CLIENT_SECRET')
-}
 
-starlette_config = Config(environ=config_data)
-
-oauth = OAuth(starlette_config)
-
-#Authlib will fetch this server_metadata_url to configure the OAuth client for you
-oauth.register(
-    name='google',
-    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-    client_kwargs={'scope': 'openid email profile'},
-)
-
-
-
-@router.get(
-    "/google-login", 
-    description=" redirect user to Google account website.When you grant access from Google website, Google will redirect back to your given redirect_uri, which is request.url_for('auth')."
-)
-async def google_login(request: Request):
-    # Redirect Google OAuth back to our application
-    redirect_uri = request.url_for('google_auth')
-    print(redirect_uri,'這是redirect_uri')
-    return await oauth.google.authorize_redirect(request, str(redirect_uri))
-
-@router.get('/google-auth')
+@router.get('/google-login')
 async def google_auth(
-    request: Request, 
+    access_token: str,
     db: Session = Depends(db.get_db)
 ):
     try:
-        print('auth被呼叫嗎?!')
-        #get the authrization code or related data from the req
-        token = await oauth.google.authorize_access_token(request)
-        print(token,'這是token')
-        user = token.get('userinfo')
-        print(user,'這是user')
+        res = requests.get(f"https://www.googleapis.com/oauth2/v1/userinfo?access_token={access_token}")
 
-        #1.拿到user後，先取email看是否找到，沒有就新建，反之error
-        found_user = user_services.find_user_with_email(user.email)
+        user_data = json.loads(res.text)
+
+        print(user_data,'這是userdata')
+        # print(user_data.email,'這是email .')
+        print(user_data['email'],'這是email []')
+        
+        #建立新的user
+        found_user = user_services.find_user_with_email(user_data['email'],db)
 
         if found_user:
-            raise_http_exception(
-                api_msgs.USER_ALREADY_EXISTS
-            )
+            raise_http_exception(api_msgs.USER_ALREADY_EXISTS)
         
         payload = {
-            'email' : user.email,
-            'first_name': user.firstName,
-            'last_name': user.lastName
+            'email' : user_data['email'],
+            'first_name': user_data['given_name'],
+            'last_name': user_data['family_name'] if 'family_name' in user_data else '',
+            'upload_avatar': user_data['picture']
         }
-        new_user = user_services.create_user(payload, db)
-        
-        
-        #2.如果建好user了，就拿id去新創一個access_token
-        token = security.create_token(new_user.id,'access')
 
-        #3.redirect到前端的callback葉面，附上query param(token)
-        return RedirectResponse(
-            f'{config("GOOGLE_LOGIN_CALLBACK")}/{token}'
-        )
-
-
-
-        # if user:
-        #     request.session['user'] = dict(user)
-
-        
-        # user_cart_length = len(user.cart.cart_items)
-
-        # return { 
-        #     'token': security.create_token(user.id,"access"),
-        #     'refresh_token': security.create_token(user.id,"refresh"),
-        #     'user': user,
-        #     'cart_length': user_cart_length      
-        # }
+        new_user = user_services.create_user_service(payload, db)
     
+        return {
+            'token': security.create_token(new_user.id,'access'),
+            'refresh_token': security.create_token(new_user.id,'refresh'),
+            'user': new_user,
+        }
+
     except OAuthError as e:
-        raise HTTPException(
-            status_code= status.HTTP_401_UNAUTHORIZED,
-            detail= e.error
+        raise_http_exception(
+            detail= e.description,
+            status_code= status.HTTP_401_UNAUTHORIZED
         )
 
-
-
-
-# @router.get('/logout')
-# async def logout(request: Request):
-#     request.session.pop('user', None)
-#     return RedirectResponse(url='/')
-# #------------------
 
 
 @router.post(
@@ -141,7 +91,7 @@ async def create_user(
                 status_code=status.HTTP_409_CONFLICT,detail='Account already exist'
             )
 
-        new_user = user_services.create_user(payload,db)
+        new_user = user_services.create_user_service(payload,db)
 
         link_params = {
             'user_id': new_user.id,

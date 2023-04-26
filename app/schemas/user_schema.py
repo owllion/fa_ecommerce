@@ -21,6 +21,9 @@ class UserBaseSchema(EmailBaseSchema,BaseModel):
 class UserCreateSchema(UserBaseSchema):
     password: constr(min_length=8) | None = None
     #google login doesn't need the pwd
+    
+    upload_avatar: HttpUrl | None = None
+    #google&github login will have avatar
 
 class LoginUserSchema(EmailBaseSchema,BaseModel):
     password: str

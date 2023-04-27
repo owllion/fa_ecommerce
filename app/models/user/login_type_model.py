@@ -16,14 +16,9 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from ...database.db import Base
+from ...schemas.user_schema import LoginTypeValue
 from ...utils import generate_id
 
-
-class LoginTypeValue(str,Enum):
-    EMAIL = 'email'
-    GOOGLE = 'google'
-    GITHUB = 'github'
-    FACEBOOK = 'facebook'
 
 class LoginType(Base):
     __tablename__ = "login_type"

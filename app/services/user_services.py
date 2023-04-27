@@ -36,14 +36,9 @@ def create_user_service(
     payload: user_schema.UserCreateSchema, 
     db: Session
 ):
-    print(type(payload),'這是type')
-    print(type(payload) is dict,'type(payload) is dict')
-    print(payload is dict,'payload is dict')
     if type(payload) is dict:
-        print("if 1111111111111111111111")
         new_user = user_model.User(**payload)
     else:
-        print("else1111111111111111111111")
         new_user = user_model.User(**payload.dict())
         
     db.add(new_user)

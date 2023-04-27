@@ -6,11 +6,15 @@ from typing import Dict
 from decouple import config
 from pydantic import BaseModel, EmailStr, Field, HttpUrl, constr, validator
 
-from ..models.user.login_type_model import LoginTypeValue
-from .item_schema import Item
+# from ..models.user.login_type_model import LoginTypeValue
 from .review_schema import ReviewSchema
 
 
+class LoginTypeValue(str,Enum):
+    EMAIL = 'email'
+    GOOGLE = 'google'
+    GITHUB = 'github'
+    FACEBOOK = 'facebook'
 class EmailBaseSchema(BaseModel):
     email: EmailStr 
 class UserBaseSchema(EmailBaseSchema,BaseModel):

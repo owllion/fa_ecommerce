@@ -11,9 +11,6 @@ app = FastAPI()
 ALLOWED_HOSTS = ["*"]
 
 
-
-#We need this SessionMiddleware, because Authlib will use request.session to store temporary codes and states.
-app.add_middleware(SessionMiddleware, secret_key=config("SESSION_MIDDLEWARE_SECRET"))
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_HOSTS,
@@ -30,4 +27,5 @@ def go_to_doc():
     return RedirectResponse(url="/docs/")
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=4438, reload=True )
+    # ssl_keyfile="./cert/key.pem", ssl_certfile="./cert/cert.pem"

@@ -43,6 +43,11 @@ token_url = 'https://github.com/login/oauth/access_token'
 
 
 
+
+
+
+
+
 @router.get('/github-login')
 async def github_login(
     request: Request,
@@ -76,11 +81,8 @@ async def github_auth(
         print(user_data,'這是userdata')
         # print(user_data.email,'這是email .')
         print(user_data['email'],'這是email []')
-
-        #github user可能不公開email，所以高機率會是空的
-        #但因為在這資料庫中name是可以重複的，且還分first、last,因此除了id和email，沒有其他東西可以拿來做身份辨識
-        #因此現階段就是，只要是github登入，依樣先取取看有無email，有舊用user的->做一班find user
-        #沒有的話，就用它的
+        
+        #建一個 github_username 欄位(拿login值)
         
         #建立新的user
         found_user = user_services.find_user_with_email(user_data['email'],db)

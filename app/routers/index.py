@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from .auth.index import auth_router
+from .auth.index import auth_router, fb_router, github_router, google_router
 from .coupon.index import coupon_router
 from .order.index import line_pay_router, order_item_router, order_router
 from .product.index import product_item_router, product_router
@@ -11,6 +11,9 @@ router = APIRouter()
 
 #auth
 router.include_router(auth_router)
+router.include_router(google_router)
+router.include_router(github_router)
+router.include_router(fb_router)
 
 #user
 router.include_router(user_router)

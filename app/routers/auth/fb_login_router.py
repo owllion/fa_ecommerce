@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import RedirectResponse
 from requests_oauthlib import OAuth2Session
+from requests_oauthlib.compliance_fixes import facebook_compliance_fix
 from sqlalchemy.orm import Session
 
 from ...constants import api_msgs
@@ -22,15 +23,7 @@ from ...utils import security
 from ...utils.dependencies import *
 from ...utils.logger import logger
 from ...utils.router_settings import get_path_decorator_settings
-
-client_id = config("GITHUB_CLIENT_ID")
-client_secret = config("GITHUB_CLIENT_SECRET")
-
-github = OAuth2Session(client_id)
-
-# OAuth endpoints given in the GitHub API documentation
-authorization_base_url = 'https://github.com/login/oauth/authorize'
-token_url = 'https://github.com/login/oauth/access_token'
+from .auth_router import router
 
 router = APIRouter(
     prefix="/auth",
@@ -39,25 +32,42 @@ router = APIRouter(
 )
 
 
-@router.get('/github-login')
-async def github_login():
-    url = github.authorization_url(authorization_base_url)
+client_id = config("FB_CLIENT_ID")
+client_secret = config("FB_CLIENT_SECRET")
+
+authorization_base_url = 'https://www.facebook.com/v16.0/dialog/oauth'
+token_url = 'https://graph.facebook.com/v16.0/oauth/access_token'
+# redirect_uri ='https://localhost:3000/auth/fb-login/callback'
+redirect_uri ='https://localhost:3000/auth/fb-login/callback'
+
+
+
+
+
+facebook = OAuth2Session(client_id, redirect_uri=redirect_uri)
+facebook = facebook_compliance_fix(facebook)
+scope = ["public_profile", "email"]
+
+@router.get('/fb-login')
+async def fb_login():
+    url,state = facebook.authorization_url(authorization_base_url)
+    print(url,'這是臉書url')
     return {"url": url}
 
-
-@router.post('/github-auth')
-async def github_auth(
+@router.post('/fb-auth')
+async def fb_auth(
     payload: auth_schema.SocialLoginSchema,
     db: Session = Depends(db.get_db)
 ):
     try:
-        github.fetch_token(
+        facebook.fetch_token(
             token_url, 
             client_secret=client_secret,
             authorization_response= payload.reqUrl
         )
 
-        res = github.get('https://api.github.com/user')
+        res = facebook.get('https://graph.facebook.com/me?')
+
         print(res.content,'this is r.content')
 
         user_data = json.loads(res.text)
@@ -66,7 +76,7 @@ async def github_auth(
         # print(user_data.email,'這是email .')
         print(user_data['email'],'這是email []')
         
-        #建一個 github_username 欄位(拿login值)
+        #建一個 fb_username 欄位(拿login值)
         
         #建立新的user
         # found_user = user_services.find_user_with_email(user_data['email'],db)
@@ -88,7 +98,7 @@ async def github_auth(
         #     'refresh_token': security.create_token(new_user.id,'refresh'),
         #     'user': new_user,
         # }
-        return {"msg": 'wpw'}
+        return {"msg": '臉書成功登入喔'}
 
     except Exception as e:
         if isinstance(e, (HTTPException,)):

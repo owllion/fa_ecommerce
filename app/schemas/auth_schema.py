@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
 
-class GithubLoginSchema(BaseModel):
+class SocialLoginSchema(BaseModel):
     reqUrl: str

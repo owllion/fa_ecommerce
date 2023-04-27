@@ -53,3 +53,6 @@ API_RESPONSES = {
      # 200: {"description": "OK"},
      500: {"description": "Internal Server Error"},
 }
+
+#server
+SERVER_ERROR = 'server error,something went wrong.'

@@ -96,10 +96,7 @@ def login(
         user = user_services.find_user_with_email(payload.email, db)
         
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail='User does not exist!'
-            )
+            raise_http_exception(api_msgs.USER_NOT_FOUND)
 
 
         if user_services.password_is_matched(payload.password, user.password) and user_services.user_is_verified(user.verified):
@@ -112,9 +109,9 @@ def login(
             }
 
 
-    except HTTPException as e:
+    except Exception as e:
         logger.error(e, exc_info=True)
-        if type(e).__name__ == 'HTTPException': raise e
+        if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
 
 
@@ -141,7 +138,7 @@ def get_refresh_token(
 
     except Exception as e:
         logger.error(e, exc_info=True)
-        if type(e).__name__ == 'HTTPException': raise e
+        if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
 
 
@@ -174,5 +171,6 @@ def verify_token_from_link(
         }
 
     except Exception as e:
-        if type(e).__name__ == 'HTTPException': raise e
+        logger.error(e, exc_info=True)
+        if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))

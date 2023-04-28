@@ -8,7 +8,9 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from ..constants import api_msgs
 from ..database import db
+from ..exceptions.get_exception import raise_http_exception
 from ..services import user_services
 from ..utils.logger import logger
 
@@ -49,10 +51,6 @@ def decode_token(
     token_type: str, 
     db:Session
 ):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        detail="Malformed token, please provide a valid token",
-    )
     try:
         payload = jwt.decode(
             token, 
@@ -62,16 +60,18 @@ def decode_token(
         user = user_services.find_user_with_id(payload['user_id'], db)
 
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,detail="User does not exist."
-        )
+            raise_http_exception(
+                api_msgs.USER_NOT_FOUND,
+                status.HTTP_401_UNAUTHORIZED
+            )
 
         return user
 
     except ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,detail="Token has expired."
+        raise_http_exception(
+            api_msgs.TOKEN_EXPIRED,
+            status.HTTP_401_UNAUTHORIZED
         )
     except JWTError as e:
         logger.error(e, exc_info=True)
-        raise credentials_exception
+        raise raise_http_exception(api_msgs.MALFORMED_TOKEN)

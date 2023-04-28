@@ -45,7 +45,11 @@ EMAIL_ALREADY_REGISTERED_WITH_GOOGLE = "this email is already registered with go
 
 MALFORMED_PAYLOAD = "could not validate credentials"
 
+MALFORMED_TOKEN = "malformed token, please provide a valid token"
+
 AUTHENTICATION_REQUIRED = "authentication required"
+
+TOKEN_EXPIRED = "token expired"
 
 #response
 API_RESPONSES = {

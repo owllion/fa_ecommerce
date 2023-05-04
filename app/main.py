@@ -20,7 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(router=index.router, prefix="/api")
-
+print("執行main!")
 
 @app.get("/")
 def go_to_doc():

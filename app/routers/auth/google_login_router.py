@@ -2,7 +2,7 @@ import json
 
 import requests
 from authlib.integrations.starlette_client import OAuthError
-from fastapi import Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from ...constants import api_msgs
@@ -11,8 +11,12 @@ from ...exceptions.custom_http_exception import CustomHTTPException
 from ...exceptions.get_exception import raise_http_exception
 from ...services import user_services
 from ...utils import security
-from .auth_router import router
 
+router = APIRouter(
+    prefix="/auth",
+    tags=["auth"],
+    responses={404: {"description": "Not found"}},
+)
 
 @router.get('/google-login')
 async def google_auth(

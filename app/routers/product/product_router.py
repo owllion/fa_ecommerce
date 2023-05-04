@@ -70,8 +70,7 @@ def get_product(
     
                 
     except Exception as e:
-        #isinstance會檢查繼承關係
-        if isinstance(e, exceptions.HTTPException): raise e
+        if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
     
 
@@ -131,7 +130,7 @@ def update_product(
         db.commit()
         
     except Exception as e:
-        if type(e).__name__ == exceptions.HTTPException: raise e
+        if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
 
 
@@ -156,7 +155,7 @@ def delete_product(product_id: str,db:Session = Depends(db.get_db)):
         db.commit()
      
     except Exception as e:
-        if type(e).__name__ == exceptions.HTTPException: raise e
+        if isinstance(e, (HTTPException,)): raise e
         raise CustomHTTPException(detail= str(e))
 
 # @public_router.put("/{product_id}")

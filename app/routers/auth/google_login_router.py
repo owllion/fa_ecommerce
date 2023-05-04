@@ -57,4 +57,5 @@ async def google_auth(
             detail= e.description,
             status_code= status.HTTP_401_UNAUTHORIZED
         )
-        raise CustomHTTPException()
+        raise CustomHTTPException(detail= str(e))
+    

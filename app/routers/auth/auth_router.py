@@ -28,6 +28,10 @@ router = APIRouter(
     tags=["auth"],
     responses={404: {"description": "Not found"}},
 )
+@router.get("test-get")
+def test_get():
+    db_name = config("DB_NAME")
+    return db_name
 
 @router.post(
     '/register', 

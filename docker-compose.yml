@@ -1,51 +1,49 @@
 version: "3.9"
-#The version of the Docker compose syntax we're gonna use.
-#Just to make sure if there's new version,it would not break our configuration.
+
 services:
-  #typically Docker compose consist of one or more services that's needed for your app.
   app:
-    build:
-      context: .
-      #This means we want to build the Dockerfile inside our current directory.
-      #So the context we're gonna use for  app service is the root directory that we're running the the Docker compose from.
-      args:
-        - DEV=true
-        #means: if we're running using this docker-compose,which we're only gonna use it for development,we set the dev to true
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --reload
+    container_name: py-server-container
+    volumes:
+      - .:/app
     ports:
-      - "8000:8000"
-    #maps por 8000 on local machine, and 8000 inside our Docker container.
-    #This is how we can access the network when we want to connect to our server
-    volumes:
-      #is a way of mapping directories from our sysrem into the Docker container.
-      - ./app:/app
-      #左邊就是我們的app資料夾，右邊就是在container的app
-      #The reason we add this is because we want the updates that we make to our code in our local project to be reflected in the running container in real time! We do not have to rebuild our container everytime we change a line of code,we want to automatically sync the code in our project to the cloud running the container.
-    command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
-    #Command is used to run the service.By default 如果沒有specify command,他就會跑來run這個指令喔!還記得前面有教到的docker指令的部分媽? 這邊就是那個後半部的指令(前半部是Docker compose syntax)~如果我們沒有在cmd特別寫啥指令，最後就是會執行這裡的!
-    #This is gonna tell our app how to connect to the db
-    environment:
-      - DB_HOST=db
-      #"db"就是下面的那個db(另個service)
-      - DB_NAME=devdb
-      - DB_USER=devuser
-      - DB_PASS=changeme
-      #這邊所有的value都要和db service的value match!!
+      - 8000:8000
+    # environment:
+    #   - DB_URL=postgresql://fastapi_traefik:fastapi_traefik@db:5432/fastapi_traefik
     depends_on:
+      - redis
       - db
-    #Docker will try to wait for the DB service to start before it starts the app service.
+
+  redis:
+    image: redis:7.0.11-alpine
+    container_name: redis-container
+    restart: always
+    ports:
+      - 6379:6379
+    # volumes:
+    # - /data/redis-data:/data
+    # command: sh -c "redis-server --daemonize yes && tail -f /dev/null" #啟動 redis-server
+
   db:
-    #it's level with the app service.
-    image: postgres:13-alpine
+    image: mysql
+    container_name: mysql-container
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    env_file:
+      - .env
+    # environment:
+    #   MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    #   MYSQL_DATABASE: ${DB_NAME}
+    # MYSQL_USER: ${DB_USER}
+    ports:
+      - 3307:3306
+    # expose:
+    #   - 3307
+    # volumes:
+    #   - mysql-volume:/var/lib/mysql
     volumes:
-      - dev-db-data:/var/postgresql/data
-      #map the directory inside the container to the named volumes(dev-db-data) on our machine.
-      #That "data" is db's data,meaning this line is saying : we're gonna store(persist) those db data into our volume.
-    environment:
-      - POSTGRES_DB=devdb
-      - POSTGRES_USER=devuser
-      - POSTGRES_PASSWORD=changeme
+      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
+
 volumes:
-  db-data:
-  #name of volume
-  #it's gonna store it in the default location on the file system that it does for the named volumes
+  mysql-volume:

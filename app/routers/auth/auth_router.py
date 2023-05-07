@@ -31,9 +31,12 @@ router = APIRouter(
 
 
 @router.get("test-get")
-def test_get(req: Request):
+async def test_get(req: Request):
     client = req.app.state.redis
     print(client, "這是client")
+    await client.set("test1", "hello, first val")
+    res = await client.get("test1")
+    print(res, "這是res")
     db_name = config("DB_NAME")
     return db_name
 

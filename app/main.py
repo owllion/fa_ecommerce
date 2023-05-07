@@ -24,9 +24,12 @@ app.include_router(router=index.router, prefix="/api")
 
 
 def redis_pool(db: int = 0):
-    redis = aioredis.from_url(
-        f"redis://:{config('password')}@{config('host')}/{db}?encoding=utf-8",
-        decode_responses=True,
+    # redis = aioredis.from_url(
+    #     f"redis://:{config('REDIS_HOST')}@{config('REDIS_PORT')}/{db}?encoding=utf-8",
+    #     decode_responses=True,
+    # )
+    redis = aioredis.Redis(
+        host=config("REDIS_HOST"), port=config("REDIS_PORT"), password=config("REDIS_PW")
     )
 
     return redis

@@ -1,3 +1,4 @@
+import aioredis
 import uvicorn
 from decouple import config
 from fastapi import FastAPI
@@ -7,7 +8,7 @@ from starlette.responses import RedirectResponse
 
 from .routers import index
 
-app = FastAPI()
+app = FastAPI(title="React Ecommerce API")
 ALLOWED_HOSTS = ["*"]
 
 
@@ -20,12 +21,38 @@ app.add_middleware(
 )
 
 app.include_router(router=index.router, prefix="/api")
-print("執行main!")
+
+
+def redis_pool(db: int = 0):
+    redis = aioredis.from_url(
+        f"redis://:{config('password')}@{config('host')}/{db}?encoding=utf-8",
+        decode_responses=True,
+    )
+
+    return redis
+
+
+@app.on_event("startup")
+def create_redis():
+    app.state.redis = redis_pool()
+
+
+@app.on_event("shutdown")
+def close_redis():
+    app.state.redis.close()
+
 
 @app.get("/")
 def go_to_doc():
     return RedirectResponse(url="/docs/")
 
+
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=4438, reload=True )
-    # ssl_keyfile="./cert/key.pem", ssl_certfile="./cert/cert.pem"
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=443,
+        reload=True,
+        ssl_keyfile="./cert/key.pem",
+        ssl_certfile="./cert/cert.pem",
+    )

@@ -23,182 +23,162 @@ from ...models.cart import cart_item_model
 from ...schemas import cart_schema, product_schema, user_schema
 from ...schemas.user_schema import SupportedField, VerifiedValue
 from ...services import product_services, user_services
-from ...utils.dependencies import *
-from ...utils.logger import logger
-from ...utils.router_settings import get_path_decorator_settings, get_router_settings
+from ...utils.common.logger import logger
+from ...utils.depends.dependencies import *
+from ...utils.router.router_settings import (
+    get_path_decorator_settings,
+    get_router_settings,
+)
 
-_,protected_singular,_,public_singular = get_router_settings(
-    singular_prefix = 'user',
-    plural_prefix = 'users',
-    tags = ['user']
+_, protected_singular, _, public_singular = get_router_settings(
+    singular_prefix="user", plural_prefix="users", tags=["user"]
 )
 
 
 @protected_singular.post(
-    "/update",
-    **get_path_decorator_settings(description= "Successfully update user data")
+    "/update", **get_path_decorator_settings(description="Successfully update user data")
 )
 def update_user(
-    req: Request,
-    payload: user_schema.UserUpdateSchema,
-    db: Session = Depends(db.get_db)
+    req: Request, payload: user_schema.UserUpdateSchema, db: Session = Depends(db.get_db)
 ):
-
-    (field,value) = jsonable_encoder(payload).values()
-    #Convert value to python dict then get the values.
-    #Can not do this when the data is of JSON format.
-    #But you can actually just write payload.field XD 
+    (field, value) = jsonable_encoder(payload).values()
+    # Convert value to python dict then get the values.
+    # Can not do this when the data is of JSON format.
+    # But you can actually just write payload.field XD
 
     try:
-        
         if field == SupportedField.VERIFIED:
             req.state.mydata.verified = int(value)
-        
+
         elif field == SupportedField.LASTNAME:
             req.state.mydata.last_name = value
         elif field == SupportedField.FIRSTNAME:
             req.state.mydata.first_name = value
-        #modify req.state.mydata == directly current user's data 
+        # modify req.state.mydata == directly current user's data
 
         db.commit()
-        #then save it to the db
+        # then save it to the db
 
     except HTTPException as e:
-        if type(e).__name__ == 'HTTPExceotion':
+        if type(e).__name__ == "HTTPExceotion":
             raise e
         logger.error(e, exc_info=True)
-        raise CustomHTTPException(detail= str(e))
-
+        raise CustomHTTPException(detail=str(e))
 
 
 @protected_singular.post(
     "/reset-password",
-    **get_path_decorator_settings(description= "Password has been successfully reset")
+    **get_path_decorator_settings(description="Password has been successfully reset")
 )
 def reset_password(
-    req: Request,
-    payload: user_schema.CreatePasswordSchema,
-    db: Session = Depends(db.get_db)
+    req: Request, payload: user_schema.CreatePasswordSchema, db: Session = Depends(db.get_db)
 ):
     try:
         req.state.mydata.password = payload.password
         db.commit()
     except Exception as e:
-        raise CustomHTTPException(detail= str(e))
-    
+        raise CustomHTTPException(detail=str(e))
 
 
 @public_singular.post(
-    "/forgot-password", 
-    **get_path_decorator_settings(description= "Password has been successfully reset")
+    "/forgot-password",
+    **get_path_decorator_settings(description="Password has been successfully reset")
 )
-async def forgot_password(
-    payload: user_schema.EmailBaseSchema,
-    db: Session = Depends(db.get_db)
-):
+async def forgot_password(payload: user_schema.EmailBaseSchema, db: Session = Depends(db.get_db)):
     try:
         user = user_services.find_user_with_email(payload.email, db)
         if not user:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail='User does not exist!'
+                status_code=status.HTTP_400_BAD_REQUEST, detail="User does not exist!"
             )
-        
+
         link_params = {
-            'user_id': user.id,
-            'user_email': user.email,
-            'link_type' : 'reset',
-            'url_params' : 'reset-password/token'   
-        }   
-    
+            "user_id": user.id,
+            "user_email": user.email,
+            "link_type": "reset",
+            "url_params": "reset-password/token",
+        }
+
         await user_services.send_verify_or_reset_link(link_params)
 
         content = {
             "detail": "A verification email has been sent to your registered email address successfully."
         }
-        return JSONResponse(
-            content= content,
-            status_code=200
-        )
+        return JSONResponse(content=content, status_code=200)
 
     except Exception as e:
-        if type(e).__name__ == 'HTTPException': raise e
-        raise CustomHTTPException(detail= str(e))
+        if type(e).__name__ == "HTTPException":
+            raise e
+        raise CustomHTTPException(detail=str(e))
+
 
 @protected_singular.post(
-    "/upload-avatar", 
-    **get_path_decorator_settings(description="Successfully upload your avatar!")
+    "/upload-avatar", **get_path_decorator_settings(description="Successfully upload your avatar!")
 )
 def get_uploaded_avatar_url(
-    req: Request,
-    payload: user_schema.UserUploadAvatarSchema,
-    db: Session = Depends(db.get_db)
+    req: Request, payload: user_schema.UserUploadAvatarSchema, db: Session = Depends(db.get_db)
 ):
     try:
         req.state.mydata.upload_avatar = payload.url
         db.commit()
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)): raise e
-        raise CustomHTTPException(detail= str(e))
-    
+        if isinstance(e, (HTTPException,)):
+            raise e
+        raise CustomHTTPException(detail=str(e))
+
 
 @protected_singular.post(
-    "/add-to-cart", 
+    "/add-to-cart",
     **get_path_decorator_settings(description="Successfully add the product to the cart.")
 )
 def add_to_cart(
-    req: Request,
-    payload: cart_schema.CartItemBaseSchema,
-    db: Session = Depends(db.get_db)
+    req: Request, payload: cart_schema.CartItemBaseSchema, db: Session = Depends(db.get_db)
 ):
     try:
-
         user_cart = req.state.mydata.cart
 
-        #沒有的話，會是{}
+        # 沒有的話，會是{}
         cart_item = user_services.get_item_from_user_cart(req, payload.product_id, payload.size)
-        
-        #取庫存、新增cart_item使用
-        product = product_services.find_product_with_id(payload.product_id,db)
 
-        
+        # 取庫存、新增cart_item使用
+        product = product_services.find_product_with_id(payload.product_id, db)
+
         if not product:
             raise HTTPException(
-                status_code= status.HTTP_400_BAD_REQUEST,
-                detail = api_msgs.PRODUCT_NOT_FOUND
+                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.PRODUCT_NOT_FOUND
             )
-        
-        res = list(filter(lambda x: x.product_id == product.id and x.size.value == payload.size,product.product_items))
+
+        res = list(
+            filter(
+                lambda x: x.product_id == product.id and x.size.value == payload.size,
+                product.product_items,
+            )
+        )
         stock = res[0].stock if res else None
-        print(stock,'這是stock')
-        print(res,'這是res')
+        print(stock, "這是stock")
+        print(res, "這是res")
 
-        
-
-        if cart_item: #如果商品存在
+        if cart_item:  # 如果商品存在
             is_available = cart_item.qty + payload.qty < stock
-            if is_available: #判斷現在傳入的qty是否<庫存
-                #不用再判斷qty是否>1了 只要最後結果是<stock就可以
+            if is_available:  # 判斷現在傳入的qty是否<庫存
+                # 不用再判斷qty是否>1了 只要最後結果是<stock就可以
                 cart_item.qty += payload.qty
-                #是-> 就直接加
-            else: #不足，就說庫存不足
+                # 是-> 就直接加
+            else:  # 不足，就說庫存不足
                 raise HTTPException(
-                    status_code= status.HTTP_400_BAD_REQUEST,
-                    detail= api_msgs.PRODUCT_IS_NOT_AVAILABLE_ERROR
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=api_msgs.PRODUCT_IS_NOT_AVAILABLE_ERROR,
                 )
-            
-        else: #商品不存在 新增一個
-            #也要先判斷數字是否<庫存
-            print(payload.qty,'qty!!')
+
+        else:  # 商品不存在 新增一個
+            # 也要先判斷數字是否<庫存
+            print(payload.qty, "qty!!")
             # print(product.stock, 'stock')
             is_available = payload.qty < stock
             if is_available:
                 new_cart_item = cart_item_model.CartItem(
-                    qty = payload.qty,
-                    product_id = product.id, 
-                    cart_id = user_cart.id,
-                    size = payload.size
+                    qty=payload.qty, product_id=product.id, cart_id=user_cart.id, size=payload.size
                 )
 
                 db.add(new_cart_item)
@@ -206,26 +186,24 @@ def add_to_cart(
                 user_cart.cart_items.append(new_cart_item)
             else:
                 raise HTTPException(
-                    status_code= status.HTTP_400_BAD_REQUEST,
-                    detail= api_msgs.PRODUCT_IS_NOT_AVAILABLE_ERROR
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=api_msgs.PRODUCT_IS_NOT_AVAILABLE_ERROR,
                 )
 
         db.commit()
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)): raise e
-        raise CustomHTTPException(detail= str(e))
-    
+        if isinstance(e, (HTTPException,)):
+            raise e
+        raise CustomHTTPException(detail=str(e))
 
 
 @protected_singular.post(
-    "/remove-from-cart", 
+    "/remove-from-cart",
     **get_path_decorator_settings(description="Successfully remove the product from the cart.")
 )
 def remove_from_cart(
-    req: Request,
-    payload: cart_schema.RemoveFromCartSchema,
-    db: Session = Depends(db.get_db)
+    req: Request, payload: cart_schema.RemoveFromCartSchema, db: Session = Depends(db.get_db)
 ):
     print("remove!!")
     try:
@@ -235,95 +213,82 @@ def remove_from_cart(
         user_services.delete_item(db, cart_item)
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)): raise e
-        raise CustomHTTPException(detail= str(e))
+        if isinstance(e, (HTTPException,)):
+            raise e
+        raise CustomHTTPException(detail=str(e))
 
 
 @protected_singular.post(
-    "/update-cart-item-qty", 
+    "/update-cart-item-qty",
     **get_path_decorator_settings(description="Successfully update item's quantity.")
 )
 def update_item_qty(
-    req: Request,
-    payload: cart_schema.UpdateItemQtySchema,
-    db: Session = Depends(db.get_db)
+    req: Request, payload: cart_schema.UpdateItemQtySchema, db: Session = Depends(db.get_db)
 ):
     try:
-        cart_item = user_services.get_item_from_user_cart( req, payload.product_id, payload.size)
+        cart_item = user_services.get_item_from_user_cart(req, payload.product_id, payload.size)
 
         if not cart_item:
             raise HTTPException(
-                status_code= status.HTTP_400_BAD_REQUEST,
-                detail= api_msgs.CART_ITEM_NOT_FOUND
+                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.CART_ITEM_NOT_FOUND
             )
-        
 
-        #------
-        #取庫存、新增cart_item使用
-        product = product_services.find_product_with_id(payload.product_id,db)
+        # ------
+        # 取庫存、新增cart_item使用
+        product = product_services.find_product_with_id(payload.product_id, db)
 
-        
         if not product:
             raise HTTPException(
-                status_code= status.HTTP_400_BAD_REQUEST,
-                detail = api_msgs.PRODUCT_NOT_FOUND
+                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.PRODUCT_NOT_FOUND
             )
-        
-        res = list(filter(lambda x: x.product_id == product.id and x.size.value == payload.size,product.product_items))
+
+        res = list(
+            filter(
+                lambda x: x.product_id == product.id and x.size.value == payload.size,
+                product.product_items,
+            )
+        )
 
         stock = res[0].size.value if res else None
 
-        print(stock,res)
-        #------
-        
-        user_services.update_qty(
-            cart_item,
-            stock,
-            payload.operation_type, 
-            db
-        )
+        print(stock, res)
+        # ------
+
+        user_services.update_qty(cart_item, stock, payload.operation_type, db)
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)): raise e
-        raise CustomHTTPException(detail= str(e))
+        if isinstance(e, (HTTPException,)):
+            raise e
+        raise CustomHTTPException(detail=str(e))
 
 
 @protected_singular.get(
-    "/cart", 
+    "/cart",
     **get_path_decorator_settings(
-        description="Get user's cart",
-        response_model= list[cart_schema.CartItemSchema]
+        description="Get user's cart", response_model=list[cart_schema.CartItemSchema]
     )
 )
-def get_user_cart(
-    req: Request,
-    db: Session = Depends(db.get_db)
-):
+def get_user_cart(req: Request, db: Session = Depends(db.get_db)):
     try:
         items = jsonable_encoder(req.state.mydata.cart.cart_items)
         first_p = jsonable_encoder(req.state.mydata.cart.cart_items[0].product)
         #    print(first_p,'首個商品')
         #    print(items)
         #    print(len(req.state.mydata.cart.cart_items),"長度")
-        cart_items = req.state.mydata.cart.cart_items 
+        cart_items = req.state.mydata.cart.cart_items
         for item in req.state.mydata.cart.cart_items:
-                res = jsonable_encoder(item.product)
-                print(res,'這是res')
-                # print(jsonable_encoder(item.product))
+            res = jsonable_encoder(item.product)
+            print(res, "這是res")
+            # print(jsonable_encoder(item.product))
         return [item for item in cart_items]
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)): raise e
-        raise CustomHTTPException(detail= str(e))
-    
-    
+        if isinstance(e, (HTTPException,)):
+            raise e
+        raise CustomHTTPException(detail=str(e))
 
-@protected_singular.get(
-    "/{user_id}", 
-    response_model=user_schema.UserSchema
-)
+
+@protected_singular.get("/{user_id}", response_model=user_schema.UserSchema)
 def get_user(user_id: str, db: Session = Depends(db.get_db)):
-    user = user_services.find_user_with_id(user_id,db)
+    user = user_services.find_user_with_id(user_id, db)
     return user
-
-

@@ -15,17 +15,17 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from ...database.db import Base
-from ...utils.generate_id import gen_id
+from ...utils.common.generate_id import gen_id
 
 
 class Coupon(Base):
-    __tablename__ = 'coupon'
+    __tablename__ = "coupon"
 
-    id = Column(String(80), primary_key=True, index=True,default=gen_id)
+    id = Column(String(80), primary_key=True, index=True, default=gen_id)
 
     code = Column(String(255), nullable=False, index=True)
 
-    description = Column(Text,default="")
+    description = Column(Text, default="")
 
     amount = Column(DECIMAL(10, 2), nullable=False)
 
@@ -37,7 +37,11 @@ class Coupon(Base):
 
     is_used = Column(Boolean, default=False)
 
-    created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
-    
-    updated_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))
-   
+    created_at = Column(TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP"),
+        onupdate=text("CURRENT_TIMESTAMP"),
+    )

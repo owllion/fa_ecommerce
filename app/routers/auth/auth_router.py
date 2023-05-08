@@ -16,13 +16,13 @@ from sqlalchemy.orm import Session
 from ...constants import api_msgs
 from ...database import db
 from ...exceptions.custom_http_exception import CustomHTTPException
-from ...exceptions.get_exception import raise_http_exception
+from ...exceptions.main import raise_http_exception
 from ...schemas import auth_schema, user_schema
 from ...services import user_services
-from ...utils import security
-from ...utils.dependencies import *
-from ...utils.logger import logger
-from ...utils.router_settings import get_path_decorator_settings
+from ...utils.common.logger import logger
+from ...utils.depends.dependencies import *
+from ...utils.router.router_settings import get_path_decorator_settings
+from ...utils.security import security
 
 router = APIRouter(
     prefix="/auth",
@@ -57,11 +57,11 @@ async def test_get(req: Request):
             {"url": "https://dummyimage.com/320x400"},
         ],
     }
-    await client.setex("test1", timedelta(seconds=30), json.dumps(data))
+    # await client.setex("test1", timedelta(seconds=30), json.dumps(data))
 
     res = await client.get("test1")
     if res:
-        print(res, "這是res")
+        print(res, "這是ressss")
         res = json.loads(res)
         print(res["product_name"])
         print(res["thumbnails"][0])

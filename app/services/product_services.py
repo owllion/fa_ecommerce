@@ -5,27 +5,25 @@ from sqlalchemy.orm.query import Query
 
 from ..constants import api_msgs
 from ..database import db
-from ..exceptions.get_exception import raise_http_exception
+from ..exceptions.main import raise_http_exception
 from ..models.product import product_model
 from ..models.user import user_favorite_model, user_model
 from ..schemas import product_schema
 
 
-def find_product_with_name(
-    name: str,
-    db: Session = Depends(db.get_db)
-):
-    product = db.query(product_model.Product).filter(product_model.Product.product_name == name).first()
-    
+def find_product_with_name(name: str, db: Session = Depends(db.get_db)):
+    product = (
+        db.query(product_model.Product).filter(product_model.Product.product_name == name).first()
+    )
+
     return product
 
-def find_product_with_id(
-    id: str,
-    db: Session
-):
+
+def find_product_with_id(id: str, db: Session):
     product = db.query(product_model.Product).filter(product_model.Product.id == id).first()
 
     return product
+
 
 def get_product_or_raise_not_found(product_id: str, db: Session):
     product = find_product_with_id(product_id, db)
@@ -34,32 +32,33 @@ def get_product_or_raise_not_found(product_id: str, db: Session):
 
     return product
 
-def find_user_fav(user_id: str, product_id: str,db: Session):
-    product = db\
-        .query(user_favorite_model.UserFavorite)\
-        .filter_by(
-            user_id = user_id,
-            product_id = product_id
-        )\
+
+def find_user_fav(user_id: str, product_id: str, db: Session):
+    product = (
+        db.query(user_favorite_model.UserFavorite)
+        .filter_by(user_id=user_id, product_id=product_id)
         .first()
-    
+    )
+
     return product
 
-def product_in_user_fav(user_id: str, product_id: str,db: Session):
+
+def product_in_user_fav(user_id: str, product_id: str, db: Session):
     product = find_user_fav(user_id, product_id, db)
-    
+
     return True if product else False
+
 
 def add_to_fav(user: user_model.User, product: product_model.Product):
     user.favorites.append(product)
+
 
 def remove_from_fav(user: user_model.User, product: product_model.Product):
     user.favorites.remove(product)
 
 
 def save_to_db_then_return(
-    payload: product_schema.ProductCreateSchema, 
-    db: Session = Depends(db.get_db)
+    payload: product_schema.ProductCreateSchema, db: Session = Depends(db.get_db)
 ):
     new_product = product_model.Product(**payload.dict())
     db.add(new_product)
@@ -75,17 +74,18 @@ def get_price_range(price: str):
     The input string should be in the format of '100-200'. The index('-') function is used to find the position of the '-' character
     to split the string into the lower and upper bounds of the price range.
     """
-    
+
     try:
-        min_price,max_price = price.split("-")
+        min_price, max_price = price.split("-")
 
         return {
-            'min_': int(min_price.strip()) if max_price else 0,
-            'max_': int(max_price.strip()) if min_price else 0,
+            "min_": int(min_price.strip()) if max_price else 0,
+            "max_": int(max_price.strip()) if min_price else 0,
         }
-    
+
     except (ValueError, AttributeError):
-        return {'min_': 0, 'max_': 0}
+        return {"min_": 0, "max_": 0}
+
 
 def get_filters(payload: product_schema.PaginateProductsSchema):
     filters = []
@@ -93,39 +93,32 @@ def get_filters(payload: product_schema.PaginateProductsSchema):
     if payload.keyword:
         keyword = payload.keyword.lower().strip()
 
-        filters.append(
-            func.lower(product_model.Product.product_name).like(f'%{keyword}%')
-        )
+        filters.append(func.lower(product_model.Product.product_name).like(f"%{keyword}%"))
 
     if payload.categories:
-        if isinstance(payload.categories,list):
-            filters.append(
-                product_model.Product.category.in_(payload.categories)
-            )
-        else: #category is a str
-            filters.append(
-                product_model.Product.category == payload.categories
-            )
+        if isinstance(payload.categories, list):
+            filters.append(product_model.Product.category.in_(payload.categories))
+        else:  # category is a str
+            filters.append(product_model.Product.category == payload.categories)
 
     if payload.brands:
-        if isinstance(payload.brands,list):
-            filters.append(
-                product_model.Product.brand.in_(payload.brands)
-            )
-        else: #brand is a str
-            filters.append(
-                product_model.Product.brand == payload.brands
-            )
+        if isinstance(payload.brands, list):
+            filters.append(product_model.Product.brand.in_(payload.brands))
+        else:  # brand is a str
+            filters.append(product_model.Product.brand == payload.brands)
 
     if payload.price:
         min_, max_ = get_price_range(payload.price).values()
-        
-        filters.append(and_(product_model.Product.price >= min_, product_model.Product.price <= max_))
-    
+
+        filters.append(
+            and_(product_model.Product.price >= min_, product_model.Product.price <= max_)
+        )
+
     return filters
 
-def results_need_sorting(sort_by: str,order_by: str):
-    return True if sort_by and order_by else False 
+
+def results_need_sorting(sort_by: str, order_by: str):
+    return True if sort_by and order_by else False
 
 
 def filter_products(query: Query, payload: product_schema.PaginateProductsSchema):
@@ -136,36 +129,20 @@ def filter_products(query: Query, payload: product_schema.PaginateProductsSchema
 
     offset = (payload.page - 1) * payload.limit
 
-    if results_need_sorting(payload.sort_by,payload.order_by):
-        order_by_fn = desc if payload.order_by == 'desc' else asc
+    if results_need_sorting(payload.sort_by, payload.order_by):
+        order_by_fn = desc if payload.order_by == "desc" else asc
 
-        sorted_results = query\
-            .filter(*filters)\
-            .order_by(
-                order_by_fn(getattr(product_model.Product,payload.sort_by))
-            )\
-            
+        sorted_results = query.filter(*filters).order_by(
+            order_by_fn(getattr(product_model.Product, payload.sort_by))
+        )
         return {
-            'total': sorted_results.count(),
-            'list': sorted_results\
-                .offset(offset)\
-                .limit(payload.limit)\
-                .all()
+            "total": sorted_results.count(),
+            "list": sorted_results.offset(offset).limit(payload.limit).all(),
         }
-        
+
     else:
-        unsorted_results = query\
-            .filter(*filters)\
-
+        unsorted_results = query.filter(*filters)
         return {
-            'total': unsorted_results.count(),
-            'list': unsorted_results\
-                .offset(offset)\
-                .limit(payload.limit)\
-                .all()
+            "total": unsorted_results.count(),
+            "list": unsorted_results.offset(offset).limit(payload.limit).all(),
         }
-    
-       
-
-
-

@@ -15,19 +15,23 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from ...database.db import Base
-from ...utils.generate_id import gen_id
+from ...utils.common.generate_id import gen_id
 
 
 class ThumbnailUrl(Base):
-    __tablename__ = 'thumbnail_url'
+    __tablename__ = "thumbnail_url"
 
-    id = Column(String(80), primary_key=True, index=True,default=gen_id)
+    id = Column(String(80), primary_key=True, index=True, default=gen_id)
 
-    url = Column(String(350), nullable= False)
+    url = Column(String(350), nullable=False)
 
-    
-    product_id = Column(String(80), ForeignKey("product.id",ondelete="CASCADE"),nullable=False)
+    product_id = Column(String(80), ForeignKey("product.id", ondelete="CASCADE"), nullable=False)
 
-    created_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'))
-    
-    updated_at = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))
+    created_at = Column(TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP"),
+        onupdate=text("CURRENT_TIMESTAMP"),
+    )

@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import timedelta
 from enum import Enum
 from typing import Annotated
 
@@ -33,10 +34,40 @@ router = APIRouter(
 @router.get("test-get")
 async def test_get(req: Request):
     client = req.app.state.redis
-    print(client, "這是client")
-    await client.set("test1", "hello, first val")
+    data = {
+        "product_name": "develop prepare nothing",
+        "description": "Skin population play hold check writer behavior. Drug if whole science wall accept many. Simple three forget go south image.",
+        "thumbnail": "https://placekitten.com/320/400",
+        "price": 421,
+        "brand": "Cartier",
+        "category": "hat",
+        "color": "LightPink",
+        "id": "06d053b91f174625952b3c63ff7d5a28",
+        "created_at": "2023-04-12T16:48:15",
+        "updated_at": "2023-04-12T16:48:15",
+        "reviews": [],
+        "images": [
+            {"url": "https://picsum.photos/720/900"},
+            {"url": "https://picsum.photos/720/900"},
+            {"url": "https://placekitten.com/720/900"},
+        ],
+        "thumbnails": [
+            {"url": "https://picsum.photos/320/400"},
+            {"url": "https://dummyimage.com/320x400"},
+            {"url": "https://dummyimage.com/320x400"},
+        ],
+    }
+    await client.setex("test1", timedelta(seconds=30), json.dumps(data))
+
     res = await client.get("test1")
-    print(res, "這是res")
+    if res:
+        print(res, "這是res")
+        res = json.loads(res)
+        print(res["product_name"])
+        print(res["thumbnails"][0])
+    else:
+        print("過期了")
+
     db_name = config("DB_NAME")
     return db_name
 

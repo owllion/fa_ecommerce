@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi import exceptions as es
 from fastapi import status
@@ -10,6 +12,7 @@ from ...models.product import product_item_model, product_model, size_model
 from ...schemas import product_schema
 from ...services import product_services
 from ...utils.depends.dependencies import *
+from ...utils.redis import keys
 from ...utils.router.router_settings import (
     get_path_decorator_settings,
     get_router_settings,
@@ -52,16 +55,21 @@ def create_product(payload: product_schema.ProductCreateSchema, db: Session = De
         response_model=product_schema.SingleProductSchema,
     )
 )
-def get_product(req: Request, product_id: str, db: Session = Depends(db.get_db)):
+async def get_product(req: Request, product_id: str, db: Session = Depends(db.get_db)):
     try:
         client = req.app.state.redis
+        # 存到hash裡面orstr都可 沒有要搜尋 皆可
         cached_product = client.get("product_id:")
+        if cached_product:
+            return cached_product
+
         product = product_services.find_product_with_id(product_id, db)
 
         if not product:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.PRODUCT_NOT_FOUND
             )
+        await client.set(keys.products_key(product.id), json.dumps(product))
 
         return product
 

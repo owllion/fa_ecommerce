@@ -17,3 +17,8 @@ def products_key(product_id: str):
 
 def products_index_key():
     return "idx:products"
+
+
+# used to create a hash to store each search options which is stored as a json str as key.
+def search_options_key():
+    return "search:options"

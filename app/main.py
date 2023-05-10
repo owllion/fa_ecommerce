@@ -24,7 +24,7 @@ app.add_middleware(
 app.include_router(router=index.router, prefix="/api")
 
 
-def redis_pool():
+async def redis_pool():
     redis = aioredis.Redis(
         host=config("REDIS_HOST"),
         port=config("REDIS_PORT"),
@@ -33,14 +33,14 @@ def redis_pool():
         encoding="utf-8",
     )
 
-    # create_product_key(redis)
+    await create_product_key(redis)
 
     return redis
 
 
 @app.on_event("startup")
-def create_redis():
-    app.state.redis = redis_pool()
+async def create_redis():
+    app.state.redis = await redis_pool()
 
 
 @app.on_event("shutdown")

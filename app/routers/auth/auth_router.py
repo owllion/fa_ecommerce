@@ -58,7 +58,14 @@ async def test_get(req: Request):
         ],
     }
     # await client.setex("test1", timedelta(seconds=30), json.dumps(data))
+    test_obj = {"name": "ruel", "age": 123}
+    # await client.set(json.dumps(test_obj), "測試值")
 
+    # ----
+    rr = await client.get(json.dumps(test_obj))
+    # 規律的話...searchOptions
+    # 用hash好了
+    print(rr, "這是123rrr，左邊應該要是'測試值'")
     res = await client.get("test1")
     if res:
         print(res, "這是ressss")

@@ -2,10 +2,10 @@
 import aioredis
 from redis.commands.search.field import TextField
 
-from ..redis.keys import products_index_key
+from .keys import products_index_key
 
 
-async def create_product_key(client: aioredis.Redis):
+async def create_product_index(client: aioredis.Redis):
     # 先判斷index是否已經存在
     indexes = await client.execute_command("FT._LIST")
     print(list(indexes), "這是已經創建的index列表")

@@ -5,6 +5,7 @@ import aioredis
 from .....schemas.product_schema import PaginateProductsSchema
 from .....services.product_services import get_price_range
 from ...keys import products_index_key
+from .deserialize import deserialize
 
 
 async def search_products(redis: aioredis.Redis, payload: PaginateProductsSchema):
@@ -35,11 +36,14 @@ async def search_products(redis: aioredis.Redis, payload: PaginateProductsSchema
 
     query = f"(@name:({cleaned}) => {'$weight':5.0}) | (@description:({cleaned})) | (@price:[{min_} {max_}]) | (@brand:({{{brands}}})) | category:({{{categories}}}))"
 
+    sort_criteria = (
+        {"BY": payload.sortBy, "DIRECTION": payload.direction}
+        if payload.sortBy and payload.direction
+        else None
+    )
     total, document = await redis.ft(products_index_key()).search(query)
 
     return {
         "total": total,
-        "list": map(lambda x:x['id'] id.replace("products#", "") ,document
-            
-        ),
+        "list": map(lambda x: deserialize(x["id"].replace("products#", ""), x["value"]), document),
     }

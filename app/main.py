@@ -7,7 +7,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import RedirectResponse
 
 from .routers import index
-from .utils.redis.create_key import create_product_key
+from .utils.redis.create_index import create_product_index
 
 app = FastAPI(title="React Ecommerce API")
 ALLOWED_HOSTS = ["*"]
@@ -33,7 +33,7 @@ async def redis_pool():
         encoding="utf-8",
     )
 
-    await create_product_key(redis)
+    await create_product_index(redis)
 
     return redis
 

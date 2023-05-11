@@ -1,10 +1,14 @@
+import json
+
 from fastapi import Depends, HTTPException, status
+from fastapi.encoders import jsonable_encoder
 
 from ...constants import api_msgs
 from ...exceptions.custom_http_exception import CustomHTTPException
 from ...schemas import order_schema
 from ...services import order_services
 from ...utils.depends.dependencies import *
+from ...utils.redis.keys import user_orders_key
 from ...utils.router.router_settings import (
     get_path_decorator_settings,
     get_router_settings,
@@ -71,10 +75,27 @@ async def get_orders(db: Session = Depends(db.get_db)):
         response_model=list[order_schema.OrderSchema],
     )
 )
-def get_user_orders(user_id: str, db: Session = Depends(db.get_db)):
+def get_user_orders(req: Request, user_id: str, db: Session = Depends(db.get_db)):
     try:
-        orders = order_services.get_orders_by_user_id(user_id, db)
+        client = req.app.state.redis
+        # cached_orders = client.json().get(user_orders_key(user_id))
+        # if cached_orders:
+        #     print(type(cached_orders), "這是cacehd order type")
+        #     return json.loads(cached_orders)
 
+        orders = order_services.get_orders_by_user_id(user_id, db)
+        print(orders[1].payment_method, "這是拿到的orders")
+        print(orders[1].id, "這是拿到的order  id")
+        for order in orders:
+            if order.id == "251801d99ee0439697fe0bd7839b506e":
+                print(order.payment_url.url, "這是付款連結")
+        # json_orders = list(map(lambda x: jsonable_encoder(x), orders))
+        # print(json_orders, "這是json_orders")
+
+        # client.json().set(user_orders_key(user_id), ".", json.dumps(json_orders))
+        # # orm obj要先轉乘一班dict才可以被json化
+        # cached_orders = client.json().get(user_orders_key(user_id))
+        # print(cached_orders, "這是cached_orders")
         return orders
 
     except Exception as e:

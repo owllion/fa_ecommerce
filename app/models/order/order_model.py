@@ -68,7 +68,14 @@ class Order(Base):
 
     payment_status = Column(Integer, default=PaymentStatus.PENDING_PAYMENT.value, nullable=False)
 
-    payment_url = relationship("PaymentUrl", backref="related_order")
+    payment_url = relationship(
+        "PaymentUrl",
+        backref="related_order",
+        cascade="all, delete",
+        passive_deletes=True,
+        uselist=False,
+    )  # backref/back_poopulat皆可 後面兩個選項是當這個order被刪除後 對應的payment_url也會被刪除
+    # uselist=False 表示這是1對1，這個值不會是list，而是會是一個dict
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP"))
 

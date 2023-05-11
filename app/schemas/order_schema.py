@@ -123,3 +123,14 @@ class OrderInListSchema(OrderStatusSchema):
     id: str
     total: float
     created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class ResponseOrder(BaseModel):
+    list: list[OrderInListSchema]
+    total: int
+
+    class Config:
+        orm_mode = True

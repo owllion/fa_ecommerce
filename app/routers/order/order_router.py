@@ -26,7 +26,12 @@ def create_order(
     req: Request, payload: order_schema.OrderCreateSchema, db: Session = Depends(db.get_db)
 ):
     try:
-        order_services.create_order(req, payload, db)
+        order = order_services.create_order(req, payload, db, need_order=True)
+        # print(order.id, "這是order id")
+        # print(jsonable_encoder(order), "這是拿到的order")
+
+        client = req.app.state.redis
+        client.json().arrappend(user_orders_key(payload.owner_id), ".", jsonable_encoder(order))
 
     except Exception as e:
         if isinstance(e, (HTTPException,)):
@@ -72,31 +77,40 @@ async def get_orders(db: Session = Depends(db.get_db)):
     "/user/{user_id}",
     **get_path_decorator_settings(
         description="Get the specific user's order list",
-        response_model=list[order_schema.OrderWithoutItemsSchema],
+        # response_model=list[order_schema.OrderInListSchema]
+        response_model=order_schema.ResponseOrder,
     )
 )
 def get_user_orders(req: Request, user_id: str, db: Session = Depends(db.get_db)):
     try:
         client = req.app.state.redis
         cached_orders = client.json().get(user_orders_key(user_id))
+        print(type(cached_orders), "這是cacehd order type")
         if cached_orders:
-            print(type(cached_orders), "這是cacehd order type")
-            return json.loads(cached_orders)
+            print("進到裡面")
+            print(cached_orders, "這是cahed_order")
+            # return json.loads(cached_orders)
+            return {"list": cached_orders, "total": len(cached_orders)}
 
         orders = order_services.get_orders_by_user_id(user_id, db)
-        print(orders[1].payment_method, "這是拿到的orders")
-        print(orders[1].id, "這是拿到的order  id")
-        for order in orders:
-            if order.id == "251801d99ee0439697fe0bd7839b506e":
-                print(order.payment_url.url, "這是付款連結")
-        # json_orders = list(map(lambda x: jsonable_encoder(x), orders))
-        # print(json_orders, "這是json_orders")
+        # print(orders[1].payment_method, "這是拿到的orders")
+        # print(orders[1].id, "這是拿到的order  id")
+        # for order in orders:
+        #     if order.id == "251801d99ee0439697fe0bd7839b506e":
+        #         print(order.payment_url.url, "這是付款連結")
+        json_orders = list(map(lambda x: jsonable_encoder(x), orders))
+        print(json_orders, "這是json_orders")
 
         # client.json().set(user_orders_key(user_id), ".", json.dumps(json_orders))
-        # # orm obj要先轉乘一班dict才可以被json化
+        # orm obj要先轉乘一班dict才可以被json化
+
+        client.json().set(user_orders_key(user_id), ".", json_orders)
+        total_len = client.json().arrlen(user_orders_key(user_id), ".")
+        print(total_len, "這是total len")
         # cached_orders = client.json().get(user_orders_key(user_id))
         # print(cached_orders, "這是cached_orders")
-        return orders
+        # return orders
+        return {"list": orders, "total": len(orders)}
 
     except Exception as e:
         if isinstance(e, (HTTPException,)):

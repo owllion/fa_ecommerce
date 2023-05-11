@@ -38,7 +38,15 @@ class OrderItemDeleteSchema(BaseModel):
 
 
 # Order
-class OrderBaseSchema(BaseModel):
+
+
+class OrderStatusSchema(BaseModel):
+    order_status: OrderStatus = Field(
+        OrderStatus.COMPLETED, description="0-> completed, 1-> canceled"
+    )
+
+
+class OrderBaseSchema(OrderStatusSchema):
     delivery_address: str
     discount: float = 0
     discount_code: str = ""
@@ -93,12 +101,25 @@ class PaymentUrlSchema(BaseModel):
         orm_mode = True
 
 
+# class OrderItemsSchema(BaseModel):
+#     order_items: list[OrderItemSchema]
+
+#     class Config:
+#         orm_mode = True
+
+
 class OrderSchema(OrderBaseSchema):
     id: str
-    payment_url: PaymentUrlSchema | None = None
     order_items: list[OrderItemSchema]
+    payment_url: PaymentUrlSchema | None = None
     created_at: datetime
     updated_at: datetime
 
     class Config:
         orm_mode = True
+
+
+class OrderInListSchema(OrderStatusSchema):
+    id: str
+    total: float
+    created_at: datetime

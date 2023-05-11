@@ -72,16 +72,16 @@ async def get_orders(db: Session = Depends(db.get_db)):
     "/user/{user_id}",
     **get_path_decorator_settings(
         description="Get the specific user's order list",
-        response_model=list[order_schema.OrderSchema],
+        response_model=list[order_schema.OrderWithoutItemsSchema],
     )
 )
 def get_user_orders(req: Request, user_id: str, db: Session = Depends(db.get_db)):
     try:
         client = req.app.state.redis
-        # cached_orders = client.json().get(user_orders_key(user_id))
-        # if cached_orders:
-        #     print(type(cached_orders), "這是cacehd order type")
-        #     return json.loads(cached_orders)
+        cached_orders = client.json().get(user_orders_key(user_id))
+        if cached_orders:
+            print(type(cached_orders), "這是cacehd order type")
+            return json.loads(cached_orders)
 
         orders = order_services.get_orders_by_user_id(user_id, db)
         print(orders[1].payment_method, "這是拿到的orders")

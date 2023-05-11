@@ -57,15 +57,13 @@ def create_product(payload: product_schema.ProductCreateSchema, db: Session = De
         response_model=product_schema.SingleProductSchema,
     )
 )
-async def get_product(req: Request, product_id: str, db: Session = Depends(db.get_db)):
+def get_product(req: Request, product_id: str, db: Session = Depends(db.get_db)):
     try:
         client = req.app.state.redis
 
         cached_product = client.json().get(products_key(product_id))
         if cached_product:
-            print("應該這邊會抱錯")
-            print(cached_product, "cached pro")
-            return cached_product
+            return json.loads(cached_product)
 
         product = product_services.find_product_with_id(product_id, db)
 
@@ -74,7 +72,7 @@ async def get_product(req: Request, product_id: str, db: Session = Depends(db.ge
                 status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.PRODUCT_NOT_FOUND
             )
 
-        await client.json().set(products_key(product.id), json.dumps(product))
+        client.json().set(products_key(product.id), ".", json.dumps(jsonable_encoder(product)))
 
         return product
 

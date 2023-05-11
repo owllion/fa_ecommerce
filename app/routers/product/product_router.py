@@ -13,9 +13,8 @@ from ...schemas import product_schema
 from ...services import product_services
 from ...utils.depends.dependencies import *
 from ...utils.redis import keys
-from ...utils.redis.keys import search_options_key
+from ...utils.redis.keys import products_key, search_options_key
 from ...utils.redis.query.product import deserialize, serialize
-from ...utils.redis.query.product.search import search_products
 from ...utils.router.router_settings import (
     get_path_decorator_settings,
     get_router_settings,
@@ -61,9 +60,11 @@ def create_product(payload: product_schema.ProductCreateSchema, db: Session = De
 async def get_product(req: Request, product_id: str, db: Session = Depends(db.get_db)):
     try:
         client = req.app.state.redis
-        # 存到hash裡面orstr都可 沒有要搜尋 皆可
-        cached_product = client.get("product_id:")
+
+        cached_product = client.json().get(products_key(product_id))
         if cached_product:
+            print("應該這邊會抱錯")
+            print(cached_product, "cached pro")
             return cached_product
 
         product = product_services.find_product_with_id(product_id, db)
@@ -72,7 +73,8 @@ async def get_product(req: Request, product_id: str, db: Session = Depends(db.ge
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.PRODUCT_NOT_FOUND
             )
-        await client.set(keys.products_key(product.id), json.dumps(product))
+
+        await client.json().set(products_key(product.id), json.dumps(product))
 
         return product
 

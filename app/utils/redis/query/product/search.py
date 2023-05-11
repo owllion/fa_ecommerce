@@ -12,38 +12,69 @@ async def search_products(redis: aioredis.Redis, payload: PaginateProductsSchema
     # 先過濾關鍵字(可以是空的，但其他欄位友直)，所以不用特別處理空白的狀態，(因為前端觸發搜尋是多點的，勾選的、單選的都會觸發，所以keyword可能空白!)
     # 只需處理keyword和其他所有條件也都是None的情況啦(但這樣根本不會觸發搜尋阿XD)
 
-    cleaned = re.sub(r"[^a-zA-Z0-9 ]", "", payload.keyword)
+    query_parts = []
 
-    # 過濾完成後就寫query
-    # 1.判斷brand、categories是否為list/None/str再去做出對應寫法(None不用寫，list就維持，str要放入list中)
-    # 2.price是numeric，以上filter conditions都依樣，
+    temp_cleaned_keyword = re.sub(r"[^a-zA-Z0-9 ]", "", payload.keyword)
+    cleaned = "".join(map(lambda x: f"%{x}%" if x else x, temp_cleaned_keyword.strip().split()))
+
+    if cleaned:
+        query_parts.append(
+            f"(@name:({cleaned})) => {{'$weight': 5.0;}} | (@description:({cleaned}))"
+        )
+
     if payload.price:
         min_, max_ = get_price_range(payload.price).values()
+        query_parts.append(f"(@price:[{min_} {max_}])")
 
     if payload.brands:
         if isinstance(payload.brands, list):
-            brands = "|".join(payload.brands)
+            brands = " | ".join(payload.brands)
         else:
             brands = payload.brands
+        query_parts.append(f"(@brand:{{{brands}}})")
 
     if payload.categories:
         if isinstance(payload.categories, list):
-            categories = "|".join(payload.categories)
+            categories = " | ".join(payload.categories)
         else:
             categories = payload.categories
+        query_parts.append(f"(@category:{{{categories}}})")
 
-    categorys = "|".join(categorys) if isinstance(payload.categories, list) and categorys else None
+    query = " | ".join(query_parts)
+    # 用|隔開的query
 
-    query = f"(@name:({cleaned}) => {'$weight':5.0}) | (@description:({cleaned})) | (@price:[{min_} {max_}]) | (@brand:({{{brands}}})) | category:({{{categories}}}))"
+    # 添加sort or not
+    if payload.sort_by and payload.order_by:
+        sort_clause = f"SORTBY {payload.sort_by} {'DESC' if payload.order_by == 'desc' else 'asc'}"
+        query += " " + sort_clause
 
-    sort_criteria = (
-        {"BY": payload.sortBy, "DIRECTION": payload.direction}
-        if payload.sortBy and payload.direction
-        else None
+    # 加上limit
+    offset = (payload.page - 1) * payload.limit
+    limit_clause = f"LIMIT {offset} {payload.limit}"
+    query += " " + limit_clause
+
+    print(query, "這是query")
+
+    # total, document = await redis.execute_command("FT.SEARCH", products_index_key(), query)
+    query = "@title:hello @price:[0 100] @tags:{ foo bar | hello world }"
+    command = f"FT.SEARCH {products_index_key()} '{query}'"
+    print(command, "")
+    res = redis.execute_command(
+        'FT.SEARCH idx "@title:hello @price:[0 100] @tags:{ foo bar | hello world }'
     )
-    total, document = await redis.ft(products_index_key()).search(query)
+    # res = redis.execute_command(
+    #     "FT.SEARCH",
+    #     products_index_key(),
+    #     "@title:hello",
+    #     "@price:[0 100]",
+    #     "@tags:{foo bar | hello world}",
+    # )
 
-    return {
-        "total": total,
-        "list": map(lambda x: deserialize(x["id"].replace("products#", ""), x["value"]), document),
-    }
+    print(res, "這是res")
+
+    # print(res.total, "這是total!")
+    # print(res.documents, "這是doc!")
+    # return {
+    #     "total": total,
+    #     "list": map(lambda x: deserialize(x["id"].replace("products#", ""), x["value"]), document),
+    # }

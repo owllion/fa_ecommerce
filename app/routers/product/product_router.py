@@ -13,6 +13,9 @@ from ...schemas import product_schema
 from ...services import product_services
 from ...utils.depends.dependencies import *
 from ...utils.redis import keys
+from ...utils.redis.keys import search_options_key
+from ...utils.redis.query.product import deserialize, serialize
+from ...utils.redis.query.product.search import search_products
 from ...utils.router.router_settings import (
     get_path_decorator_settings,
     get_router_settings,
@@ -86,13 +89,57 @@ async def get_product(req: Request, product_id: str, db: Session = Depends(db.ge
         response_model=product_schema.ResponsePaginateProductsSchema,
     )
 )
-def get_products(payload: product_schema.PaginateProductsSchema, db: Session = Depends(db.get_db)):
+async def get_products(
+    req: Request, payload: product_schema.PaginateProductsSchema, db: Session = Depends(db.get_db)
+):
     try:
+        client = req.app.state.redis
+        print(client, "這是client")
+        json_payload = jsonable_encoder(payload)
+
+        cached_res = client.json().get(search_options_key(json.dumps(json_payload)))
+        if cached_res:
+            # print(cached_res, "這是cache hash")
+            # print(type(cached_res), "這是type")
+            print(type(json.loads(cached_res)), "這是 loads type")  # list
+
+            # deserialize_list = map(lambda x: deserialize.deserialize(x), json.loads(cached_res))
+            print(len(json.loads(cached_res)), "長度")
+            res = {"list": json.loads(cached_res), "total": len(json.loads(cached_res))}
+            print("跑cached")
+            return res
+
         query = db.query(product_model.Product)
 
         total, filtered_list = product_services.filter_products(query, payload).values()
 
-        return {"list": filtered_list, "total": total}
+        print(filtered_list, "這是filter list")
+        # client.json().set(
+        #     search_options_key(json.dumps(json_payload)), ".", json.dumps(filtered_list)
+        # )
+
+        if not filtered_list:
+            res = {"list": [], "total": 0}
+        else:
+            res = {"list": filtered_list, "total": total}
+            res_for_redis = list(map(lambda x: jsonable_encoder(x), filtered_list))
+            print(res_for_redis, "這是redforredis")
+            # 這邊都沒問題
+
+            print(json.dumps(res_for_redis), "json畫的res for redis")
+
+            client.json().set(
+                search_options_key(json.dumps(json_payload)), ".", json.dumps(res_for_redis)
+            )
+
+            # result = client.json().get(search_options_key(json.dumps(json_payload)))
+            # print(result, "這是result")
+
+            # await client.json(
+            #     search_options_key(json.dumps(json_payload)), json.dumps(res_for_redis)
+            # )
+
+        return res
 
     except Exception as e:
         if isinstance(e, (HTTPException,)):

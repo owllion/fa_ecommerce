@@ -1,4 +1,5 @@
 import aioredis
+import redis
 import uvicorn
 from decouple import config
 from fastapi import FastAPI
@@ -25,7 +26,14 @@ app.include_router(router=index.router, prefix="/api")
 
 
 async def redis_pool():
-    redis = aioredis.Redis(
+    # redis = aioredis.Redis(
+    #     host=config("REDIS_HOST"),
+    #     port=config("REDIS_PORT"),
+    #     password=config("REDIS_PW"),
+    #     decode_responses=True,
+    #     encoding="utf-8",
+    # )
+    myredis = redis.Redis(
         host=config("REDIS_HOST"),
         port=config("REDIS_PORT"),
         password=config("REDIS_PW"),
@@ -33,9 +41,7 @@ async def redis_pool():
         encoding="utf-8",
     )
 
-    await create_product_index(redis)
-
-    return redis
+    return myredis
 
 
 @app.on_event("startup")

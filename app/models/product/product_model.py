@@ -38,7 +38,7 @@ class Product(Base):
     description = Column(String(800), default="")
 
     product_items = relationship(
-        "ProductItem", backref="parent_product", cascade="all, delete", passive_deletes=True
+        "ProductItem", back_populates="parent_product", cascade="all, delete", passive_deletes=True
     )
 
     images = relationship(

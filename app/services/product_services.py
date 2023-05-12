@@ -134,6 +134,8 @@ def filter_products(query: Query, payload: product_schema.PaginateProductsSchema
 
         sorted_results = query.filter(*filters).order_by(
             order_by_fn(getattr(product_model.Product, payload.sort_by))
+            # get the corresponding attr from Product model
+            # -> desc/asc(created_at)
         )
         return {
             "total": sorted_results.count(),

@@ -25,6 +25,8 @@ class ProductItem(Base):
         String(80), ForeignKey("product.id", ondelete="CASCADE"), primary_key=True, nullable=False
     )
 
+    parent_product = relationship("Product", back_populates="product_items")
+
     size_id = Column(
         String(80), ForeignKey("size.id", ondelete="CASCADE"), primary_key=True, nullable=False
     )

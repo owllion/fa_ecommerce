@@ -1,19 +1,24 @@
 import json
+from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi import exceptions as es
 from fastapi import status
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import func
+from sqlalchemy import and_, asc, desc, func
 
 from ...constants import api_msgs, exceptions
 from ...exceptions.custom_http_exception import CustomHTTPException
 from ...models.product import product_item_model, product_model, size_model
-from ...schemas import product_schema
+from ...schemas import product_item_schema, product_schema
 from ...services import product_services
 from ...utils.depends.dependencies import *
 from ...utils.redis import keys
-from ...utils.redis.keys import products_key, search_options_key
+from ...utils.redis.keys import (
+    best_selling_products_key,
+    products_key,
+    search_options_key,
+)
 from ...utils.redis.query.product import deserialize, serialize
 from ...utils.router.router_settings import (
     get_path_decorator_settings,
@@ -194,6 +199,50 @@ def delete_product(product_id: str, db: Session = Depends(db.get_db)):
         db.delete(product)
 
         db.commit()
+
+    except Exception as e:
+        if isinstance(e, (HTTPException,)):
+            raise e
+        raise CustomHTTPException(detail=str(e))
+
+
+@public_plural.get(
+    "/best-seller",
+    **get_path_decorator_settings(
+        description="Successfully obtained a list of the top-selling products.",
+        response_model=list[product_item_schema.BestSellerProductSchema],
+    )
+)
+def get_top_selling_products(req: Request, db: Session = Depends(db.get_db)):
+    try:
+        client = req.app.state.redis
+        cached_products = client.json().get(best_selling_products_key(), ".")
+
+        if cached_products:
+            print("沒有過期")
+            print(cached_products, "這是cached priduct")
+            return cached_products
+
+        product_items = (
+            db.query(product_item_model.ProductItem)
+            .order_by(desc(getattr(product_item_model.ProductItem, "sales")))
+            .limit(10)
+            .all()
+        )
+        # 這邊不用getattr會error
+        """
+        Can't resolve label reference for ORDER BY / GROUP BY / DISTINCT etc. Textual SQL expression 'sales' should be explicitly declared as text('sales')"
+        """
+
+        dict_products = list(map(lambda x: jsonable_encoder(x.parent_product), product_items))
+
+        print(dict_products, "這是dict products")
+
+        client.json().set(best_selling_products_key(), ".", dict_products)
+        client.expire(best_selling_products_key(), timedelta(seconds=10))
+        print("過期囉")
+
+        return dict_products
 
     except Exception as e:
         if isinstance(e, (HTTPException,)):

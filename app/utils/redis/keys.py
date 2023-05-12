@@ -15,6 +15,11 @@ def products_key(product_id: str):
     return f"products#{product_id}"
 
 
+def best_selling_products_key():
+    return "products:best_selling"
+
+
+# -----for redisearch---------------
 def products_index_key():
     return "idx:products"
 

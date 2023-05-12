@@ -69,32 +69,35 @@ def get_product(req: Request, product_id: str, db: Session = Depends(db.get_db))
 
         cached_product = client.json().get(products_key(product_id), ".")
         if cached_product:
+            print("從cached拿")
             return json.loads(cached_product)
 
-        product = product_services.find_product_with_id(product_id, db)
+        product = product_services.get_populated_product_or_raise_not_found(product_id, db)
 
         if not product:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.PRODUCT_NOT_FOUND
             )
         # --------------試驗區
-        images = jsonable_encoder(product.images)
-        thumbnails = jsonable_encoder(product.thumbnails)
-        reviews = jsonable_encoder(product.reviews)
+        # images = jsonable_encoder(product.images)
+        # thumbnails = jsonable_encoder(product.thumbnails)
+        # reviews = jsonable_encoder(product.reviews)
         # print(images, "這是jsonable product的image")
         # print(thubmbnails, "這是jsonable product的thubnails")
         # print(reviews, "這是jsonable product的reviews")
         # -------------
 
-        res = {
-            **jsonable_encoder(product),
-            "images": images,
-            "thumbnails": thumbnails,
-            "reviews": reviews,
-        }
+        # res = {
+        #     **jsonable_encoder(product),
+        #     "images": images,
+        #     "thumbnails": thumbnails,
+        #     "reviews": reviews,
+        # }
 
-        client.json().set(products_key(product.id), ".", json.dumps(res))
-        return res
+        client.json().set(products_key(product_id), ".", json.dumps(jsonable_encoder(product)))
+        client.expire(products_key(product_id), timedelta(seconds=300))
+        print("過期")
+        return product
 
     except Exception as e:
         if isinstance(e, (HTTPException,)):
@@ -283,7 +286,7 @@ def get_top_selling_products(req: Request, db: Session = Depends(db.get_db)):
         print(dict_products, "這是dict products")
 
         client.json().set(best_selling_products_key(), ".", dict_products)
-        client.expire(best_selling_products_key(), timedelta(seconds=10))
+        client.expire(best_selling_products_key(), timedelta(seconds=600))
         print("過期囉")
 
         return dict_products

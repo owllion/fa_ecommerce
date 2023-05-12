@@ -67,7 +67,7 @@ def get_order(req: Request, order_id: str, db: Session = Depends(db.get_db)):
         # }
 
         # client.json().set(orders_key(order_id), ".", json.dumps(order_for_redis))
-        client.json().set(orders_key(order_id), ".", json.dumps(order1))
+        client.json().set(orders_key(order_id), ".", json.dumps(jsonable_encoder(order)))
         client.expire(orders_key(order_id), timedelta(seconds=600))
 
         return order
@@ -106,13 +106,13 @@ async def get_orders(db: Session = Depends(db.get_db)):
 def get_user_orders(req: Request, user_id: str, db: Session = Depends(db.get_db)):
     try:
         client = req.app.state.redis
-        cached_orders = client.json().get(user_orders_key(user_id))
-        print(type(cached_orders), "這是cacehd order type")
-        if cached_orders:
-            print("進到裡面")
-            print(cached_orders, "這是cahed_order")
-            # return json.loads(cached_orders)
-            return {"list": cached_orders, "total": len(cached_orders)}
+        # cached_orders = client.json().get(user_orders_key(user_id))
+        # print(type(cached_orders), "這是cacehd order type")
+        # if cached_orders:
+        #     print("進到裡面")
+        #     print(cached_orders, "這是cahed_order")
+        #     # return json.loads(cached_orders)
+        #     return {"list": cached_orders, "total": len(cached_orders)}
 
         orders = order_services.get_orders_by_user_id(user_id, db)
         # print(orders[1].payment_method, "這是拿到的orders")
@@ -133,7 +133,7 @@ def get_user_orders(req: Request, user_id: str, db: Session = Depends(db.get_db)
         # cached_orders = client.json().get(user_orders_key(user_id))
         # print(cached_orders, "這是cached_orders")
         # return orders
-        return {"list": orders, "total": len(orders)}
+        return {"list": orders, "total": total_len}
 
     except Exception as e:
         if isinstance(e, (HTTPException,)):

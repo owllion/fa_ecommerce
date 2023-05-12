@@ -1,6 +1,6 @@
 from fastapi import Depends, Request
 from sqlalchemy import and_, asc, desc, func
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload, subqueryload
 from sqlalchemy.orm.query import Query
 
 from ..constants import api_msgs
@@ -25,8 +25,31 @@ def find_product_with_id(id: str, db: Session):
     return product
 
 
+def find_product_with_relation_field_populated(id: str, db: Session):
+    product = (
+        db.query(product_model.Product)
+        .options(
+            subqueryload(product_model.Product.reviews),
+            subqueryload(product_model.Product.images),
+            subqueryload(product_model.Product.thumbnails),
+        )
+        .filter(product_model.Product.id == id)
+        .first()
+    )
+
+    return product
+
+
 def get_product_or_raise_not_found(product_id: str, db: Session):
     product = find_product_with_id(product_id, db)
+    if not product:
+        raise_http_exception(api_msgs.PRODUCT_NOT_FOUND)
+
+    return product
+
+
+def get_populated_product_or_raise_not_found(product_id: str, db: Session):
+    product = find_product_with_relation_field_populated(product_id, db)
     if not product:
         raise_http_exception(api_msgs.PRODUCT_NOT_FOUND)
 

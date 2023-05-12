@@ -67,7 +67,7 @@ def get_product(req: Request, product_id: str, db: Session = Depends(db.get_db))
     try:
         client = req.app.state.redis
 
-        cached_product = client.json().get(products_key(product_id))
+        cached_product = client.json().get(products_key(product_id), ".")
         if cached_product:
             return json.loads(cached_product)
 
@@ -77,10 +77,24 @@ def get_product(req: Request, product_id: str, db: Session = Depends(db.get_db))
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.PRODUCT_NOT_FOUND
             )
+        # --------------試驗區
+        images = jsonable_encoder(product.images)
+        thumbnails = jsonable_encoder(product.thumbnails)
+        reviews = jsonable_encoder(product.reviews)
+        # print(images, "這是jsonable product的image")
+        # print(thubmbnails, "這是jsonable product的thubnails")
+        # print(reviews, "這是jsonable product的reviews")
+        # -------------
 
-        client.json().set(products_key(product.id), ".", json.dumps(jsonable_encoder(product)))
+        res = {
+            **jsonable_encoder(product),
+            "images": images,
+            "thumbnails": thumbnails,
+            "reviews": reviews,
+        }
 
-        return product
+        client.json().set(products_key(product.id), ".", json.dumps(res))
+        return res
 
     except Exception as e:
         if isinstance(e, (HTTPException,)):

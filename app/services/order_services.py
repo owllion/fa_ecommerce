@@ -1,6 +1,6 @@
 from fastapi import Depends, Request, status
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from ..constants import api_msgs
 from ..database import db
@@ -74,6 +74,20 @@ def create_order_then_return(payload: order_schema.OrderCreateSchema, db: Sessio
     return order
 
 
+def find_order_with_relation_field_populated(id: str, db: Session):
+    order = (
+        db.query(order_model.Order)
+        .options(
+            joinedload(order_model.Order.order_items).joinedload(
+                order_item_model.OrderItem.product_info
+            )
+        )
+        .filter_by(id=id)
+        .first()
+    )
+    return order
+
+
 def find_order_with_id(id: str, db: Session):
     order = db.query(order_model.Order).filter_by(id=id).first()
     return order
@@ -89,6 +103,15 @@ def order_exists(order_id: str, db: Session):
 
 def get_order_or_raise_not_found(id: str, db: Session):
     order = find_order_with_id(id, db)
+    if not order:
+        raise_http_exception(api_msgs.ORDER_NOT_FOUND)
+
+    return order
+
+
+def get_populated_order_or_raise_not_found(id: str, db: Session):
+    order = find_order_with_relation_field_populated(id, db)
+
     if not order:
         raise_http_exception(api_msgs.ORDER_NOT_FOUND)
 

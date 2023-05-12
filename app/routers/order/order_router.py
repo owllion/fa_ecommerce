@@ -9,7 +9,7 @@ from ...exceptions.custom_http_exception import CustomHTTPException
 from ...schemas import order_schema
 from ...services import order_services
 from ...utils.depends.dependencies import *
-from ...utils.redis.keys import user_orders_key
+from ...utils.redis.keys import orders_key, user_orders_key
 from ...utils.router.router_settings import (
     get_path_decorator_settings,
     get_router_settings,
@@ -46,9 +46,30 @@ def create_order(
         description="Get the data of a order", response_model=order_schema.OrderSchema
     )
 )
-def get_order(order_id: str, db: Session = Depends(db.get_db)):
+def get_order(req: Request, order_id: str, db: Session = Depends(db.get_db)):
     try:
-        order = order_services.get_order_or_raise_not_found(order_id, db)
+        client = req.app.state.redis
+        cached_order = client.json().get(orders_key(order_id), ".")
+
+        if cached_order:
+            print("用cached")
+            return json.loads(cached_order)
+
+        order = order_services.get_populated_order_or_raise_not_found(order_id, db)
+        print(order, "這是新的order")
+        order1 = jsonable_encoder(order)
+        print(order1, "這是order1")
+        # product_info = order.order_items.product_info
+        # print(product_info, "這是裡面product info")
+        # order_for_redis = {
+        #     **jsonable_encoder(order),
+        #     "order_items": jsonable_encoder(order.order_items),
+        # }
+
+        # client.json().set(orders_key(order_id), ".", json.dumps(order_for_redis))
+        client.json().set(orders_key(order_id), ".", json.dumps(order1))
+        client.expire(orders_key(order_id), timedelta(seconds=600))
+
         return order
 
     except Exception as e:

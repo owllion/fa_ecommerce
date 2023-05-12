@@ -81,8 +81,8 @@ class ProductSchema(ProductBaseSchema):
 # for detail page
 class SingleProductSchema(ProductSchema):
     reviews: list[ReviewSchema] = []
-    images: list[ProductImageUrlSchema] = []
-    thumbnails: list[ProductImageUrlSchema] = []
+    images: list[ProductImageUrlSchema]
+    thumbnails: list[ProductImageUrlSchema]
 
     class Config:
         orm_mode = True

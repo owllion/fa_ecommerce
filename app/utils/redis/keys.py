@@ -11,6 +11,10 @@ def user_orders_key(user_id: str):
     return f"user:orders#{user_id}"
 
 
+def orders_key(order_id: str):
+    return f"orders#{order_id}"
+
+
 def products_key(product_id: str):
     return f"products#{product_id}"
 

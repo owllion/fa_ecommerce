@@ -16,6 +16,7 @@ from ...utils.depends.dependencies import *
 from ...utils.redis import keys
 from ...utils.redis.keys import (
     best_selling_products_key,
+    number_of_search_result_key,
     products_key,
     search_options_key,
 )
@@ -99,18 +100,26 @@ async def get_products(
 ):
     try:
         client = req.app.state.redis
-        print(client, "這是client")
         json_payload = jsonable_encoder(payload)
+        # client.delete(search_options_key(json.dumps(json_payload)))
+        print(number_of_search_result_key(json.dumps(json_payload)), "這是數量key")
 
-        cached_res = client.json().get(search_options_key(json.dumps(json_payload)))
-        if cached_res:
+        cached_products = client.json().get(search_options_key(json.dumps(json_payload)), ".")
+        print(cached_products, "這是cached產品s")
+        print(type(cached_products), "這是type")  # str
+        cached_total = client.get(number_of_search_result_key(json.dumps(json_payload)))
+
+        if cached_products and cached_total:
             # print(cached_res, "這是cache hash")
             # print(type(cached_res), "這是type")
-            print(type(json.loads(cached_res)), "這是 loads type")  # list
+            # print(type(json.loads(cached_products)), "這是 loads type")  # list
+
+            print(int(cached_total), "總cache比數")
 
             # deserialize_list = map(lambda x: deserialize.deserialize(x), json.loads(cached_res))
-            print(len(json.loads(cached_res)), "長度")
-            res = {"list": json.loads(cached_res), "total": len(json.loads(cached_res))}
+            # print(len(json.loads(cached_res)), "長度")
+
+            res = {"list": json.loads(cached_products), "total": int(cached_total)}
             print("跑cached")
             return res
 
@@ -118,7 +127,7 @@ async def get_products(
 
         total, filtered_list = product_services.filter_products(query, payload).values()
 
-        print(filtered_list, "這是filter list")
+        # print(filtered_list, "這是filter list")
         # client.json().set(
         #     search_options_key(json.dumps(json_payload)), ".", json.dumps(filtered_list)
         # )
@@ -127,16 +136,37 @@ async def get_products(
             res = {"list": [], "total": 0}
         else:
             res = {"list": filtered_list, "total": total}
-            res_for_redis = list(map(lambda x: jsonable_encoder(x), filtered_list))
-            print(res_for_redis, "這是redforredis")
-            # 這邊都沒問題
 
-            print(json.dumps(res_for_redis), "json畫的res for redis")
+            dict_products = list(map(lambda x: jsonable_encoder(x), filtered_list))
+            # print(dict_products, "這是redforredis")
 
+            # print(json.dumps(dict_products), "json畫的res for redis")
+            print("資料下面")
+
+            # client.delete(search_options_key(json.dumps(json_payload)))
+            # client.json().set(search_options_key(json.dumps(json_payload)), ".", dict_products)
+            # --------------------
+            # 要設定新搜尋結果
             client.json().set(
-                search_options_key(json.dumps(json_payload)), ".", json.dumps(res_for_redis)
+                search_options_key(json.dumps(json_payload)), ".", json.dumps(dict_products)
             )
+            rrr = client.json().get(search_options_key(json.dumps(json_payload)), ".")
+            print(rrr, "這是搜尋結果儲存結果")
+            print("設定搜節下面")
+            # 搜尋結果expire
+            client.expire(search_options_key(json.dumps(json_payload)), timedelta(seconds=3600))
 
+            # 設定筆數(string)
+            client.set(number_of_search_result_key(json.dumps(json_payload)), str(total))
+            print("設定比數下面")
+
+            cached_total = client.get(number_of_search_result_key(json.dumps(json_payload)))
+            print(cached_total, "這是reids存的總筆數")
+            # 搜尋結果expire
+            client.expire(
+                number_of_search_result_key(json.dumps(json_payload)), timedelta(seconds=3600)
+            )
+            # --------------------------------
             # result = client.json().get(search_options_key(json.dumps(json_payload)))
             # print(result, "這是result")
 

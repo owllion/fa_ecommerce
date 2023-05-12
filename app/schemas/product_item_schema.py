@@ -78,10 +78,3 @@ class BestSellerProductSchema(BaseModel):
 
     class Config:
         orm_mode = True
-
-
-class ProductItemWithProductSchema(BaseModel):
-    parent_product: BestSellerProductSchema
-
-    class Config:
-        orm_mode = True

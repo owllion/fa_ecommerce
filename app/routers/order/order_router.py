@@ -1,4 +1,5 @@
 import json
+from datetime import timedelta
 
 from fastapi import Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
@@ -105,6 +106,7 @@ def get_user_orders(req: Request, user_id: str, db: Session = Depends(db.get_db)
         # orm obj要先轉乘一班dict才可以被json化
 
         client.json().set(user_orders_key(user_id), ".", json_orders)
+        client.expire(user_orders_key(user_id), timedelta(seconds=300))
         total_len = client.json().arrlen(user_orders_key(user_id), ".")
         print(total_len, "這是total len")
         # cached_orders = client.json().get(user_orders_key(user_id))

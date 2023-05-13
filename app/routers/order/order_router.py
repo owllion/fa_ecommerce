@@ -101,16 +101,15 @@ async def get_orders(db: Session = Depends(db.get_db)):
 def get_user_orders(req: Request, user_id: str, db: Session = Depends(db.get_db)):
     try:
         client = req.app.state.redis
-
-        print(user_orders_key(user_id), "這是id")
-
+        print(user_orders_key(user_id), "這是user order key")
         cached_orders = client.json().get(user_orders_key(user_id), ".")
-        print(type(cached_orders), "這是cacehd order type")
-        if cached_orders:
-            print("進到裡面")
-            print(cached_orders, "這是cahed_order")
-            # return json.loads(cached_orders)
-            return {"list": cached_orders, "total": len(cached_orders)}
+        # print(type(cached_orders), "這是cacehd order type")
+
+        total_len = client.json().arrlen(user_orders_key(user_id), ".")
+        if cached_orders and total_len:
+            # print("進到裡面")
+            # print(cached_orders, "這是cahed_order")
+            return {"list": cached_orders, "total": total_len}
 
         orders = order_services.get_orders_by_user_id(user_id, db)
         # print(orders[1].payment_method, "這是拿到的orders")
@@ -126,7 +125,8 @@ def get_user_orders(req: Request, user_id: str, db: Session = Depends(db.get_db)
 
         client.json().set(user_orders_key(user_id), ".", json_orders)
 
-        client.expire(user_orders_key(user_id), timedelta(seconds=30000))
+        client.expire(user_orders_key(user_id), timedelta(seconds=60))
+        print("他媽的設置過期")
 
         total_len = client.json().arrlen(user_orders_key(user_id), ".")
 

@@ -27,12 +27,7 @@ def create_order(
     req: Request, payload: order_schema.OrderCreateSchema, db: Session = Depends(db.get_db)
 ):
     try:
-        order = order_services.create_order(req, payload, db, need_order=True)
-        # print(order.id, "這是order id")
-        # print(jsonable_encoder(order), "這是拿到的order")
-
-        client = req.app.state.redis
-        client.json().arrappend(user_orders_key(payload.owner_id), ".", jsonable_encoder(order))
+        order_services.create_order(req, payload, db)
 
     except Exception as e:
         if isinstance(e, (HTTPException,)):
@@ -106,13 +101,16 @@ async def get_orders(db: Session = Depends(db.get_db)):
 def get_user_orders(req: Request, user_id: str, db: Session = Depends(db.get_db)):
     try:
         client = req.app.state.redis
-        # cached_orders = client.json().get(user_orders_key(user_id))
-        # print(type(cached_orders), "這是cacehd order type")
-        # if cached_orders:
-        #     print("進到裡面")
-        #     print(cached_orders, "這是cahed_order")
-        #     # return json.loads(cached_orders)
-        #     return {"list": cached_orders, "total": len(cached_orders)}
+
+        print(user_orders_key(user_id), "這是id")
+
+        cached_orders = client.json().get(user_orders_key(user_id), ".")
+        print(type(cached_orders), "這是cacehd order type")
+        if cached_orders:
+            print("進到裡面")
+            print(cached_orders, "這是cahed_order")
+            # return json.loads(cached_orders)
+            return {"list": cached_orders, "total": len(cached_orders)}
 
         orders = order_services.get_orders_by_user_id(user_id, db)
         # print(orders[1].payment_method, "這是拿到的orders")
@@ -127,12 +125,17 @@ def get_user_orders(req: Request, user_id: str, db: Session = Depends(db.get_db)
         # orm obj要先轉乘一班dict才可以被json化
 
         client.json().set(user_orders_key(user_id), ".", json_orders)
-        client.expire(user_orders_key(user_id), timedelta(seconds=300))
+
+        client.expire(user_orders_key(user_id), timedelta(seconds=30000))
+
         total_len = client.json().arrlen(user_orders_key(user_id), ".")
+
         print(total_len, "這是total len")
+
         # cached_orders = client.json().get(user_orders_key(user_id))
         # print(cached_orders, "這是cached_orders")
         # return orders
+
         return {"list": orders, "total": total_len}
 
     except Exception as e:

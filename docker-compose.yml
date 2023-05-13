@@ -16,14 +16,17 @@ services:
       - db
 
   redis:
-    image: redis:7.0.11-alpine
+    image: redislabs/redismod
     container_name: redis-container
     restart: always
-    ports:
-      - 6379:6379
-    # volumes:
-    # - /data/redis-data:/data
-    # command: sh -c "redis-server --daemonize yes && tail -f /dev/null" #啟動 redis-server
+    volumes:
+      - redis-cached:/data
+    # ports:
+    #   - 6379:6379
+    environment:
+      - REDIS_HOST=redis-18330.c14.us-east-1-2.ec2.cloud.redislabs.com
+      - REDIS_PORT=18330
+      - REDIS_PASSWORD=I0ICW9kijUa0KZZauEHrK383tPKumMfC
 
   db:
     image: mysql
@@ -47,3 +50,4 @@ services:
 
 volumes:
   mysql-volume:
+  redis-cached:

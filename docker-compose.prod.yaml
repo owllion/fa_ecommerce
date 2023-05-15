@@ -2,15 +2,15 @@ version: "3.9"
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     command: uvicorn app.main:app --host 0.0.0.0 --reload
     container_name: py-server-container
     volumes:
       - .:/app
     ports:
       - 8000:8000
-    # environment:
-    #   - DB_URL=postgresql://fastapi_traefik:fastapi_traefik@db:5432/fastapi_traefik
     depends_on:
       - redis
       - db
@@ -20,9 +20,7 @@ services:
     container_name: redis-container
     restart: always
     volumes:
-      - redis-cached:/data
-    # ports:
-    #   - 6379:6379
+      - redis-cached-prod:/data
     environment:
       - REDIS_HOST= ${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
@@ -32,21 +30,14 @@ services:
     container_name: mysql-container
     restart: always
     command: --default-authentication-plugin=mysql_native_password
-    # env_file:
-    #   - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
-      # MYSQL_USER: ${DB_USER}
     ports:
       - 3307:3306
-    # expose:
-    #   - 3307
     volumes:
-      - mysql-volume:/var/lib/mysql
-    # volumes:
-    #   - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
+      - mysql-volume-prod:/var/lib/mysql
 
 volumes:
-  mysql-volume:
-  redis-cached:
+  mysql-volume-prod:
+  redis-cached-prod:

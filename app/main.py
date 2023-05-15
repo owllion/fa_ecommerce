@@ -4,6 +4,7 @@ import uvicorn
 from decouple import config
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from mangum import Mangum
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import RedirectResponse
 
@@ -11,6 +12,10 @@ from .routers import index
 from .utils.redis.create_index import create_product_index
 
 app = FastAPI(title="React Ecommerce API")
+
+# adaptor for running ASGI app in aws lambda
+handler = Mangum(app)
+
 ALLOWED_HOSTS = ["*"]
 
 

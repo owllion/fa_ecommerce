@@ -131,3 +131,9 @@ dmypy.json
 
 #https
 cert/
+
+#zip
+*.zip
+
+#library folder
+lib

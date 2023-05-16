@@ -10,10 +10,10 @@ jobs:
     #jobs is gonna run on ubuntu
 
     steps:
-      - name: create env file
-        run: |
-          touch .env
-          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+      # - name: create env file
+      #   run: |
+      #     touch .env
+      #     echo DB_NAME=${{ secrets.DB_NAME }} >> .env
 
       # Step 1
       # to clone your repository into the GitHub Actions' execution environment, allowing your workflow to perform operations on the code in the repository.
@@ -47,6 +47,8 @@ jobs:
 
       # Step 6
       - name: Activate venv and Run Test
+        env:
+          DB_NAME: ${{ secrets.DB_NAME }}
         run: . venv/bin/activate && pytest
 
       # Step 7

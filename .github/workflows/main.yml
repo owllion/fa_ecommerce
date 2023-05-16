@@ -66,10 +66,16 @@ jobs:
           REDIS_PW: ${{ secrets.REDIS_PW }}
 
           # JWT
+          ACCESS_TOKEN_EXPIRES_IN: ${{ secrets.ACCESS_TOKEN_EXPIRES_IN }}
+          REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.REFRESH_TOKEN_EXPIRES_IN }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
+
           REFRESH_SECRET: ${{ secrets.REFRESH_SECRET }}
           RESET_PWD_SECRET: ${{ secrets.RESET_PWD_SECRET }}
           VALIDATE_EMAIL_SECRET: ${{ secrets.VALIDATE_EMAIL_SECRET }}
+
+          #email setting
           MAIL_FROM: ${{ secrets.MAIL_FROM }}
           MAIL_PWD: ${{ secrets.MAIL_PWD }}
 

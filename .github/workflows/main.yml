@@ -10,6 +10,11 @@ jobs:
     #jobs is gonna run on ubuntu
 
     steps:
+      - name: create env file
+        run: |
+          touch .env
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+
       # Step 1
       # to clone your repository into the GitHub Actions' execution environment, allowing your workflow to perform operations on the code in the repository.
       - uses: actions/checkout@v2

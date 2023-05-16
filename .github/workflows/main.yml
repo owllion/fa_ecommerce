@@ -54,6 +54,38 @@ jobs:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
 
+          DEFAULT_AVATAR_URL: ${{ secrets.DEFAULT_AVATAR_URL }}
+
+          # GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          # GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          # GITHUB_CALLBACK: ${{ secrets.GITHUB_CALLBACK }}
+
+          # Redis
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          REDIS_PW: ${{ secrets.REDIS_PW }}
+
+          # JWT
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          REFRESH_SECRET: ${{ secrets.REFRESH_SECRET }}
+          RESET_PWD_SECRET: ${{ secrets.RESET_PWD_SECRET }}
+          VALIDATE_EMAIL_SECRET: ${{ secrets.VALIDATE_EMAIL_SECRET }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_PWD: ${{ secrets.MAIL_PWD }}
+
+          # LINE Pay
+          # LINEPAY_CHANNEL_ID: ${{ secrets.LINEPAY_CHANNEL_ID }}
+          # LINEPAY_CHANNEL_SECRET_KEY: ${{ secrets.LINEPAY_CHANNEL_SECRET_KEY }}
+          # LINEPAY_RETURN_HOST: ${{ secrets.LINEPAY_RETURN_HOST }}
+          # LINEPAY_RETURN_CONFIRM_URL: ${{ secrets.LINEPAY_RETURN_CONFIRM_URL }}
+          # LINEPAY_RETURN_CANCEL_URL: ${{ secrets.LINEPAY_RETURN_CANCEL_URL }}
+          # LINEPAY_SITE_TEST: ${{ secrets.LINEPAY_SITE_TEST }}
+          # LINEPAY_SITE_PRO: ${{ secrets.LINEPAY_SITE_PRO }}
+
+          # API
+          # REQUEST_API: ${{ secrets.REQUEST_API }}
+          # CONFIRM_API: ${{ secrets.CONFIRM_API }}
+
         run: . venv/bin/activate && pytest
 
       # Step 7

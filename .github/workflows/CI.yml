@@ -99,7 +99,7 @@ jobs:
       # Step 7
       - name: Create Zipfile archive of Dependencies
         run: |
-          cd ./venv/lib/site-packages
+          cd ./venv/lib/python3.10/site-packages
           zip -r9 ../../../../api.zip .
 
       # Step 8

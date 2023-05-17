@@ -10,9 +10,9 @@ from .get_mail_text import get_mail_text
 from .set_template import set_template
 
 conf = ConnectionConfig(
-    MAIL_USERNAME=os.environ.get("MAIL_FROM"),
+    MAIL_USERNAME="testemailforrc1@gmail.com",
     MAIL_PASSWORD=config("MAIL_PWD"),
-    MAIL_FROM=os.environ.get("MAIL_FROM"),
+    MAIL_FROM="testemailforrc1@gmail.com",
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",
     MAIL_STARTTLS=True,

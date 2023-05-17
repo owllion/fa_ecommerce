@@ -10,7 +10,7 @@ from .set_template import set_template
 conf = ConnectionConfig(
     MAIL_USERNAME=config("MAIL_FROM"),
     MAIL_PASSWORD=config("MAIL_PWD"),
-    MAIL_FROM=config("MAIL_FROM"),
+    MAIL_FROM=config("MAIL_FROM", cast=str),
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",
     MAIL_STARTTLS=True,

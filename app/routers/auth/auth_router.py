@@ -82,7 +82,7 @@ async def test_get(req: Request):
 @router.post(
     "/register",
     status_code=status.HTTP_201_CREATED,
-    response_model=user_schema.RegisterResultSchema,
+    # response_model=user_schema.RegisterResultSchema,
 )
 async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depends(db.get_db)):
     try:

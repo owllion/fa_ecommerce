@@ -56,8 +56,8 @@ jobs:
 
           DEFAULT_AVATAR_URL: ${{ secrets.DEFAULT_AVATAR_URL }}
 
-          # GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          # GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           # GITHUB_CALLBACK: ${{ secrets.GITHUB_CALLBACK }}
 
           # Redis
@@ -93,7 +93,7 @@ jobs:
           # CONFIRM_API: ${{ secrets.CONFIRM_API }}
 
         run: |
-          echo "$MAIL_FROM"
+          echo "${{ secrets.MAIL_FROM }}"
           . venv/bin/activate && pytest
       # Step 7
       - name: Create Zipfile archive of Dependencies

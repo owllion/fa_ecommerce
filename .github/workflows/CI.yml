@@ -58,7 +58,9 @@ jobs:
 
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          # GITHUB_CALLBACK: ${{ secrets.GITHUB_CALLBACK }}
+
+          GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET }}
 
           # Redis
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
@@ -80,17 +82,16 @@ jobs:
           MAIL_PWD: ${{ secrets.MAIL_PWD }}
 
           # LINE Pay
-          # LINEPAY_CHANNEL_ID: ${{ secrets.LINEPAY_CHANNEL_ID }}
-          # LINEPAY_CHANNEL_SECRET_KEY: ${{ secrets.LINEPAY_CHANNEL_SECRET_KEY }}
-          # LINEPAY_RETURN_HOST: ${{ secrets.LINEPAY_RETURN_HOST }}
-          # LINEPAY_RETURN_CONFIRM_URL: ${{ secrets.LINEPAY_RETURN_CONFIRM_URL }}
-          # LINEPAY_RETURN_CANCEL_URL: ${{ secrets.LINEPAY_RETURN_CANCEL_URL }}
-          # LINEPAY_SITE_TEST: ${{ secrets.LINEPAY_SITE_TEST }}
-          # LINEPAY_SITE_PRO: ${{ secrets.LINEPAY_SITE_PRO }}
+          LINEPAY_CHANNEL_ID: ${{ secrets.LINEPAY_CHANNEL_ID }}
+
+          LINEPAY_CHANNEL_SECRET_KEY: ${{ secrets.LINEPAY_CHANNEL_SECRET_KEY }}
+
+          LINEPAY_RETURN_HOST: ${{ secrets.LINEPAY_RETURN_HOST }}
+
+          LINEPAY_RETURN_CONFIRM_URL: ${{ secrets.LINEPAY_RETURN_CONFIRM_URL }}
 
           # API
-          # REQUEST_API: ${{ secrets.REQUEST_API }}
-          # CONFIRM_API: ${{ secrets.CONFIRM_API }}
+          REQUEST_API: ${{ secrets.REQUEST_API }}
 
         run: |
           echo "${{ secrets.MAIL_FROM }}"

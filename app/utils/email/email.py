@@ -1,3 +1,5 @@
+import os
+
 from decouple import config
 from fastapi import HTTPException, status
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
@@ -8,9 +10,9 @@ from .get_mail_text import get_mail_text
 from .set_template import set_template
 
 conf = ConnectionConfig(
-    MAIL_USERNAME=config("MAIL_FROM"),
+    MAIL_USERNAME=os.environ.get("MAIL_FROM"),
     MAIL_PASSWORD=config("MAIL_PWD"),
-    MAIL_FROM=config("MAIL_FROM", cast=str),
+    MAIL_FROM=os.environ.get("MAIL_FROM"),
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",
     MAIL_STARTTLS=True,

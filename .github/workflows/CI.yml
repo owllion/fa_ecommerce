@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v2
 
       # Step 2
-      - name: Set up Python
+      - name: Set up Python 3.10
         uses: actions/setup-python@v2
         with:
           python-version: "3.10"
@@ -92,8 +92,9 @@ jobs:
           # REQUEST_API: ${{ secrets.REQUEST_API }}
           # CONFIRM_API: ${{ secrets.CONFIRM_API }}
 
-        run: . venv/bin/activate && pytest
-
+        run: |
+          echo "$MAIL_FROM"
+          . venv/bin/activate && pytest
       # Step 7
       - name: Create Zipfile archive of Dependencies
         run: |
@@ -113,20 +114,20 @@ jobs:
           path: api.zip
 
       #Docker
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v2
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+      # - name: Login to DockerHub
+      #   uses: docker/login-action@v2
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          push: true
-          tags: traversal/react-shopapp:1.0
+      # - name: Build and push
+      #   uses: docker/build-push-action@v3
+      #   with:
+      #     push: true
+      # tags: traversal/react-shopapp:1.0

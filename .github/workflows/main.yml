@@ -157,7 +157,12 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-      # Step 4
+      #Step4-1
+     - name: Set Lambda environment variables
+        run: |
+        aws lambda update-function-configuration --function-name fastapiLambda --environment "Variables={FRONTEND_DEPLOY_URL=${{ secrets.FRONTEND_DEPLOY_URL }},SHOP_NAME=${{ secrets.SHOP_NAME }},GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }},GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }},GITHUB_CLIENT_ID=${{ secrets.GITHUB_CLIENT_ID }},GITHUB_CLIENT_SECRET=${{ secrets.GITHUB_CLIENT_SECRET }},GITHUB_CALLBACK=${{ secrets.GITHUB_CALLBACK }},REDIS_HOST=${{ secrets.REDIS_HOST }},REDIS_PORT=${{ secrets.REDIS_PORT }},REDIS_PW=${{ secrets.REDIS_PW }},DB_NAME=${{ secrets.DB_NAME }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_HOST=${{ secrets.DB_HOST }},DB_PORT=${{ secrets.DB_PORT }},DEFAULT_AVATAR_URL=${{ secrets.DEFAULT_AVATAR_URL }},ACCESS_TOKEN_EXPIRES_IN=${{ secrets.ACCESS_TOKEN_EXPIRES_IN }},REFRESH_TOKEN_EXPIRES_IN=${{ secrets.REFRESH_TOKEN_EXPIRES_IN }},JWT_ALGORITHM=${{ secrets.JWT_ALGORITHM }},JWT_SECRET=${{ secrets.JWT_SECRET }},REFRESH_SECRET=${{ secrets.REFRESH_SECRET }},RESET_PWD_SECRET=${{ secrets.RESET_PWD_SECRET }},VALIDATE_EMAIL_SECRET=${{ secrets.VALIDATE_EMAIL_SECRET }},MAIL_FROM=${{ secrets.MAIL_FROM }},MAIL_PWD=${{ secrets.MAIL_PWD }},LINEPAY_CHANNEL_ID=${{ secrets.LINEPAY_CHANNEL_ID }},LINEPAY_CHANNEL_SECRET_KEY=${{ secrets.LINEPAY_CHANNEL_SECRET_KEY }},LINEPAY_RETURN_HOST=${{ secrets.LINEPAY_RETURN_HOST }},LINEPAY_RETURN_CONFIRM_URL=${{ secrets.LINEPAY_RETURN_CONFIRM_URL }},REQUEST_API=${{ secrets.REQUEST_API }}}"
+
+      # Step 4-2
       - name: Deploy new Lambda
         run: aws lambda update-function-code --function-name fastapiLambda --s3-bucket fastapiecbucket1 --s3-key api.zip
         env:

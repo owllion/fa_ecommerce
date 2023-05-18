@@ -13,27 +13,6 @@ from starlette.responses import RedirectResponse
 from .routers import index
 from .utils.redis.create_index import create_product_index
 
-# Make a regular expression
-# for validating an Email
-regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b"
-
-
-# Define a function for
-# for validating an Email
-def check(email):
-    # pass the regular expression
-    # and the string into the fullmatch() method
-    if re.fullmatch(regex, email):
-        print("Valid Email")
-
-    else:
-        print("Invalid Email")
-
-
-email = config("MAIL_FROM")
-
-check(email)
-
 app = FastAPI(title="React Ecommerce API")
 
 # adaptor for running ASGI app in aws lambda
@@ -54,13 +33,6 @@ app.include_router(router=index.router, prefix="/api")
 
 
 async def redis_pool():
-    # redis = aioredis.Redis(
-    #     host=config("REDIS_HOST"),
-    #     port=config("REDIS_PORT"),
-    #     password=config("REDIS_PW"),
-    #     decode_responses=True,
-    #     encoding="utf-8",
-    # )
     myredis = redis.Redis(
         host=config("REDIS_HOST"),
         port=config("REDIS_PORT"),

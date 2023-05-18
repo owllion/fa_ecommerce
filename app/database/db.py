@@ -3,23 +3,24 @@ from sqlalchemy import MetaData, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-db_name = config('DB_NAME')
-db_user = config('DB_USER')
-db_password = config('DB_PASSWORD')
-db_host = config('DB_HOST')
-db_port = config('DB_PORT')
+db_name = config("DB_NAME")
+db_user = config("DB_USER")
+db_password = config("DB_PASSWORD")
+db_host = config("DB_HOST")
+db_port = config("DB_PORT")
 
-db_url = f"mysql+mysqldb://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+db_url = f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 
 engine = create_engine(db_url)
 
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False,bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 session = SessionLocal()
 
 Base = declarative_base()
-#use to create our application’s database model
+# use to create our application’s database model
 metadata = Base.metadata
+
 
 # Dependency
 def get_db():

@@ -19,34 +19,31 @@
 - redis-py - 4.5.5
 
 ## Setup
-
-- local
+- Server - local
 
 ```
 git clone https://github.com/owllion/EC-Server.git
 
 uvicorn app.main:main --reload
 ```
-- production
+ - Server - production
 ```
 uvicorn app.main:main --reload --env-file app/.env.prod
 ```
 
-- docker
-
-- local
+- docker - local
 ```
 docker-compose --build -d up
 ```
 
-- production
+- docker - production
 ```
 docker-compose -f docker-compose.prod.yml --env-file .env.prod --build -d up
 ```
 
 ## Project Status
 
-
+Under Refactoring.
 
 ## License
 

@@ -100,7 +100,7 @@ jobs:
       # Step 8
       - name: Add App to Zip file
         # run: cd ./app && zip -g ../api.zip -r .
-        run: zip -g ../api.zip -r .
+        run: zip -g api.zip -r app
 
       # Step 9
       #Upload the api.zip to GitHub server as an artifact using actions/upload-artifact@v2 . This will enable the next 'job' to retrieve back the artifact file for the deployment of our lambda package which is our api.zip file.

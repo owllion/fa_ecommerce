@@ -19,11 +19,14 @@
 - redis-py - 4.5.5
 
 ## Setup
+- Clone
+```
+git clone https://github.com/owllion/EC-Server.git
+```
+
 - Server - local
 
 ```
-git clone https://github.com/owllion/EC-Server.git
-
 uvicorn app.main:main --reload
 ```
  - Server - production

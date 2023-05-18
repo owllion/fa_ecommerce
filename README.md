@@ -24,11 +24,17 @@
 git clone https://github.com/owllion/EC-Server.git
 ```
 
-- Server - local
+- Server - local - http
 
 ```
 uvicorn app.main:main --reload
 ```
+-Server - local -https
+
+```
+uvicorn app.main:app --port 8000 --reload --ssl-keyfile app/cert/key.pem --ssl-certfile app/cert/cert.pem
+```
+
  - Server - production
 ```
 uvicorn app.main:app --reload --env-file app/.env.prod

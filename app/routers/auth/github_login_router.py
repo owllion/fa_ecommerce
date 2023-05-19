@@ -18,7 +18,6 @@ from ...exceptions.custom_http_exception import CustomHTTPException
 from ...exceptions.main import raise_http_exception
 from ...schemas import auth_schema, user_schema
 from ...services import user_services
-from ...utils.common.logger import logger
 from ...utils.depends.dependencies import *
 from ...utils.router.router_settings import get_path_decorator_settings
 from ...utils.security import security

@@ -19,7 +19,8 @@ from ...exceptions.custom_http_exception import CustomHTTPException
 from ...exceptions.main import raise_http_exception
 from ...schemas import auth_schema, user_schema
 from ...services import user_services
-from ...utils.common.logger import logger
+
+# from ...utils.common.logger import logger
 from ...utils.depends.dependencies import *
 from ...utils.router.router_settings import get_path_decorator_settings
 from ...utils.security import security
@@ -122,7 +123,7 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
         # }
 
     except Exception as e:
-        logger.error(e, exc_info=True)
+        # logger.error(e, exc_info=True)
 
         if type(e).__name__ == "HTTPException":
             raise e
@@ -151,7 +152,7 @@ def login(payload: user_schema.LoginUserSchema, db: Session = Depends(db.get_db)
             }
 
     except Exception as e:
-        logger.error(e, exc_info=True)
+        # logger.error(e, exc_info=True)
         if isinstance(e, (HTTPException,)):
             raise e
         raise CustomHTTPException(detail=str(e))
@@ -168,7 +169,7 @@ def get_refresh_token(payload: user_schema.TokenSchema, db: Session = Depends(db
         }
 
     except Exception as e:
-        logger.error(e, exc_info=True)
+        # logger.error(e, exc_info=True)
         if isinstance(e, (HTTPException,)):
             raise e
         raise CustomHTTPException(detail=str(e))
@@ -194,7 +195,7 @@ def verify_token_from_link(payload: user_schema.TokenSchema, db: Session = Depen
         }
 
     except Exception as e:
-        logger.error(e, exc_info=True)
+        # logger.error(e, exc_info=True)
         if isinstance(e, (HTTPException,)):
             raise e
         raise CustomHTTPException(detail=str(e))

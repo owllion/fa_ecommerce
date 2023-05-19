@@ -23,7 +23,8 @@ from ...models.cart import cart_item_model
 from ...schemas import cart_schema, product_schema, user_schema
 from ...schemas.user_schema import SupportedField, VerifiedValue
 from ...services import product_services, user_services
-from ...utils.common.logger import logger
+
+# from ...utils.common.logger import logger
 from ...utils.depends.dependencies import *
 from ...utils.router.router_settings import (
     get_path_decorator_settings,
@@ -62,7 +63,7 @@ def update_user(
     except HTTPException as e:
         if type(e).__name__ == "HTTPExceotion":
             raise e
-        logger.error(e, exc_info=True)
+        # logger.error(e, exc_info=True)
         raise CustomHTTPException(detail=str(e))
 
 

@@ -11,7 +11,8 @@ from sqlalchemy.orm import Session
 from ...constants import api_msgs
 from ...exceptions.main import raise_http_exception
 from ...services import user_services
-from ..common.logger import logger
+
+# from ..common.logger import logger
 
 ACCESS_TOKEN_EXPIRES_IN = config("ACCESS_TOKEN_EXPIRES_IN", cast=int)
 REFRESH_TOKEN_EXPIRES_IN = config("REFRESH_TOKEN_EXPIRES_IN", cast=int)
@@ -66,5 +67,5 @@ def decode_token(token: str, token_type: str, db: Session):
     except ExpiredSignatureError:
         raise_http_exception(api_msgs.TOKEN_EXPIRED, status.HTTP_401_UNAUTHORIZED)
     except JWTError as e:
-        logger.error(e, exc_info=True)
+        # logger.error(e, exc_info=True)
         raise raise_http_exception(api_msgs.MALFORMED_TOKEN)

@@ -2,14 +2,26 @@
  
 [![CI CD Pipeline](https://github.com/owllion/fa_ecommerce/actions/workflows/main.yml/badge.svg)](https://github.com/owllion/fa_ecommerce/actions/workflows/main.yml)
 
-- A server for a shopping app powered by FastAPI and utilizes MySQL and Redis for efficient data storage and retrieval. Containerized with Docker for easy deployment and scalability. Deployed on AWS Lambda with CI/CD integration for automated build, packaging, and deployment
+A server for a shopping app powered by FastAPI and utilizes MySQL and Redis for efficient data storage and retrieval. Containerized with Docker for easy deployment and scalability. Deployed on AWS Lambda with CI/CD integration for automated build, packaging, and deployment
 
 ## Table of Contents
-
+- [Table Diagram](diagram)
 - [Technologies](#technologies)
+- [Features](#features)
 - [Setup](#setup)
 - [Project Status](#project-status)
 - [License](#license)
+
+## Table Diagram
+![](https://res.cloudinary.com/azainseong/image/upload/v1684509215/3183D9FE-849C-4815-AACB-6A7089BCCAE4_nacgr5.jpg)
+[see table relation in text](https://kaput-hose-1ba.notion.site/fastapi-ecommerce-project-Table-Relationships-bdd84cf011fd49f39fcbc1c57cf05326)
+
+## Features
+- redis/redisJson for cache
+- aws lambda for server deployment
+- aws RDS for db deployment
+- docker for containerization
+- pydantic for data verification
 
 ## Technologies
 

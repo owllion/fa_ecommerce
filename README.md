@@ -2,7 +2,7 @@
  
 [![CI CD Pipeline](https://github.com/owllion/fa_ecommerce/actions/workflows/main.yml/badge.svg)](https://github.com/owllion/fa_ecommerce/actions/workflows/main.yml)
 
-- A server for a shopping app powered by FastAPI and utilizes MySQL and Redis for efficient data storage and retrieval. Containerized with Docker for easy deployment and scalability. Deployed on AWS Lambda with CI/CD integration for automated build, packaging, and deployment
+A server for a shopping app powered by FastAPI and utilizes MySQL and Redis for efficient data storage and retrieval. Containerized with Docker for easy deployment and scalability. Deployed on AWS Lambda with CI/CD integration for automated build, packaging, and deployment
 
 ## Table of Contents
 - [Table Diagram](diagram)

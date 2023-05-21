@@ -4,43 +4,40 @@ on:
   push:
     branches: [main]
 
+env:
+  RUN_REGION: us-central1
+
 jobs:
   continuous-integration:
     runs-on: ubuntu-latest
     #jobs is gonna run on ubuntu
 
     steps:
-      # Step 1
-      # to clone your repository into the GitHub Actions' execution environment, allowing your workflow to perform operations on the code in the repository.
       - uses: actions/checkout@v2
 
-      # Step 2
       - name: Set up Python 3.10
         uses: actions/setup-python@v2
         with:
           python-version: "3.10"
 
-      # Step 3
       - name: Install Python Virtual ENV
         run: pip3 install virtualenv
-      # Step 4
+
       - name: Setup Virtual env
         uses: actions/cache@v2
-        id: cache-venv #for later access
+        id: cache-venv
         with:
           path: venv #cache路徑
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }} #每個cache的獨特key，可用來做辨識hasfile是內建函數，最後return一個hash
           restore-keys: |
             ${{ runner.os }}-venv-
           #用來恢復cache(如果cache expire或照不到)反之就會重新建立cache
-      # Step 5
+
       - name: Activate and Install Depencies into Virtual env
         run: python -m venv venv && source venv/bin/activate &&
           pip3 install -r requirements.txt
         if: steps.cache-venv.outputs.cache-hit != 'true'
-        #沒有cache就重新建立一個venv &安裝套件
 
-      # Step 6
       - name: Activate venv and Run Test
         env:
           DB_NAME: ${{ secrets.DB_NAME }}
@@ -88,79 +85,45 @@ jobs:
           # API
           REQUEST_API: ${{ secrets.REQUEST_API }}
 
-        run: |
-          echo "${{ secrets.MAIL_FROM }}"
-          . venv/bin/activate && pytest
-      # Step 7
-      - name: Create Zipfile archive of Dependencies
-        run: |
-          cd ./venv/lib/python3.10/site-packages
-          zip -r9 ../../../../api.zip .
-
-      # Step 8
-      - name: Add App to Zip file
-        # run: cd ./app && zip -g ../api.zip -r .
-        run: zip -g api.zip -r app
-
-      # Step 9
-      #Upload the api.zip to GitHub server as an artifact using actions/upload-artifact@v2 . This will enable the next 'job' to retrieve back the artifact file for the deployment of our lambda package which is our api.zip file.
-      - name: Upload zip file artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: api
-          path: api.zip
-
-      #Docker
-      # - name: Set up QEMU
-      #   uses: docker/setup-qemu-action@v2
-
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v2
-
-      # - name: Login to DockerHub
-      #   uses: docker/login-action@v2
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}
-
-      # - name: Build and push
-      #   uses: docker/build-push-action@v3
-      #   with:
-      #     push: true
-      # tags: traversal/react-shopapp:1.0
+        run: . venv/bin/activate && pytest
 
   continuous-deployment:
     runs-on: ubuntu-latest
     needs: [continuous-integration]
-    #This job will only run when the continuous-integration build is succeeded.
     if: github.ref == 'refs/heads/main'
     steps:
-      # Step 1
-      - name: Install AWS CLI
-        uses: unfor19/install-aws-cli-action@v1
+      - name: Set up gcloud Cloud SDK environment
+      - uses: google-github-actions/setup-gcloud@v1
         with:
-          version: 2
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-      # Step 2
-      - name: Download Lambda api.zip
-        uses: actions/download-artifact@v2
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      # Print gcloud info
+      - name: Info
+        run: gcloud info
+
+      # Build and push image to Google Container Registry
+      # - name: Build
+      #   run: gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-gcp .
+
+      # - uses: "google-github-actions/auth@v1"
+      #   with:
+      #     workload_identity_provider: "projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider"
+      #     service_account: "projects/fastapi-ec/serviceAccounts/local-docker-service@fastapi-ec.iam.gserviceaccount.com"
+
+      # Deploy image to Cloud Run
+      # - name: Deploy
+      #   run: |-
+      #     gcloud run deploy my-gcp \
+      #       --quiet \
+      #       --region "$RUN_REGION" \
+      #       --image "gcr.io/$PROJECT_ID/$SERVICE_NAME" \
+      #       --platform "managed" \
+      #       --port 80 \
+      #       --allow-unauthenticated
+
+      - uses: "google-github-actions/deploy-cloudrun@v1"
+        id: "deploy"
         with:
-          name: api
-          #The artifact name defines in this step must the same as the name used during the step of uploading the artifact
-      # Step 3
-      - name: Upload to S3
-        run: aws s3 cp api.zip s3://fastapiecbucket1/api.zip
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-      # Step 4
-      - name: Deploy new Lambda
-        run: aws lambda update-function-code --function-name fastapiLambda --s3-bucket fastapiecbucket1 --s3-key api.zip
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          service: "my-gcp"
+          image: "gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-gcp"
+          region: "asia-northeast1"

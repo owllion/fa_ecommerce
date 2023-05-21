@@ -1,6 +1,11 @@
 FROM tiangolo/uvicorn-gunicorn:python3.10-slim
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+WORKDIR /code
 
-COPY . .
+COPY ./requirements.txt /code/requirements.txt
+
+RUN apt-get update && apt-get install -y default-mysql-client libmysqlclient-dev
+
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+COPY ./app /code/app

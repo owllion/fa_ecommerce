@@ -36,30 +36,18 @@ A server for a shopping app powered by FastAPI and utilizes MySQL and Redis for 
 git clone https://github.com/owllion/EC-Server.git
 ```
 
-- Server - local - http
-
+- Server(http/https/production)
 ```
-uvicorn app.main:main --reload
-```
-- Server - local - https
-
-```
+uvicorn app.main:main --reload 
 uvicorn app.main:app --port 8000 --reload --ssl-keyfile app/cert/key.pem --ssl-certfile app/cert/cert.pem
-```
-
- - Server - production
-```
 uvicorn app.main:app --reload --env-file app/.env.prod
+
 ```
 
-- docker - local
+- docker(local/production)
 ```
 docker-compose --build -d up
-```
-
-- docker - production
-```
-docker-compose -f docker-compose.prod.yml --env-file .env.prod --build -d up
+docker-compose --env-file .env.prod --build -d up
 ```
 
 ## Project Status

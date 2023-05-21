@@ -97,7 +97,6 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-      # Print gcloud info
       - name: Info
         run: gcloud info
 

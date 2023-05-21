@@ -13,7 +13,7 @@ jobs:
     #jobs is gonna run on ubuntu
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v2
@@ -111,10 +111,9 @@ jobs:
       # - name: Build
       #   run: gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-gcp .
 
-      # - uses: "google-github-actions/auth@v1"
-      #   with:
-      #     workload_identity_provider: "projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider"
-      #     service_account: "projects/fastapi-ec/serviceAccounts/local-docker-service@fastapi-ec.iam.gserviceaccount.com"
+      - uses: "google-github-actions/auth@v1"
+        with:
+          service_account: "projects/fastapi-ec/serviceAccounts/local-docker-service@fastapi-ec.iam.gserviceaccount.com"
 
       # Deploy image to Cloud Run
       # - name: Deploy

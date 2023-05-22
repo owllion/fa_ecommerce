@@ -119,6 +119,11 @@ jobs:
       #   run: |
       #     cd $GITHUB_WORKSPACE
       #     gcloud builds submit --config cloudbuild.yaml .
+
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - run: |
+          gcloud auth configure-docker
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 

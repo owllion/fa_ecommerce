@@ -113,10 +113,7 @@ jobs:
         run: gcloud info
 
       - name: Build and push image to Container Registry
-        run: |
-          gcloud builds submit \
-            --quiet \
-            --tag "gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_SERVICE_NAME }} ."
+        run: gcloud builds submit --config cloudbuild.yaml .
 
       - name: Deploy to gcp
         uses: "google-github-actions/deploy-cloudrun@v1"

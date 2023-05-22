@@ -10,7 +10,7 @@ COPY ./requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY ./app /code/app
-
+ENV PORT 80
 CMD exec uvicorn app.main:app --host 0.0.0.0 --port $PORT --env-file .env.prod --reload 
 
 # Step 4: Run the web service on container startup using gunicorn webserver.

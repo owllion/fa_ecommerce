@@ -97,6 +97,10 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
+      - uses: "google-github-actions/auth@v1"
+        with:
+          service_account: "projects/fastapi-ec/serviceAccounts/local-docker-service@fastapi-ec.iam.gserviceaccount.com"
+
       - name: Info
         run: gcloud info
 
@@ -110,10 +114,6 @@ jobs:
       # Build and push image to Google Container Registry
       # - name: Build
       #   run: gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-gcp .
-
-      - uses: "google-github-actions/auth@v1"
-        with:
-          service_account: "projects/fastapi-ec/serviceAccounts/local-docker-service@fastapi-ec.iam.gserviceaccount.com"
 
       # Deploy image to Cloud Run
       # - name: Deploy

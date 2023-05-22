@@ -91,15 +91,23 @@ jobs:
     runs-on: ubuntu-latest
     needs: [continuous-integration]
     if: github.ref == 'refs/heads/main'
+
+    #Allow the job to fetch a GitHub ID token
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
       - name: Set up gcloud Cloud SDK environment
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-      - uses: "google-github-actions/auth@v1"
+      - name: "Authenticate to Google Cloud"
+        uses: "google-github-actions/auth@v1.1.1"
         with:
-          service_account: "projects/fastapi-ec/serviceAccounts/local-docker-service@fastapi-ec.iam.gserviceaccount.com"
+          workload_identity_provider: "projects/442631561829/locations/global/workloadIdentityPools/fa-pool/providers/github"
+          service_account: "fastapi-ec@fastapi-ec-387409.iam.gserviceaccount.com"
 
       - name: Info
         run: gcloud info

@@ -103,8 +103,8 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-      - name: "Authenticate to Google Cloud"
-        uses: "google-github-actions/auth@v1.1.1"
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1.1.1
         with:
           workload_identity_provider: "projects/442631561829/locations/global/workloadIdentityPools/fa-pool/providers/github"
           service_account: "fastapi-ec@fastapi-ec-387409.iam.gserviceaccount.com"
@@ -112,24 +112,15 @@ jobs:
       - name: Info
         run: gcloud info
 
-      - name: deploy to gcp
+      - name: Build and push image to Container Registry
+        run: |
+          gcloud builds submit \
+            --quiet \
+            --tag "gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_SERVICE_NAME }}"
+
+      - name: Deploy to gcp
         uses: "google-github-actions/deploy-cloudrun@v1"
         with:
-          service: "my-gcp"
-          image: "gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-gcp"
-          region: "asia-northeast1"
-
-      # Build and push image to Google Container Registry
-      # - name: Build
-      #   run: gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-gcp .
-
-      # Deploy image to Cloud Run
-      # - name: Deploy
-      #   run: |-
-      #     gcloud run deploy my-gcp \
-      #       --quiet \
-      #       --region "$RUN_REGION" \
-      #       --image "gcr.io/$PROJECT_ID/$SERVICE_NAME" \
-      #       --platform "managed" \
-      #       --port 80 \
-      #       --allow-unauthenticated
+          service: ${{ secrets.GCP_SERVICE_NAME }}
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_SERVICE_NAME }}
+          region: ${{ secrets.GCP_REGION }}

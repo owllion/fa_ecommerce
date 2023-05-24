@@ -35,22 +35,29 @@ Deployed on GCP Cloud Run with CI/CD integration for automated build, packaging,
 - redis-py - 4.5.5
 
 ## Setup
+- Clone the project
 ```sh
 #clone
 git clone https://github.com/owllion/EC-Server.git
 ```
 
-- Server
+- Launch server
 ```sh
-uvicorn app.main:main --reload  #http
-uvicorn app.main:app --port 8000 --reload --ssl-keyfile app/cert/key.pem --ssl-certfile app/cert/cert.pem #https
-uvicorn app.main:app --reload --env-file app/.env.prod #production
+#http
+uvicorn app.main:main --reload  
+#https
+uvicorn app.main:app --port 8000 --reload --ssl-keyfile app/cert/key.pem --ssl-certfile app/cert/cert.pem 
+#production
+uvicorn app.main:app --reload --env-file app/.env.prod 
 ```
 
-- docker
+- Or develop with docker-compose
 ```sh
-docker-compose --build -d up #local
-ocker-compose -f docker-compose.yml -f docker-compose.access.yml --env-file=.env.prod  up -d --build #production
+#use local mysql db(dev)
+docker-compose --build -d up 
+
+#use cloud sql(prod)
+docker-compose -f docker-compose.yml -f docker-compose.access.yml --env-file=.env.prod  up -d --build #production
 ```
 
 ## Project Status

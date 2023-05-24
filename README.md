@@ -9,7 +9,7 @@ A server for a shopping app powered by FastAPI and utilizes MySQL and Redis for 
 Deployed on GCP Cloud Run with CI/CD integration for automated build, packaging, and deployment
 
 ## Table of Contents
-- [Table Diagram](diagram)
+- [Table Diagram](#table-diagram)
 - [Technologies](#technologies)
 - [Features](#features)
 - [Setup](#setup)

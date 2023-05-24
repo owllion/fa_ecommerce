@@ -57,7 +57,7 @@ uvicorn app.main:app --reload --env-file app/.env.prod
 docker-compose --build -d up 
 
 #use cloud sql(prod)
-docker-compose -f docker-compose.yml -f docker-compose.access.yml --env-file=.env.prod  up -d --build #production
+docker-compose -f docker-compose.yml -f docker-compose.access.yml --env-file=.env.prod  up -d --build
 ```
 
 ## Project Status
@@ -66,5 +66,6 @@ Under Refactoring.
 ## License
 
 This project is licensed under the terms of the MIT license.
+
 Copyright &copy; 2023
 

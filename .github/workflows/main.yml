@@ -45,8 +45,6 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
-          UNIX_SOCKET_PATH: ${{ secrets.UNIX_SOCKET_PATH }}
-          CLOUD_SQL_INSTANCE_NAME: ${{ secrets.CLOUD_SQL_INSTANCE_NAME }}
 
           DEFAULT_AVATAR_URL: ${{ secrets.DEFAULT_AVATAR_URL }}
 

@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    command: uvicorn app.main:app --host 0.0.0.0 --reload --env-file app/.env.docker
+    command: uvicorn app.main:app --host 0.0.0.0 --reload --env-file app/docker-compose.env
     container_name: py-server-container
     volumes:
       - .:/app
@@ -29,10 +29,10 @@ services:
     image: mysql
     container_name: mysql-container
     restart: always
-    command: --default-authentication-plugin=mysql_native_password
+    command: login--default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
       - 3307:3306
     volumes:

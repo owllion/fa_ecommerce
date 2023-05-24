@@ -35,8 +35,8 @@ services:
     # env_file:
     #   - .env
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
       # MYSQL_USER: ${DB_USER}
     ports:
       - 3307:3306

@@ -73,8 +73,6 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
         # }
 
     except Exception as e:
-        # logger.error(e, exc_info=True)
-
         if type(e).__name__ == "HTTPException":
             raise e
         raise CustomHTTPException(detail=str(e))
@@ -102,7 +100,6 @@ def login(payload: user_schema.LoginUserSchema, db: Session = Depends(db.get_db)
             }
 
     except Exception as e:
-        # logger.error(e, exc_info=True)
         if isinstance(e, (HTTPException,)):
             raise e
         raise CustomHTTPException(detail=str(e))

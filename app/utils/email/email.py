@@ -1,10 +1,12 @@
 import os
 
 from decouple import config
-from fastapi import HTTPException, status
+
+# from fastapi import HTTPException, status
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 
-from ...exceptions.custom_http_exception import CustomHTTPException
+# from ...exceptions.custom_http_exception import CustomHTTPException
+from ...exceptions.main import get_exception
 from ...schemas import email_schema
 from .get_mail_text import get_mail_text
 from .set_template import set_template
@@ -52,4 +54,4 @@ async def send_link(params: email_schema.SendLinkParamsSchema):
         print("await after@")
 
     except Exception as e:
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)

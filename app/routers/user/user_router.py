@@ -19,6 +19,7 @@ from sqlalchemy.orm import Session
 from ...constants import api_msgs
 from ...database import db
 from ...exceptions.custom_http_exception import CustomHTTPException
+from ...exceptions.main import get_exception
 from ...models.cart import cart_item_model
 from ...schemas import cart_schema, product_schema, user_schema
 from ...schemas.user_schema import SupportedField, VerifiedValue
@@ -58,9 +59,7 @@ def update_user(
         db.commit()
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.post(
@@ -74,9 +73,7 @@ def reset_password(payload: user_schema.ResetPasswordSchema, db: Session = Depen
         db.commit()
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.post(
@@ -90,9 +87,7 @@ def modify_password(
         req.state.mydata.password = payload.password
         db.commit()
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @public_singular.post(
@@ -122,9 +117,7 @@ async def forgot_password(payload: user_schema.EmailBaseSchema, db: Session = De
         return JSONResponse(content=content, status_code=200)
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.post(
@@ -138,9 +131,7 @@ def get_uploaded_avatar_url(
         db.commit()
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.post(
@@ -208,9 +199,7 @@ def add_to_cart(
         db.commit()
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.post(
@@ -228,9 +217,7 @@ def remove_from_cart(
         user_services.delete_item(db, cart_item)
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.post(
@@ -272,9 +259,7 @@ def update_item_qty(
         user_services.update_qty(cart_item, stock, payload.operation_type, db)
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.get(
@@ -298,12 +283,17 @@ def get_user_cart(req: Request, db: Session = Depends(db.get_db)):
         return [item for item in cart_items]
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.get("/{user_id}", response_model=user_schema.UserSchema)
 def get_user(user_id: str, db: Session = Depends(db.get_db)):
-    user = user_services.find_user_with_id(user_id, db)
-    return user
+    try:
+        user = user_services.find_user_with_id(user_id, db)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="User does not exist!"
+            )
+        return user
+    except Exception as e:
+        get_exception(e)

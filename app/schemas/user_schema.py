@@ -1,13 +1,17 @@
-import uuid
 from datetime import datetime
 from enum import Enum
-from typing import Dict
+from typing import Optional
 
 from decouple import config
-from pydantic import BaseModel, EmailStr, Field, HttpUrl, constr, validator
-
-# from ..models.user.login_type_model import LoginTypeValue
-from .review_schema import ReviewSchema
+from pydantic import (
+    BaseModel,
+    EmailStr,
+    Field,
+    HttpUrl,
+    constr,
+    root_validator,
+    validator,
+)
 
 
 class LoginTypeValue(str, Enum):
@@ -24,6 +28,7 @@ class EmailBaseSchema(BaseModel):
 class UserBaseSchema(EmailBaseSchema, BaseModel):
     first_name: str
     last_name: str
+    verified: bool = False
 
     class Config:
         orm_mode = True
@@ -39,9 +44,6 @@ class UserCreateSchema(UserBaseSchema):
 
 class LoginUserSchema(EmailBaseSchema, BaseModel):
     password: str
-
-
-# 每個user都要創一個欸 但拿值的時候就是value: str沒錯
 
 
 class LoginTypeCreateSchema(BaseModel):
@@ -66,7 +68,6 @@ class ResetPasswordSchema(ModifyPasswordSchema):
 class UserSchema(UserBaseSchema):
     id: str
     phone: str = ""
-    verified: bool = False
     upload_avatar: str = Field("", alias="avatarUpload")
     default_avatar: str = Field(config("DEFAULT_AVATAR_URL"), alias="avatarDefault")
     created_at: datetime
@@ -120,31 +121,20 @@ class VerifiedValue(str, Enum):
     ONE = "1"
 
 
-supported_fields = [field.value for field in SupportedField]
-verified_values = [member.value for member in VerifiedValue]
+base_keys = list(UserBaseSchema.__annotations__.keys())
 
 
 class UserUpdateSchema(BaseModel):
-    field: SupportedField = Field(
-        description="user data's field you want to update.Only the updating to the firstname,lastName,phone and verify field is supported."
-    )
-    value: str | VerifiedValue = Field(
-        description="data for update the field you specify.('0' -> False & '1' -> True)"
-    )
+    __annotations__ = {k: Optional[v] for k, v in UserBaseSchema.__annotations__.items()}
 
-    @validator("field")
-    def validate_field(cls, v):
-        if v not in supported_fields:
-            raise ValueError(
-                "Invalid field value, must be one of the following: {}".format(supported_fields)
-            )
+    @root_validator(pre=True)
+    def check_at_least_one_attribute(cls, values):
+        if len(values) < 1:
+            raise ValueError("Please pass at least one attribute.")
 
-    @validator("value")
-    def validate_value(cls, v, values):
-        field_name, field_value = values.get("field"), values.get("value")
-        if field_name == "verified" and field_value not in verified_values:
-            raise ValueError("value for verified field must be '0' or '1'")
-
+        for attr in values:
+            if attr not in base_keys:
+                raise ValueError(f"You've passed a non-existing attribute: {attr}")
         return values
 
 

@@ -63,6 +63,7 @@ class ModifyPasswordSchema(BaseModel):
 
 class ResetPasswordSchema(ModifyPasswordSchema):
     token: str
+    token_type: str = "reset_pwd"
 
 
 class UserSchema(UserBaseSchema):

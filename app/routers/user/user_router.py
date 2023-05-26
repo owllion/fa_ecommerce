@@ -69,9 +69,10 @@ def update_user(
 )
 def reset_password(payload: user_schema.ResetPasswordSchema, db: Session = Depends(db.get_db)):
     try:
-        user = decode_token(payload.token)
+        user = decode_token(payload.token, payload.token_type, db)
         user.password = payload.password
         db.commit()
+
     except Exception as e:
         if isinstance(e, (HTTPException,)):
             raise e

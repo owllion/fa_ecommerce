@@ -53,10 +53,13 @@ uvicorn app.main:app --reload --env-file app/.env.prod
 
 - Or develop with docker-compose
 ```sh
-#use local mysql db(dev)
-docker-compose --build -d up 
+#use local mysql (dev)
+docker-compose up -d --build 
 
-#use cloud sql(prod)
+#use cloud sql (prod)
+#you have to generate IAM key and download it to your local machine,
+#then mount it on your main service(in my case is 'app') volumes,
+#that way gcloud can read your credential and allow you to connect to cloud sql.
 docker-compose -f docker-compose.yml -f docker-compose.access.yml --env-file=.env.prod  up -d --build
 ```
 

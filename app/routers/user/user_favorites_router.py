@@ -1,6 +1,3 @@
-from enum import Enum
-from typing import Annotated, Generic, TypeVar
-
 from fastapi import (
     APIRouter,
     Body,
@@ -11,17 +8,12 @@ from fastapi import (
     Request,
     status,
 )
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
-from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
-from ...constants import api_msgs
 from ...database import db
-from ...exceptions.custom_http_exception import CustomHTTPException
+from ...exceptions.main import get_exception
 from ...models.cart import cart_item_model
 from ...schemas import cart_schema, common_schema, product_schema, user_schema
-from ...schemas.user_schema import SupportedField, VerifiedValue
 from ...services import product_services, user_services
 from ...utils.depends.dependencies import *
 from ...utils.router.router_settings import (
@@ -56,9 +48,7 @@ def toggle_fav(
         db.commit()
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_plural.get(
@@ -72,6 +62,4 @@ def get_user_favs(req: Request, db: Session = Depends(db.get_db)):
     try:
         return req.state.mydata.favorites
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)

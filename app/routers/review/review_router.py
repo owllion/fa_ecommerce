@@ -2,6 +2,7 @@ from fastapi import Depends, HTTPException, status
 
 from ...constants import api_msgs
 from ...exceptions.custom_http_exception import CustomHTTPException
+from ...exceptions.main import get_exception
 from ...schemas import review_schema
 from ...services import review_services
 from ...utils.depends.dependencies import *
@@ -24,14 +25,12 @@ protected_plural, protected_singular, public_plural, public_singular = get_route
 )
 def create_review(payload: review_schema.ReviewCreateSchema, db: Session = Depends(db.get_db)):
     try:
-        new_product = review_services.create_new_review(payload, db)
+        new_product = review_services.svc_create_review(payload, db)
 
         return new_product
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @public_singular.get(
@@ -52,9 +51,7 @@ def get_review(review_id: str, db: Session = Depends(db.get_db)):
         return review
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @public_plural.get(
@@ -65,14 +62,12 @@ def get_review(review_id: str, db: Session = Depends(db.get_db)):
 )
 def get_reviews(db: Session = Depends(db.get_db)):
     try:
-        reviews = review_services.get_reviews(db)
+        reviews = review_services.svc_get_reviews(db)
 
         return reviews
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @public_plural.get(
@@ -84,14 +79,12 @@ def get_reviews(db: Session = Depends(db.get_db)):
 )
 def get_user_reviews(user_id: str, db: Session = Depends(db.get_db)):
     try:
-        reviews = review_services.get_user_reviews(user_id, db)
+        reviews = review_services.svc_get_user_reviews(user_id, db)
 
         return reviews
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.put(
@@ -118,9 +111,7 @@ def update_review(payload: review_schema.ReviewUpdateSchema, db: Session = Depen
         db.commit()
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.delete(
@@ -139,10 +130,7 @@ def delete_review(review_id: str, db: Session = Depends(db.get_db)):
             )
 
         db.delete(review)
-
         db.commit()
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)

@@ -12,17 +12,17 @@ def find_review_with_id(id: str, db: Session):
     return review
 
 
-def get_reviews(db: Session):
+def svc_get_reviews(db: Session):
     reviews = db.query(review_model.Review).all()
     return reviews
 
 
-def get_user_reviews(user_id: str, db: Session):
+def svc_get_user_reviews(user_id: str, db: Session):
     reviews = db.query(review_model.Review).filter(review_model.Review.user_id == user_id).all()
     return reviews
 
 
-def create_new_review(payload: review_schema.ReviewCreateSchema, db: Session):
+def svc_create_review(payload: review_schema.ReviewCreateSchema, db: Session):
     new_review = review_model.Review(**payload.dict())
     db.add(new_review)
     db.commit()

@@ -1,8 +1,7 @@
 from fastapi import Depends, HTTPException, status
 
 from ...constants import api_msgs
-from ...exceptions.custom_http_exception import CustomHTTPException
-from ...exceptions.main import get_exception
+from ...exceptions.main import get_exception, raise_http_exception
 from ...schemas import review_schema
 from ...services import review_services
 from ...utils.depends.dependencies import *
@@ -44,9 +43,7 @@ def get_review(review_id: str, db: Session = Depends(db.get_db)):
         review = review_services.find_review_with_id(review_id, db)
 
         if not review:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.REVIEW_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.REVIEW_NOT_FOUND)
 
         return review
 
@@ -98,9 +95,7 @@ def update_review(payload: review_schema.ReviewUpdateSchema, db: Session = Depen
         review = review_services.find_review_with_id(payload.id, db)
 
         if not review:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.REVIEW_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.REVIEW_NOT_FOUND)
 
         data = payload.dict(exclude_unset=True)
 
@@ -125,9 +120,7 @@ def delete_review(review_id: str, db: Session = Depends(db.get_db)):
         review = review_services.find_review_with_id(review_id, db)
 
         if not review:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.REVIEW_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.REVIEW_NOT_FOUND)
 
         db.delete(review)
         db.commit()

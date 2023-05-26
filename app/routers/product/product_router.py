@@ -152,9 +152,7 @@ def update_product(payload: product_schema.ProductUpdateSchema, db: Session = De
         product = product_services.find_product_with_id(payload.id, db)
 
         if not product:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.PRODUCT_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.PRODUCT_NOT_FOUND)
 
         data = payload.dict(exclude_unset=True)
 
@@ -165,9 +163,7 @@ def update_product(payload: product_schema.ProductUpdateSchema, db: Session = De
         db.commit()
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.delete(
@@ -181,18 +177,13 @@ def delete_product(product_id: str, db: Session = Depends(db.get_db)):
         product = product_services.find_product_with_id(product_id, db)
 
         if not product:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.PRODUCT_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.PRODUCT_NOT_FOUND)
 
         db.delete(product)
-
         db.commit()
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @public_plural.get(
@@ -205,11 +196,10 @@ def delete_product(product_id: str, db: Session = Depends(db.get_db)):
 def get_top_selling_products(req: Request, db: Session = Depends(db.get_db)):
     try:
         client = req.app.state.redis
+
         cached_products = client.json().get(best_selling_products_key(), ".")
 
         if cached_products:
-            print("沒有過期")
-            print(cached_products, "這是cached priduct")
             return cached_products
 
         product_items = (
@@ -225,26 +215,11 @@ def get_top_selling_products(req: Request, db: Session = Depends(db.get_db)):
 
         dict_products = list(map(lambda x: jsonable_encoder(x.parent_product), product_items))
 
-        print(dict_products, "這是dict products")
-
         client.json().set(best_selling_products_key(), ".", dict_products)
+
         client.expire(best_selling_products_key(), timedelta(seconds=600))
-        print("過期囉")
 
         return dict_products
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
-
-
-# @public_router.put("/{product_id}")
-# async def update_item(product_id: str):
-#     return {'name': 'hello'}
-# #     stored_item_data = items[item_id]
-# #     stored_item_model = Item(**stored_item_data)
-# #     update_data = item.dict(exclude_unset=True)
-# #     updated_item = stored_item_model.copy(update=update_data)
-# #     items[item_id] = jsonable_encoder(updated_item)
-# #     return updated_item
+        get_exception(e)

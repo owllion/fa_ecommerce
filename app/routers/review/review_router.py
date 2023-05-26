@@ -24,7 +24,7 @@ protected_plural, protected_singular, public_plural, public_singular = get_route
 )
 def create_review(payload: review_schema.ReviewCreateSchema, db: Session = Depends(db.get_db)):
     try:
-        new_product = review_services.save_to_db_then_return(payload, db)
+        new_product = review_services.create_new_review(payload, db)
 
         return new_product
 

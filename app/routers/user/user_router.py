@@ -30,6 +30,7 @@ from ...utils.router.router_settings import (
     get_path_decorator_settings,
     get_router_settings,
 )
+from ...utils.security.security import decode_token
 
 _, protected_singular, _, public_singular = get_router_settings(
     singular_prefix="user", plural_prefix="users", tags=["user"]
@@ -48,22 +49,19 @@ def update_user(
     # But you can actually just write payload.field XD
 
     try:
+        data = payload.dict(exclude_unset=True)
+        user = req.state.mydata
+        for field, value in data.items():
+            if hasattr(user, field):
+                setattr(user, field, value)
+
+        db.commit()
         if field == SupportedField.VERIFIED:
             req.state.mydata.verified = int(value)
 
-        elif field == SupportedField.LASTNAME:
-            req.state.mydata.last_name = value
-        elif field == SupportedField.FIRSTNAME:
-            req.state.mydata.first_name = value
-        # modify req.state.mydata == directly current user's data
-
-        db.commit()
-        # then save it to the db
-
-    except HTTPException as e:
-        if type(e).__name__ == "HTTPExceotion":
+    except Exception as e:
+        if isinstance(e, (HTTPException,)):
             raise e
-        # logger.error(e, exc_info=True)
         raise CustomHTTPException(detail=str(e))
 
 
@@ -71,13 +69,30 @@ def update_user(
     "/reset-password",
     **get_path_decorator_settings(description="Password has been successfully reset")
 )
-def reset_password(
-    req: Request, payload: user_schema.CreatePasswordSchema, db: Session = Depends(db.get_db)
+def reset_password(payload: user_schema.ResetPasswordSchema, db: Session = Depends(db.get_db)):
+    try:
+        user = decode_token(payload.token)
+        user.password = payload.password
+        db.commit()
+    except Exception as e:
+        if isinstance(e, (HTTPException,)):
+            raise e
+        raise CustomHTTPException(detail=str(e))
+
+
+@protected_singular.post(
+    "/modify-password",
+    **get_path_decorator_settings(description="Password has been successfully modified")
+)
+def modify_password(
+    req: Request, payload: user_schema.ModifyPasswordSchema, db: Session = Depends(db.get_db)
 ):
     try:
         req.state.mydata.password = payload.password
         db.commit()
     except Exception as e:
+        if isinstance(e, (HTTPException,)):
+            raise e
         raise CustomHTTPException(detail=str(e))
 
 
@@ -108,7 +123,7 @@ async def forgot_password(payload: user_schema.EmailBaseSchema, db: Session = De
         return JSONResponse(content=content, status_code=200)
 
     except Exception as e:
-        if type(e).__name__ == "HTTPException":
+        if isinstance(e, (HTTPException,)):
             raise e
         raise CustomHTTPException(detail=str(e))
 

@@ -137,3 +137,6 @@ cert/
 
 #library folder
 lib
+
+#ADC key
+gcp_key.json

@@ -68,8 +68,8 @@ class ResetPasswordSchema(ModifyPasswordSchema):
 class UserSchema(UserBaseSchema):
     id: str
     phone: str = ""
-    upload_avatar: str = Field("", alias="avatarUpload")
-    default_avatar: str = Field(config("DEFAULT_AVATAR_URL"), alias="avatarDefault")
+    upload_avatar: str = ""
+    default_avatar: str = Field(config("DEFAULT_AVATAR_URL"))
     created_at: datetime
     updated_at: datetime
 

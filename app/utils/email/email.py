@@ -1,11 +1,8 @@
 import os
 
 from decouple import config
-
-# from fastapi import HTTPException, status
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 
-# from ...exceptions.custom_http_exception import CustomHTTPException
 from ...exceptions.main import get_exception
 from ...schemas import email_schema
 from .get_mail_text import get_mail_text

@@ -1,31 +1,14 @@
-from enum import Enum
-from typing import Annotated, Generic, TypeVar
-
-from fastapi import (
-    APIRouter,
-    Body,
-    Depends,
-    FastAPI,
-    Header,
-    HTTPException,
-    Request,
-    status,
-)
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
 from ...constants import api_msgs
 from ...database import db
-from ...exceptions.custom_http_exception import CustomHTTPException
 from ...exceptions.main import get_exception
 from ...models.cart import cart_item_model
-from ...schemas import cart_schema, product_schema, user_schema
-from ...schemas.user_schema import SupportedField, VerifiedValue
+from ...schemas import cart_schema, user_schema
 from ...services import product_services, user_services
-
-# from ...utils.common.logger import logger
 from ...utils.depends.dependencies import *
 from ...utils.router.router_settings import (
     get_path_decorator_settings,
@@ -45,15 +28,11 @@ def update_user(
     req: Request, payload: user_schema.UserUpdateSchema, db: Session = Depends(db.get_db)
 ):
     try:
-        print(payload, "這是payload")
         data = payload.dict(exclude_unset=True)
-        print(data, "thisi is data")
         user = req.state.mydata
-        print(user.email, "這是email")
+
         for field, value in data.items():
             if hasattr(user, field):
-                print(field, "這是filed")
-                print(type(value), "這是type")
                 setattr(user, field, value)
 
         db.commit()
@@ -209,7 +188,6 @@ def add_to_cart(
 def remove_from_cart(
     req: Request, payload: cart_schema.RemoveFromCartSchema, db: Session = Depends(db.get_db)
 ):
-    print("remove!!")
     try:
         # cart_item = user_services.get_item_from_cart_item_table(req, payload.product_id, db)
         cart_item = user_services.get_item_from_user_cart(req, payload.product_id, payload.size)
@@ -235,7 +213,6 @@ def update_item_qty(
                 status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.CART_ITEM_NOT_FOUND
             )
 
-        # ------
         # 取庫存、新增cart_item使用
         product = product_services.find_product_with_id(payload.product_id, db)
 

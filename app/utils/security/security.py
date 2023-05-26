@@ -50,13 +50,24 @@ def create_token(user_id: str, token_type: str):
     return token
 
 
+def get_secret(token_type: str):
+    secrets = {
+        "access": config("JWT_SECRET"),
+        "refresh": config("REFRESH_SECRET"),
+        "reset_pwd": config("RESET_PWD_SECRET"),
+        "validate_email": config("VALIDATE_EMAIL_SECRET"),
+    }
+    return secrets.get(token_type)
+
+
 def decode_token(token: str, token_type: str, db: Session):
     try:
         payload = jwt.decode(
             token,
-            config("JWT_SECRET") if token_type == "access" else config("REFRESH_SECRET"),
+            get_secret(token_type),
             algorithms=[config("JWT_ALGORITHM")],
         )
+
         user = user_services.find_user_with_id(payload["user_id"], db)
 
         if not user:
@@ -67,5 +78,4 @@ def decode_token(token: str, token_type: str, db: Session):
     except ExpiredSignatureError:
         raise_http_exception(api_msgs.TOKEN_EXPIRED, status.HTTP_401_UNAUTHORIZED)
     except JWTError as e:
-        # logger.error(e, exc_info=True)
         raise raise_http_exception(api_msgs.MALFORMED_TOKEN)

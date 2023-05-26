@@ -48,9 +48,11 @@ def update_user(
         data = payload.dict(exclude_unset=True)
         print(data, "thisi is data")
         user = req.state.mydata
-        print(user.dict(), "這user")
+        print(user.email, "這是email")
         for field, value in data.items():
             if hasattr(user, field):
+                print(field, "這是filed")
+                print(type(value), "這是type")
                 setattr(user, field, value)
 
         db.commit()

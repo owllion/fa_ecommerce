@@ -43,21 +43,17 @@ _, protected_singular, _, public_singular = get_router_settings(
 def update_user(
     req: Request, payload: user_schema.UserUpdateSchema, db: Session = Depends(db.get_db)
 ):
-    (field, value) = jsonable_encoder(payload).values()
-    # Convert value to python dict then get the values.
-    # Can not do this when the data is of JSON format.
-    # But you can actually just write payload.field XD
-
     try:
+        print(payload, "這是payload")
         data = payload.dict(exclude_unset=True)
+        print(data, "thisi is data")
         user = req.state.mydata
+        print(user.dict(), "這user")
         for field, value in data.items():
             if hasattr(user, field):
                 setattr(user, field, value)
 
         db.commit()
-        if field == SupportedField.VERIFIED:
-            req.state.mydata.verified = int(value)
 
     except Exception as e:
         if isinstance(e, (HTTPException,)):

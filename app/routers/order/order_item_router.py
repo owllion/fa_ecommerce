@@ -2,6 +2,7 @@ from fastapi import Depends, HTTPException, status
 
 from ...constants import api_msgs
 from ...exceptions.custom_http_exception import CustomHTTPException
+from ...exceptions.main import get_exception
 from ...schemas import order_schema
 from ...services import order_item_services, order_services, product_item_services
 from ...utils.depends.dependencies import *
@@ -28,9 +29,7 @@ def get_order_items(order_id: str, db: Session = Depends(db.get_db)):
         return order.order_items
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.delete(
@@ -52,6 +51,4 @@ def delete_order_item(
         order_item_services.delete_order_item_record(order_item, db)
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)

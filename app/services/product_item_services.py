@@ -27,7 +27,7 @@ def delete_item(item: product_item_schema.ProductItemSchema, db: Session):
 # ---product_item---
 
 
-def create_product_item(payload: product_item_schema.ProductItemCreateSchema):
+def svc_create_product_item(payload: product_item_schema.ProductItemCreateSchema):
     product_item = product_item_model.ProductItem(
         product_id=payload.product_id,
         size_id=payload.size_id,

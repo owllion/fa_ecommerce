@@ -3,25 +3,21 @@ from datetime import timedelta
 
 from fastapi import Depends, HTTPException
 from fastapi import exceptions as es
-from fastapi import status
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import and_, asc, desc, func
 
-from ...constants import api_msgs, exceptions
-from ...exceptions.custom_http_exception import CustomHTTPException
+from ...constants import api_msgs
 from ...exceptions.main import get_exception, raise_http_exception
 from ...models.product import product_item_model, product_model
 from ...schemas import product_item_schema, product_schema
 from ...services import product_services
 from ...utils.depends.dependencies import *
-from ...utils.redis import keys
 from ...utils.redis.keys import (
     best_selling_products_key,
     number_of_search_result_key,
     products_key,
     search_options_key,
 )
-from ...utils.redis.query.product import deserialize, serialize
 from ...utils.router.router_settings import (
     get_path_decorator_settings,
     get_router_settings,

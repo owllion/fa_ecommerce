@@ -6,6 +6,7 @@ from sqlalchemy import func
 
 from ...constants import api_msgs, exceptions
 from ...exceptions.custom_http_exception import CustomHTTPException
+from ...exceptions.main import get_exception, raise_http_exception
 from ...models.product import product_item_model, product_model, size_model
 from ...schemas import product_item_schema
 from ...services import product_item_services, product_services
@@ -34,16 +35,15 @@ def create_product_item(
             payload.product_id, db
         ) and product_item_services.size_exists(payload.size_id, db):
             if product_item_services.product_item_not_exists:
-                product_item = product_item_services.create_product_item(payload)
+                product_item = product_item_services.svc_create_product_item(payload)
 
-                product_item_services.save_to_db(product_item, db)
+                db.add(product_item)
+                db.commit()
 
                 return product_item
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.delete("/", **get_path_decorator_settings(description="delete a product item"))
@@ -61,9 +61,7 @@ def delete_product_item(
             product_item_services.delete_item(product_item, db)
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.put("/", **get_path_decorator_settings(description="update a product item"))
@@ -81,9 +79,7 @@ def update_product_item(
             product_item_services.update_item(payload, product_item, db)
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @public_plural.get(

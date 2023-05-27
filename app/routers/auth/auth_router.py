@@ -1,19 +1,8 @@
-import json
-import os
-from datetime import timedelta
-from enum import Enum
-from typing import Annotated
-
-import requests
-from authlib.integrations.starlette_client import OAuthError
-from decouple import config
-from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.encoders import jsonable_encoder
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from ...constants import api_msgs
 from ...database import db
-from ...exceptions.custom_http_exception import CustomHTTPException
 from ...exceptions.main import get_exception, raise_http_exception
 from ...schemas import user_schema
 from ...services import user_services

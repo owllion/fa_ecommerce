@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from ..constants import api_msgs
 from ..database import db
+from ..exceptions.main import raise_http_exception
 from ..models.cart import cart_item_model
 from ..models.user import user_model
 from ..schemas import email_schema, user_schema
@@ -49,17 +50,13 @@ def get_updated_payload_data(payload: user_schema.UserCreateSchema):
 
 def user_is_verified(verified: bool):
     if not verified:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Please verify your email address"
-        )
+        raise_http_exception(api_msgs.EMAIL_NOT_VERIFIED, status.HTTP_401_UNAUTHORIZED)
     return True
 
 
 def password_is_matched(payload_pwd: str, user_pwd: str):
     if not security.verify_password(payload_pwd, user_pwd):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect Email or Password"
-        )
+        raise_http_exception(api_msgs.INCORRECT_LOGIN_INPUT)
     return True
 
 
@@ -92,8 +89,6 @@ def get_user_cart_id(req: Request):
 
 def get_item_from_cart_item_table(req: Request, product_id: str, db: Session):
     user_cart_id = get_user_cart_id(req)
-    print(user_cart_id, "這是id")
-    print(product_id, "商品Id")
 
     cart_item = (
         db.query(cart_item_model.CartItem)
@@ -103,12 +98,9 @@ def get_item_from_cart_item_table(req: Request, product_id: str, db: Session):
         )
         .first()
     )
-    print(cart_item, "這是cart_item")
 
     if not cart_item:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.CART_ITEM_NOT_FOUND
-        )
+        raise_http_exception(api_msgs.CART_ITEM_NOT_FOUND)
     return cart_item
 
 
@@ -119,15 +111,12 @@ def delete_item(db: Session, cart_item: cart_item_model.CartItem):
 
 def update_qty(cart_item: cart_item_model.CartItem, stock: int, operation_type: str, db: Session):
     # 確認完當前購物車內數量是正常的之後(超過就會error)
-    # 但其實應該是 按下+ -> 判斷加上去是否會>stock 會就error
-    # 按下 - -> 判斷減去是否會<1(前端確認即可，但後端就保險還是要確認)
+    # 但其實應該是按下+ -> 判斷加上去是否會>stock 會就error
+    # 按下 - -> 判斷減去是否會<1(前端確認即可，但後端為了保險還是要確認)
 
     if cart_item.quantity > 1 and cart_item.quantity < stock:
         cart_item.quantity += 1 if operation_type == OperationType.INC else -1
         db.commit()
         # 在購物車裡面做更新，qty只會是+1(因為不給手動輸入)
     else:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=api_msgs.CART_ITEM_QUANTITY_LIMITS_ERROR,
-        )
+        raise_http_exception(api_msgs.CART_ITEM_QUANTITY_LIMITS_ERROR)

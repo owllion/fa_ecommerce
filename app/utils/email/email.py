@@ -25,7 +25,7 @@ async def send_link(params: email_schema.SendLinkParamsSchema):
     link_type, link, email = params.values()
 
     res = get_mail_text(link_type)
-    print(res, "this is res")
+
     btn_text, title, content, link_type, action = get_mail_text(link_type).values()
 
     try:
@@ -48,7 +48,6 @@ async def send_link(params: email_schema.SendLinkParamsSchema):
 
         fm = FastMail(conf)
         await fm.send_message(message)
-        print("await after@")
 
     except Exception as e:
         get_exception(e)

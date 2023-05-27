@@ -39,7 +39,9 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
             "user_id": new_user.id,
             "user_email": new_user.email,
             "link_type": "verify",
+            'token_type': "validate_email"
             "url_params": "verify-email",
+            
         }
 
         await user_services.send_verify_or_reset_link(link_params)

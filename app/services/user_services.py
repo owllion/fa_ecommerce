@@ -60,10 +60,12 @@ def password_is_matched(payload_pwd: str, user_pwd: str):
     return True
 
 
-async def send_verify_or_reset_link(params: email_schema.SendVerifyOrResetLinkSchema):
-    user_id, user_email, link_type, url_params = params.values()
+async def send_verify_or_reset_link(payload: email_schema.SendLinkSchema):
+    user_id, user_email, link_type, url_params = payload.values()
 
-    token = security.create_token(user_id, "access")
+    token = security.create_token(
+        user_id,
+    )
 
     target_link = f'{config("FRONTEND_DEPLOY_URL")}/auth/{url_params}/{token}'
 

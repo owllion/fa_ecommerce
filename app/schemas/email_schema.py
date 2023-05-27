@@ -9,13 +9,17 @@ class CreateEmailContentSchema(BaseModel):
     link_type: str
     action: str
 
+
 class SendLinkInfoBase(BaseModel):
     link_type: str
     email: str
 
-class SendVerifyOrResetLinkSchema(SendLinkInfoBase):
+
+class SendLinkSchema(SendLinkInfoBase):
     user_id: str
     url_params: str
+    token_type: str
+
 
 class SendLinkParamsSchema(SendLinkInfoBase):
     link: str

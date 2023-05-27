@@ -1,5 +1,4 @@
 from fastapi import Depends, HTTPException, status
-from fastapi.encoders import jsonable_encoder
 
 from ...constants import api_msgs
 from ...exceptions.custom_http_exception import CustomHTTPException
@@ -24,7 +23,7 @@ protected_plural, protected_singular, public_plural, public_singular = get_route
 )
 def create_coupon(payload: coupon_schema.CouponCreateSchema, db: Session = Depends(db.get_db)):
     try:
-        new_coupon = coupon_services.save_to_db_then_return(payload, db)
+        new_coupon = coupon_services.svc_create_coupon(payload, db)
 
         return new_coupon
 

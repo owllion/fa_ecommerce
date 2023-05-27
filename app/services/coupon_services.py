@@ -1,12 +1,11 @@
 from datetime import datetime
-from decimal import Decimal
 
 from fastapi import HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from ..constants import api_msgs
-from ..exceptions.main import raise_http_exception
+from ..exceptions.main import get_exception, raise_http_exception
 from ..models.coupon import coupon_model
 from ..schemas import coupon_schema
 
@@ -20,16 +19,14 @@ def is_valid_coupon(expiry_date: datetime):
     if (expiry_datetime - datetime.now()).total_seconds() > 0:
         return True
 
-    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.COUPON_EXPIRED)
+    raise_http_exception(api_msgs.COUPON_EXPIRED)
 
 
 def is_threshold_met(min_amount: float, total_price: float):
     if total_price > min_amount:
         return True
 
-    raise HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.MINIMUM_THRESHOLD_NOT_MET
-    )
+    raise_http_exception(api_msgs.MINIMUM_THRESHOLD_NOT_MET)
 
 
 def get_price_and_discount(discount_type: str, total_price: float, amount: float):
@@ -63,6 +60,7 @@ def get_coupons(db: Session):
 
 def get_user_coupons(user_id: str, db: Session):
     coupons = db.query(coupon_model.Coupon).filter(coupon_model.Coupon.user_id == user_id).all()
+
     return coupons
 
 
@@ -100,15 +98,13 @@ def add_coupon_to_user_coupon_list(req: Request, coupon: coupon_model.Coupon, db
     found_coupon = get_coupon_from_req_user(req, coupon.code)
 
     if found_coupon:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail=api_msgs.COUPON_ALREADY_EXISTS
-        )
+        raise_http_exception(api_msgs.COUPON_ALREADY_EXISTS)
 
     req.state.mydata.coupons.append(coupon)
     db.commit()
 
 
-def save_to_db_then_return(payload: coupon_schema.CouponCreateSchema, db: Session):
+def svc_create_coupon(payload: coupon_schema.CouponCreateSchema, db: Session):
     new_coupon = coupon_model.Coupon(**payload.dict())
     db.add(new_coupon)
     db.commit()

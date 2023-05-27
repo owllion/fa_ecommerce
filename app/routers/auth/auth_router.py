@@ -27,9 +27,7 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
         user = user_services.find_user_with_email(payload.email, db)
 
         if user:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail=api_msgs.ACCOUNT_ALREADY_EXISTS
-            )
+            raise_http_exception(api_msgs.ACCOUNT_ALREADY_EXISTS, status.HTTP_409_CONFLICT)
 
         new_user = user_services.svc_create_user(payload, db)
 
@@ -106,3 +104,21 @@ def verify_token_from_link(payload: user_schema.TokenSchema, db: Session = Depen
 
     except Exception as e:
         get_exception(e)
+
+
+@public_singular.post(
+    "/check-token",
+    **get_path_decorator_settings(
+        response_model=None,
+        description="Check if the token retrieved from the link is valid",
+    )
+)
+def check_if_token_is_valid(payload: user_schema.TokenSchema):
+    try:
+        security.decode_token(payload.token, "access", db)
+
+        return {"is_valid": True}
+
+    except Exception as e:
+        get_exception(e)
+        return {"is_valid": True}

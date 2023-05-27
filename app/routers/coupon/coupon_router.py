@@ -2,6 +2,7 @@ from fastapi import Depends, HTTPException, status
 
 from ...constants import api_msgs
 from ...exceptions.custom_http_exception import CustomHTTPException
+from ...exceptions.main import get_exception, raise_http_exception
 from ...schemas import coupon_schema
 from ...services import coupon_services, user_services
 from ...utils.depends.dependencies import *
@@ -28,9 +29,7 @@ def create_coupon(payload: coupon_schema.CouponCreateSchema, db: Session = Depen
         return new_coupon
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @public_singular.get(
@@ -44,16 +43,12 @@ def get_coupon(coupon_id: str, db: Session = Depends(db.get_db)):
         coupon = coupon_services.find_coupon_with_id(coupon_id, db)
 
         if not coupon:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.COUPON_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.COUPON_NOT_FOUND)
 
         return coupon
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @public_plural.get(
@@ -65,13 +60,10 @@ def get_coupon(coupon_id: str, db: Session = Depends(db.get_db)):
 def get_coupons(db: Session = Depends(db.get_db)):
     try:
         coupons = coupon_services.get_coupons(db)
-
         return coupons
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_plural.get(
@@ -86,9 +78,7 @@ def get_user_coupons(req: Request, db: Session = Depends(db.get_db)):
         return req.state.mydata.coupons
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.put(
@@ -102,16 +92,12 @@ def update_coupon(payload: coupon_schema.CouponUpdateSchema, db: Session = Depen
         coupon = coupon_services.find_coupon_with_id(payload.id, db)
 
         if not coupon:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.COUPON_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.COUPON_NOT_FOUND)
 
         coupon_services.update_coupon_with(payload, coupon, db)
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.delete(
@@ -124,25 +110,19 @@ def delete_user_coupon(user_id: str, coupon_id: str, db: Session = Depends(db.ge
     try:
         user = user_services.find_user_with_id(user_id, db)
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.USER_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.USER_NOT_FOUND)
 
         coupon = coupon_services.find_coupon_with_id(coupon_id, db)
 
         if not coupon:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.COUPON_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.COUPON_NOT_FOUND)
 
         user.coupons.remove(coupon)
 
         db.commit()
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.delete(
@@ -152,23 +132,17 @@ def delete_user_coupon(user_id: str, coupon_id: str, db: Session = Depends(db.ge
     )
 )
 def delete_coupon(coupon_id: str, db: Session = Depends(db.get_db)):
-    print("這是刪除全部優惠之一")
     try:
         coupon = coupon_services.find_coupon_with_id(coupon_id, db)
 
         if not coupon:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.COUPON_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.COUPON_NOT_FOUND)
 
         db.delete(coupon)
-
         db.commit()
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.post(
@@ -185,14 +159,10 @@ def apply_coupon(
         coupon = coupon_services.get_coupon_from_req_user(req, payload.code)
 
         if not coupon:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.COUPON_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.COUPON_NOT_FOUND)
 
         if coupon.is_used:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.COUPON_ALREADY_USED
-            )
+            raise_http_exception(api_msgs.COUPON_ALREADY_USED)
 
         (
             final_price_after_discount,
@@ -206,9 +176,7 @@ def apply_coupon(
         }
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @protected_singular.post(
@@ -221,13 +189,9 @@ def redeem_coupon(
         coupon = coupon_services.find_coupon_with_code(payload.code, db)
 
         if not coupon:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.COUPON_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.COUPON_NOT_FOUND)
 
         coupon_services.add_coupon_to_user_coupon_list(req, coupon, db)
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)

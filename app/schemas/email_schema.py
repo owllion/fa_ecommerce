@@ -12,7 +12,7 @@ class CreateEmailContentSchema(BaseModel):
 
 class SendLinkInfoBase(BaseModel):
     link_type: str
-    email: str
+    user_email: str
 
 
 class SendLinkSchema(SendLinkInfoBase):

@@ -60,16 +60,17 @@ def password_is_matched(payload_pwd: str, user_pwd: str):
     return True
 
 
-async def send_verify_or_reset_link(payload: email_schema.SendLinkSchema):
-    user_id, user_email, link_type, url_params = payload.values()
-
+async def send_link(payload: email_schema.SendLinkSchema):
     token = security.create_token(
-        user_id,
+        payload.user_id,
+        payload.token_type,
     )
 
-    target_link = f'{config("FRONTEND_DEPLOY_URL")}/auth/{url_params}/{token}'
+    target_link = f'{config("FRONTEND_DEPLOY_URL")}/auth/{payload.url_params}/{token}'
 
-    await email.send_link({"type": link_type, "link": target_link, "email": user_email})
+    await email.send_link(
+        {"type": payload.link_type, "link": target_link, "email": payload.user_email}
+    )
 
 
 def get_item_from_user_cart(req: Request, product_id: str, size: str):

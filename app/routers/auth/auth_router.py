@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from ...constants import api_msgs
+from ...constants import api_msgs, constants
 from ...database import db
 from ...exceptions.main import get_exception, raise_http_exception
 from ...schemas import user_schema
@@ -38,13 +38,12 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
         link_params = {
             "user_id": new_user.id,
             "user_email": new_user.email,
-            "link_type": "verify",
-            'token_type': "validate_email"
-            "url_params": "verify-email",
-            
+            "link_type": constants.URLLinkType.VERIFY,
+            "token_type": constants.TokenType.VALIDATE_EMAIL,
+            "url_params": constants.URLParams.VERIFY_EMAIL,
         }
 
-        await user_services.send_verify_or_reset_link(link_params)
+        await user_services.send_link(link_params)
 
     except Exception as e:
         get_exception(e)

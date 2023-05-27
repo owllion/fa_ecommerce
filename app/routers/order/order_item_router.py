@@ -1,10 +1,8 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 
-from ...constants import api_msgs
-from ...exceptions.custom_http_exception import CustomHTTPException
 from ...exceptions.main import get_exception
 from ...schemas import order_schema
-from ...services import order_item_services, order_services, product_item_services
+from ...services import order_item_services, order_services
 from ...utils.depends.dependencies import *
 from ...utils.router.router_settings import (
     get_path_decorator_settings,

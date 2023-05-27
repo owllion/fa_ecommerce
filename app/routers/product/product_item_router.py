@@ -1,15 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi import exceptions as es
-from fastapi import status
-from fastapi.encoders import jsonable_encoder
-from sqlalchemy import func
+from fastapi import Depends
 
-from ...constants import api_msgs, exceptions
-from ...exceptions.custom_http_exception import CustomHTTPException
-from ...exceptions.main import get_exception, raise_http_exception
-from ...models.product import product_item_model, product_model, size_model
+from ...exceptions.main import get_exception
+from ...models.product import product_item_model
 from ...schemas import product_item_schema
-from ...services import product_item_services, product_services
+from ...services import product_item_services
 from ...utils.depends.dependencies import *
 from ...utils.router.router_settings import (
     get_path_decorator_settings,

@@ -40,8 +40,8 @@ Deployed on GCP Cloud Run with CI/CD integration for automated build, packaging,
 #clone
 git clone https://github.com/owllion/EC-Server.git
 ```
-
-- Launch server
+Choose one of them to launch the service
+- uvicorn
 ```sh
 #http
 uvicorn app.main:main --reload  
@@ -51,17 +51,17 @@ uvicorn app.main:app --port 8000 --reload --ssl-keyfile app/cert/key.pem --ssl-c
 uvicorn app.main:app --reload --env-file app/.env.prod 
 ```
 
-- Or develop with docker-compose
+- docker-compose
 ```sh
 #use local mysql (dev)
 docker-compose up -d --build 
 
 #use cloud sql (prod)
-#you have to generate IAM key and download it to your local machine,
-#then mount it on your main service(in my case is 'app') volumes,
-#that way gcloud can read your credential and allow you to connect to cloud sql.
 docker-compose -f docker-compose.yml -f docker-compose.access.yml --env-file=.env.prod  up -d --build
 ```
+📙 docker-compose.access.yml
+- This file is used to configure the necessary authentication(ADC) and access settings for connecting to Cloud SQL in a production environment. 
+- Make sure to generate an IAM key from your service account, download it to your local machine, and update the ./gcp_key.json file path accordingly in the docker-compose.access.yml file, then mount it on your main service(in my case is 'app') volumes.
 
 ## Project Status
 Under Refactoring.

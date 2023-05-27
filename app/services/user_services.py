@@ -3,6 +3,7 @@ from fastapi import Depends, HTTPException, Request, status
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
 
+from ..constants import api_msgs
 from ..database import db
 from ..models.cart import cart_item_model
 from ..models.user import user_model
@@ -10,8 +11,6 @@ from ..schemas import email_schema, user_schema
 from ..schemas.cart_schema import OperationType
 from ..utils.email import email
 from ..utils.security import security
-
-from ..constants import api_msgs
 
 
 def find_user_with_email(email: str, db: Session = Depends(db.get_db)):
@@ -28,7 +27,7 @@ def find_user_with_id(id: str, db: Session = Depends(db.get_db)):
     return user
 
 
-def create_user_service(payload: user_schema.UserCreateSchema, db: Session):
+def svc_create_user(payload: user_schema.UserCreateSchema, db: Session):
     if type(payload) is dict:
         new_user = user_model.User(**payload)
     else:

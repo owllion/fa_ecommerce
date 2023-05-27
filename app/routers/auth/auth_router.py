@@ -14,26 +14,26 @@ from sqlalchemy.orm import Session
 from ...constants import api_msgs
 from ...database import db
 from ...exceptions.custom_http_exception import CustomHTTPException
-from ...exceptions.main import raise_http_exception
+from ...exceptions.main import get_exception, raise_http_exception
 from ...schemas import user_schema
 from ...services import user_services
 
 # from ...utils.common.logger import logger
 from ...utils.depends.dependencies import *
-from ...utils.router.router_settings import get_path_decorator_settings
+from ...utils.router.router_settings import (
+    get_path_decorator_settings,
+    get_router_settings,
+)
 from ...utils.security import security
 
-router = APIRouter(
-    prefix="/auth",
-    tags=["auth"],
-    responses={404: {"description": "Not found"}},
+_, _, _, public_singular = get_router_settings(
+    singular_prefix="auth", plural_prefix="auth", tags=["auth"]
 )
 
 
-@router.post(
+@public_singular.post(
     "/register",
     status_code=status.HTTP_201_CREATED,
-    # response_model=user_schema.RegisterResultSchema,
 )
 async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depends(db.get_db)):
     try:
@@ -41,10 +41,10 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
 
         if user:
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail="Account already exist"
+                status_code=status.HTTP_409_CONFLICT, detail=api_msgs.ACCOUNT_ALREADY_EXISTS
             )
 
-        new_user = user_services.create_user_service(payload, db)
+        new_user = user_services.svc_create_user(payload, db)
 
         link_params = {
             "user_id": new_user.id,
@@ -55,32 +55,11 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
 
         await user_services.send_verify_or_reset_link(link_params)
 
-        return_data = jsonable_encoder(new_user, by_alias=False)
-        # 改成易於serilize的格式(dict)
-
-        # return_data.pop('password')
-
-        print(return_data, "這是return data")
-
-        # return_data['token'] = security.create_token(new_user.id,'access')
-        # return_data['refresh_token'] = security.create_token(new_user.id,'refresh')
-
-        # 註冊後根本不用船任何東西，因為沒認證email仕進不去的
-        # return {
-        #     'token': security.create_token(new_user.id,'access'),
-        #     'refresh_token': security.create_token(new_user.id,'refresh'),
-        #     'user': return_data,
-        # }
-
     except Exception as e:
-        if type(e).__name__ == "HTTPException":
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
-@router.post(
-    "/login", status_code=status.HTTP_200_OK, response_model=user_schema.LoginResultSchema
-)
+@public_singular.post("/login", response_model=user_schema.LoginResultSchema)
 def login(payload: user_schema.LoginUserSchema, db: Session = Depends(db.get_db)):
     try:
         user = user_services.find_user_with_email(payload.email, db)
@@ -91,7 +70,6 @@ def login(payload: user_schema.LoginUserSchema, db: Session = Depends(db.get_db)
         if user_services.password_is_matched(
             payload.password, user.password
         ) and user_services.user_is_verified(user.verified):
-            # cart_length = db.query()
             return {
                 "token": security.create_token(user.id, "access"),
                 "refresh_token": security.create_token(user.id, "refresh"),
@@ -100,12 +78,10 @@ def login(payload: user_schema.LoginUserSchema, db: Session = Depends(db.get_db)
             }
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
-@router.post("/refresh-token", response_model=user_schema.AccessAndRefreshTokenSchema)
+@public_singular.post("/refresh-token", response_model=user_schema.AccessAndRefreshTokenSchema)
 def get_refresh_token(payload: user_schema.TokenSchema, db: Session = Depends(db.get_db)):
     try:
         decoded_data = security.decode_token(payload.token, "refresh", db)
@@ -116,13 +92,10 @@ def get_refresh_token(payload: user_schema.TokenSchema, db: Session = Depends(db
         }
 
     except Exception as e:
-        # logger.error(e, exc_info=True)
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
-@router.post(
+@public_singular.post(
     "/verify-token",
     **get_path_decorator_settings(
         response_model=user_schema.RegisterResultSchema,
@@ -132,7 +105,9 @@ def get_refresh_token(payload: user_schema.TokenSchema, db: Session = Depends(db
 def verify_token_from_link(payload: user_schema.TokenSchema, db: Session = Depends(db.get_db)):
     try:
         decoded_data = security.decode_token(payload.token, "access", db)
+
         decoded_data.verified = 1
+
         db.commit()
 
         return {
@@ -142,7 +117,4 @@ def verify_token_from_link(payload: user_schema.TokenSchema, db: Session = Depen
         }
 
     except Exception as e:
-        # logger.error(e, exc_info=True)
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)

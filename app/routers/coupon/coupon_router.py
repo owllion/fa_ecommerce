@@ -1,7 +1,6 @@
 from fastapi import Depends, HTTPException, status
 
 from ...constants import api_msgs
-from ...exceptions.custom_http_exception import CustomHTTPException
 from ...exceptions.main import get_exception, raise_http_exception
 from ...schemas import coupon_schema
 from ...services import coupon_services, user_services

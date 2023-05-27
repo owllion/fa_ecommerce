@@ -7,6 +7,7 @@ class TokenType:
 
 class URLParams:
     VERIFY_EMAIL = "verify-email"
+    RESET_PWD = "reset-password/token"
 
 
 class URLLinkType:

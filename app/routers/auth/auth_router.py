@@ -6,8 +6,6 @@ from ...database import db
 from ...exceptions.main import get_exception, raise_http_exception
 from ...schemas import user_schema
 from ...services import user_services
-
-# from ...utils.common.logger import logger
 from ...utils.depends.dependencies import *
 from ...utils.router.router_settings import (
     get_path_decorator_settings,

@@ -114,9 +114,8 @@ def delete_item(db: Session, cart_item: cart_item_model.CartItem):
 
 def update_qty(cart_item: cart_item_model.CartItem, stock: int, operation_type: str, db: Session):
     # 確認完當前購物車內數量是正常的之後(超過就會error)
-    # 但其實應該是按下+ -> 判斷加上去是否會>stock 會就error
+    # 是按下+ -> 判斷加上去是否會>stock，會就error
     # 按下 - -> 判斷減去是否會<1(前端確認即可，但後端為了保險還是要確認)
-
     if cart_item.quantity > 1 and cart_item.quantity < stock:
         cart_item.quantity += 1 if operation_type == OperationType.INC else -1
         db.commit()

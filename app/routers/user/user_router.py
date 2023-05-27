@@ -3,9 +3,9 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
-from ...constants import api_msgs
+from ...constants import api_msgs, constants
 from ...database import db
-from ...exceptions.main import get_exception
+from ...exceptions.main import get_exception, raise_http_exception
 from ...models.cart import cart_item_model
 from ...schemas import cart_schema, user_schema
 from ...services import product_services, user_services
@@ -77,18 +77,17 @@ async def forgot_password(payload: user_schema.EmailBaseSchema, db: Session = De
     try:
         user = user_services.find_user_with_email(payload.email, db)
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="User does not exist!"
-            )
+            raise_http_exception(api_msgs.USER_NOT_FOUND)
 
         link_params = {
             "user_id": user.id,
             "user_email": user.email,
-            "link_type": "reset",
-            "url_params": "reset-password/token",
+            "link_type": constants.URLLinkType.RESET,
+            "token_type": constants.TokenType.RESET_PWD,
+            "url_params": constants.URLParams.RESET_PWD,
         }
 
-        await user_services.send_verify_or_reset_link(link_params)
+        await user_services.send_link(link_params)
 
         content = {
             "detail": "A verification email has been sent to your registered email address successfully."
@@ -130,9 +129,7 @@ def add_to_cart(
         product = product_services.find_product_with_id(payload.product_id, db)
 
         if not product:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.PRODUCT_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.PRODUCT_NOT_FOUND)
 
         res = list(
             filter(
@@ -141,39 +138,36 @@ def add_to_cart(
             )
         )
         stock = res[0].stock if res else None
-        print(stock, "這是stock")
-        print(res, "這是res")
 
-        if cart_item:  # 如果商品存在
+        # 如果商品存在
+        if cart_item:
             is_available = cart_item.qty + payload.qty < stock
-            if is_available:  # 判斷現在傳入的qty是否<庫存
-                # 不用再判斷qty是否>1了 只要最後結果是<stock就可以
-                cart_item.qty += payload.qty
-                # 是-> 就直接加
-            else:  # 不足，就說庫存不足
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=api_msgs.PRODUCT_IS_NOT_AVAILABLE_ERROR,
-                )
 
-        else:  # 商品不存在 新增一個
+            if is_available:
+                # 判斷現在傳入的qty是否<庫存
+                # 不用再判斷qty是否>1了 只要最後結果是<stock就可以
+
+                cart_item.qty += payload.qty
+                # 是->就直接加
+            else:
+                raise_http_exception(api_msgs.PRODUCT_IS_NOT_AVAILABLE_ERROR)
+
+        else:
+            # 商品不存在 新增一個
             # 也要先判斷數字是否<庫存
-            print(payload.qty, "qty!!")
-            # print(product.stock, 'stock')
+
             is_available = payload.qty < stock
+
             if is_available:
                 new_cart_item = cart_item_model.CartItem(
                     qty=payload.qty, product_id=product.id, cart_id=user_cart.id, size=payload.size
                 )
 
                 db.add(new_cart_item)
-
                 user_cart.cart_items.append(new_cart_item)
+
             else:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=api_msgs.PRODUCT_IS_NOT_AVAILABLE_ERROR,
-                )
+                raise_http_exception(api_msgs.PRODUCT_IS_NOT_AVAILABLE_ERROR)
 
         db.commit()
 
@@ -189,7 +183,6 @@ def remove_from_cart(
     req: Request, payload: cart_schema.RemoveFromCartSchema, db: Session = Depends(db.get_db)
 ):
     try:
-        # cart_item = user_services.get_item_from_cart_item_table(req, payload.product_id, db)
         cart_item = user_services.get_item_from_user_cart(req, payload.product_id, payload.size)
 
         user_services.delete_item(db, cart_item)
@@ -209,29 +202,23 @@ def update_item_qty(
         cart_item = user_services.get_item_from_user_cart(req, payload.product_id, payload.size)
 
         if not cart_item:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.CART_ITEM_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.CART_ITEM_NOT_FOUND)
 
-        # 取庫存、新增cart_item使用
         product = product_services.find_product_with_id(payload.product_id, db)
 
         if not product:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=api_msgs.PRODUCT_NOT_FOUND
-            )
+            raise_http_exception(api_msgs.PRODUCT_NOT_FOUND)
 
-        res = list(
+        product_item = list(
             filter(
                 lambda x: x.product_id == product.id and x.size.value == payload.size,
                 product.product_items,
             )
         )
+        stock = product_item[0].size.value
 
-        stock = res[0].size.value if res else None
-
-        print(stock, res)
-        # ------
+        if not stock:
+            raise ValueError(api_msgs.PRODUCT_IS_NOT_AVAILABLE_ERROR)
 
         user_services.update_qty(cart_item, stock, payload.operation_type, db)
 
@@ -247,16 +234,7 @@ def update_item_qty(
 )
 def get_user_cart(req: Request, db: Session = Depends(db.get_db)):
     try:
-        items = jsonable_encoder(req.state.mydata.cart.cart_items)
-        first_p = jsonable_encoder(req.state.mydata.cart.cart_items[0].product)
-        #    print(first_p,'首個商品')
-        #    print(items)
-        #    print(len(req.state.mydata.cart.cart_items),"長度")
         cart_items = req.state.mydata.cart.cart_items
-        for item in req.state.mydata.cart.cart_items:
-            res = jsonable_encoder(item.product)
-            print(res, "這是res")
-            # print(jsonable_encoder(item.product))
         return [item for item in cart_items]
 
     except Exception as e:
@@ -268,9 +246,7 @@ def get_user(user_id: str, db: Session = Depends(db.get_db)):
     try:
         user = user_services.find_user_with_id(user_id, db)
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="User does not exist!"
-            )
+            raise_http_exception(api_msgs.USER_NOT_FOUND)
         return user
     except Exception as e:
         get_exception(e)

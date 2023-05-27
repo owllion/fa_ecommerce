@@ -2,13 +2,12 @@ import json
 
 import requests
 from authlib.integrations.starlette_client import OAuthError
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from ...constants import api_msgs
 from ...database import db
-from ...exceptions.custom_http_exception import CustomHTTPException
-from ...exceptions.main import raise_http_exception
+from ...exceptions.main import get_social_login_exception, raise_http_exception
 from ...services import user_services
 from ...utils.security import security
 
@@ -54,8 +53,4 @@ async def google_auth(access_token: str, db: Session = Depends(db.get_db)):
         }
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        if isinstance(e, (OAuthError,)):
-            raise_http_exception(detail=e.description, status_code=status.HTTP_401_UNAUTHORIZED)
-        raise CustomHTTPException(detail=str(e))
+        get_social_login_exception(e)

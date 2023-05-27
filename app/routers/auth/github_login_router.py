@@ -1,22 +1,14 @@
 import json
-import os
-from enum import Enum
-from typing import Annotated
 
-import requests
-from authlib.integrations.starlette_client import OAuthError
 from decouple import config
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import RedirectResponse
 from requests_oauthlib import OAuth2Session
 from sqlalchemy.orm import Session
 
 from ...constants import api_msgs
 from ...database import db
-from ...exceptions.custom_http_exception import CustomHTTPException
-from ...exceptions.main import raise_http_exception
-from ...schemas import auth_schema, user_schema
+from ...exceptions.main import get_social_login_exception, raise_http_exception
+from ...schemas import auth_schema
 from ...services import user_services
 from ...utils.depends.dependencies import *
 from ...utils.router.router_settings import get_path_decorator_settings
@@ -41,6 +33,7 @@ router = APIRouter(
 @router.get("/github-login")
 async def github_login():
     url = github.authorization_url(authorization_base_url)
+
     return {"url": url}
 
 
@@ -85,8 +78,4 @@ async def github_auth(payload: auth_schema.SocialLoginSchema, db: Session = Depe
         return {"msg": "wpw"}
 
     except Exception as e:
-        if isinstance(e, (HTTPException,)):
-            raise e
-        if isinstance(e, (OAuthError,)):
-            raise_http_exception(detail=e.description, status_code=status.HTTP_401_UNAUTHORIZED)
-        raise_http_exception(api_msgs.SERVER_ERROR)
+        get_social_login_exception(e)

@@ -1,12 +1,10 @@
 import json
 from datetime import timedelta
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from fastapi.encoders import jsonable_encoder
 
-from ...constants import api_msgs
-from ...exceptions.custom_http_exception import CustomHTTPException
-from ...exceptions.main import get_exception, raise_http_exception
+from ...exceptions.main import get_exception
 from ...schemas import order_schema
 from ...services import order_services
 from ...utils.depends.dependencies import *

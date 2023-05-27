@@ -118,7 +118,7 @@ def get_populated_order_or_raise_not_found(id: str, db: Session):
     return order
 
 
-def get_all_orders(db: Session):
+def svc_get_orders(db: Session):
     return db.query(order_model.Order).all()
 
 
@@ -126,7 +126,7 @@ def get_orders_by_user_id(user_id: str, db: Session):
     return db.query(order_model.Order).filter_by(owner_id=user_id).all()
 
 
-def update_order_record(
+def svc_update_order_record(
     payload: order_schema.OrderUpdateSchema, order: order_model.Order, db: Session
 ):
     if payload.order_status:
@@ -141,7 +141,7 @@ def update_order_record(
     db.commit()
 
 
-def delete_order_record(order_id: str, db: Session):
+def svc_delete_order(order_id: str, db: Session):
     order = get_order_or_raise_not_found(order_id, db)
     db.delete(order)
     db.commit()
@@ -171,7 +171,7 @@ def set_coupon_as_used(req: Request, code: str, db: Session):
     db.commit()
 
 
-def create_order(
+def svc_create_order(
     req: Request, payload: order_schema.OrderCreateSchema, db: Session, need_order: bool = False
 ):
     order = create_order_then_return(payload, db)

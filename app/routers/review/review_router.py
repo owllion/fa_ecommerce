@@ -1,10 +1,14 @@
-from fastapi import Depends, HTTPException, status
+from datetime import timedelta
+
+from fastapi import Depends
+from fastapi.encoders import jsonable_encoder
 
 from ...constants import api_msgs
 from ...exceptions.main import get_exception, raise_http_exception
 from ...schemas import review_schema
 from ...services import review_services
 from ...utils.depends.dependencies import *
+from ...utils.redis.keys import user_reviews_key
 from ...utils.router.router_settings import (
     get_path_decorator_settings,
     get_router_settings,
@@ -60,46 +64,41 @@ def get_review(review_id: str, db: Session = Depends(db.get_db)):
 def get_reviews(db: Session = Depends(db.get_db)):
     try:
         reviews = review_services.svc_get_reviews(db)
-
         return reviews
 
     except Exception as e:
         get_exception(e)
 
 
-@public_plural.get(
+@protected_plural.get(
     "/user/{user_id}",
     **get_path_decorator_settings(
         description="Get the specific user's review list",
         response_model=list[review_schema.ReviewSchema],
     )
 )
-def get_user_reviews(user_id: str, db: Session = Depends(db.get_db)):
+def get_user_reviews(req: Request, user_id: str, db: Session = Depends(db.get_db)):
     try:
         client = req.app.state.redis
 
-        cached_orders = client.json().get(user_orders_key(user_id), ".")
+        cached_reviews = client.json().get(user_reviews_key(user_id), ".")
 
-        total_len = client.json().arrlen(user_orders_key(user_id), ".")
+        total_len = client.json().arrlen(user_reviews_key(user_id), ".")
 
-        if cached_orders and total_len:
-            return {"list": cached_orders, "total": total_len}
+        if cached_reviews and total_len:
+            return cached_reviews
 
-        # orders = order_services.get_orders_by_user_id(user_id, db)
-        orders = req.state.mydata.orders
+        reviews = review_services.get_user_reviews_with_user_field_populated(user_id, db)
 
-        json_orders = list(map(lambda x: jsonable_encoder(x), orders))
+        json_reviews = list(map(lambda x: jsonable_encoder(x), reviews))
 
-        client.json().set(user_orders_key(user_id), ".", json_orders)
+        client.json().set(user_reviews_key(user_id), ".", json_reviews)
 
-        client.expire(user_orders_key(user_id), timedelta(seconds=60))
+        client.expire(user_reviews_key(user_id), timedelta(seconds=120))
 
-        total_len = client.json().arrlen(user_orders_key(user_id), ".")
+        total_len = client.json().arrlen(user_reviews_key(user_id), ".")
 
-        return {"list": orders, "total": total_len}
-        # reviews = review_services.svc_get_user_reviews(user_id, db)
-
-        # return reviews
+        return reviews
 
     except Exception as e:
         get_exception(e)

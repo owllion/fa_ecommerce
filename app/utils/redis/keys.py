@@ -2,6 +2,10 @@ def user_orders_key(user_id: str):
     return f"user:orders#{user_id}"
 
 
+def user_reviews_key(user_id: str):
+    return f"user:reviews#{user_id}"
+
+
 def orders_key(order_id: str):
     return f"orders#{order_id}"
 

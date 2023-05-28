@@ -1,5 +1,5 @@
 from fastapi import Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, subqueryload
 
 from ..database import db
 from ..models.review import review_model
@@ -19,6 +19,17 @@ def svc_get_reviews(db: Session):
 
 def svc_get_user_reviews(user_id: str, db: Session):
     reviews = db.query(review_model.Review).filter(review_model.Review.user_id == user_id).all()
+    return reviews
+
+
+def get_user_reviews_with_user_field_populated(user_id: str, db: Session):
+    reviews = (
+        db.query(review_model.Review)
+        .options(subqueryload(review_model.Review.user))
+        .filter(review_model.Review.user_id == user_id)
+        .all()
+    )
+
     return reviews
 
 

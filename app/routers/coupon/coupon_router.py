@@ -72,9 +72,28 @@ def get_coupons(db: Session = Depends(db.get_db)):
         response_model=list[coupon_schema.CouponSchema],
     )
 )
-def get_user_coupons(req: Request, db: Session = Depends(db.get_db)):
+def get_user_coupons(req: Request, user_id: str, db: Session = Depends(db.get_db)):
     try:
-        return req.state.mydata.coupons
+        client = req.app.state.redis
+
+        cached_reviews = client.json().get(user_reviews_key(user_id), ".")
+
+        total_len = client.json().arrlen(user_reviews_key(user_id), ".")
+
+        if cached_reviews and total_len:
+            return cached_reviews
+
+        reviews = review_services.get_user_reviews_with_user_field_populated(user_id, db)
+
+        json_reviews = list(map(lambda x: jsonable_encoder(x), reviews))
+
+        client.json().set(user_reviews_key(user_id), ".", json_reviews)
+
+        client.expire(user_reviews_key(user_id), timedelta(seconds=120))
+
+        total_len = client.json().arrlen(user_reviews_key(user_id), ".")
+
+        return reviews
 
     except Exception as e:
         get_exception(e)

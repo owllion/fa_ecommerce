@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from ...constants import api_msgs, constants
 from ...database import db
-from ...exceptions.main import get_exception, raise_http_exception
+from ...exceptions.main import CustomHTTPException, get_exception, raise_http_exception
 from ...schemas import user_schema
 from ...services import user_services
 from ...utils.depends.dependencies import *
@@ -48,14 +48,16 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
 @public_singular.post("/login", response_model=user_schema.LoginResultSchema)
 def login(payload: user_schema.LoginUserSchema, db: Session = Depends(db.get_db)):
     try:
+        print("這是登入")
         user = user_services.find_user_with_email(payload.email, db)
 
         if not user:
             raise_http_exception(api_msgs.USER_NOT_FOUND)
-
+        print(user, "這是uesr")
         if user_services.password_is_matched(
             payload.password, user.password
         ) and user_services.user_is_verified(user.verified):
+            print("近來囉最終部分")
             return {
                 "token": security.create_token(user.id, "access"),
                 "refresh_token": security.create_token(user.id, "refresh"),
@@ -64,7 +66,10 @@ def login(payload: user_schema.LoginUserSchema, db: Session = Depends(db.get_db)
             }
 
     except Exception as e:
-        get_exception(e)
+        # get_exception(e)
+        if isinstance(e, (HTTPException,)):
+            raise e
+        raise CustomHTTPException(detail=str(e))
 
 
 @public_singular.post("/refresh-token", response_model=user_schema.AccessAndRefreshTokenSchema)
@@ -115,10 +120,10 @@ def verify_token_from_link(payload: user_schema.TokenSchema, db: Session = Depen
 )
 def check_if_token_is_valid(payload: user_schema.TokenSchema):
     try:
-        security.decode_token(payload.token, "access", db)
+        security.decode_token(payload.token, constants.TokenType.RESET_PWD, db)
 
         return {"is_valid": True}
 
     except Exception as e:
         get_exception(e)
-        return {"is_valid": True}
+        return {"is_valid": False}

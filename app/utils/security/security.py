@@ -13,7 +13,7 @@ from ...services import user_services
 # expire time
 ACCESS_TOKEN_EXPIRES_IN = config("ACCESS_TOKEN_EXPIRES_IN", cast=int)
 REFRESH_TOKEN_EXPIRES_IN = config("REFRESH_TOKEN_EXPIRES_IN", cast=int)
-RESET_EMAIL_EXPIRES_IN = config("RESET_EMAIL_EXPIRES_IN", cast=int)
+RESET_PWD_EXPIRES_IN = config("RESET_PWD_EXPIRES_IN", cast=int)
 VALIDATE_EMAIL_EXPIRES_IN = config("VALIDATE_EMAIL_EXPIRES_IN", cast=int)
 
 secrets = {
@@ -26,7 +26,7 @@ secrets = {
 time_deltas = {
     "access": timedelta(minutes=ACCESS_TOKEN_EXPIRES_IN),
     "refresh": timedelta(days=REFRESH_TOKEN_EXPIRES_IN),
-    "reset_pwd": timedelta(minutes=RESET_EMAIL_EXPIRES_IN),
+    "reset_pwd": timedelta(minutes=RESET_PWD_EXPIRES_IN),
     "validate_email": timedelta(minutes=VALIDATE_EMAIL_EXPIRES_IN),
 }
 
@@ -50,10 +50,9 @@ def get_secret(token_type: str):
 
 
 def create_token(user_id: str, token_type: str):
-    token_timedelta = time_deltas["token_type"]
+    token_timedelta = time_deltas[token_type]
 
     expire = datetime.utcnow() + token_timedelta
-
     token = jwt.encode(
         claims={"exp": expire, "user_id": user_id},
         key=get_secret(token_type),

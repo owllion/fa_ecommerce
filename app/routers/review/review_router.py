@@ -76,9 +76,30 @@ def get_reviews(db: Session = Depends(db.get_db)):
 )
 def get_user_reviews(user_id: str, db: Session = Depends(db.get_db)):
     try:
-        reviews = review_services.svc_get_user_reviews(user_id, db)
+        client = req.app.state.redis
 
-        return reviews
+        cached_orders = client.json().get(user_orders_key(user_id), ".")
+
+        total_len = client.json().arrlen(user_orders_key(user_id), ".")
+
+        if cached_orders and total_len:
+            return {"list": cached_orders, "total": total_len}
+
+        # orders = order_services.get_orders_by_user_id(user_id, db)
+        orders = req.state.mydata.orders
+
+        json_orders = list(map(lambda x: jsonable_encoder(x), orders))
+
+        client.json().set(user_orders_key(user_id), ".", json_orders)
+
+        client.expire(user_orders_key(user_id), timedelta(seconds=60))
+
+        total_len = client.json().arrlen(user_orders_key(user_id), ".")
+
+        return {"list": orders, "total": total_len}
+        # reviews = review_services.svc_get_user_reviews(user_id, db)
+
+        # return reviews
 
     except Exception as e:
         get_exception(e)

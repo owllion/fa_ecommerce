@@ -232,7 +232,7 @@ def update_item_qty(
         description="Get user's cart", response_model=list[cart_schema.CartItemSchema]
     )
 )
-def get_user_cart(req: Request, db: Session = Depends(db.get_db)):
+def get_user_cart(req: Request):
     try:
         cart_items = req.state.mydata.cart.cart_items
         return [item for item in cart_items]

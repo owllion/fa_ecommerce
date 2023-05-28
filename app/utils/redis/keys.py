@@ -1,12 +1,3 @@
-def usersKey(userId: str):
-    return f"users#{userId}"
-
-
-def userLikesKey(userId: str):
-    return f"users:likes#{userId}"
-
-
-# ------
 def user_orders_key(user_id: str):
     return f"user:orders#{user_id}"
 

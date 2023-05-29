@@ -14,7 +14,9 @@ class User(Base):
 
     id = Column(String(80), primary_key=True, index=True, default=generate_id.gen_id)
 
-    email = Column(String(80), unique=True, index=True)
+    email = Column(String(80), unique=True, index=True, nullable=True)
+
+    github_username = Column(String(80), index=True, nullable=True)
 
     first_name = Column(String(30), index=True)
 
@@ -23,6 +25,7 @@ class User(Base):
     phone = Column(String(50), nullable=True, default="")
 
     password = Column(String(80), nullable=True)
+
     upload_avatar = Column(String(350), nullable=True, default="")
 
     default_avatar = Column(String(350), default=config("DEFAULT_AVATAR_URL"))

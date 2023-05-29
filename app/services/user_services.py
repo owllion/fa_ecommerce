@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, Request, status
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
 
-from ..constants import api_msgs
+from ..constants import api_msgs, constants
 from ..database import db
 from ..exceptions.main import raise_http_exception
 from ..models.cart import cart_item_model
@@ -122,3 +122,17 @@ def update_qty(cart_item: cart_item_model.CartItem, stock: int, operation_type: 
         # 在購物車裡面做更新，qty只會是+1(因為不給手動輸入)
     else:
         raise_http_exception(api_msgs.CART_ITEM_QUANTITY_LIMITS_ERROR)
+
+
+def find_user_with_github_username(name: str, db: Session):
+    user = db.query(user_model.User).filter_by(github_username=name).first()
+
+    return user
+
+
+def gen_user_info_and_tokens(user: user_model.User):
+    return {
+        "token": security.create_token(user.id, constants.TokenType.ACCESS),
+        "refresh_token": security.create_token(user.id, constants.TokenType.REFRESH),
+        "user": user,
+    }

@@ -42,10 +42,15 @@ def toggle_fav(
 
         if product_services.product_in_user_fav(user.id, payload.product_id, db):
             product_services.remove_from_fav(user, product)
+            db.commit()
+            operation_msg = "remove from fav"
+
         else:
             product_services.add_to_fav(user, product)
+            operation_msg = "add to fav"
 
         db.commit()
+        return {"msg": operation_msg}
 
     except Exception as e:
         get_exception(e)

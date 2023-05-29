@@ -33,8 +33,8 @@ router = APIRouter(
 @router.get("/github-login")
 async def github_login():
     url = github.authorization_url(authorization_base_url)
-
-    return {"url": url}
+    print(url, "這是url")
+    return url[0]
 
 
 @router.post("/github-auth")
@@ -45,37 +45,24 @@ async def github_auth(payload: auth_schema.SocialLoginSchema, db: Session = Depe
         )
 
         res = github.get("https://api.github.com/user")
-        print(res.content, "this is r.content")
 
         user_data = json.loads(res.text)
 
-        print(user_data, "這是userdata")
-        # print(user_data.email,'這是email .')
-        print(user_data["email"], "這是email []")
+        user = user_services.find_user_with_github_username(user_data["login"], db)
 
-        # 建一個 github_username 欄位(拿login值)
+        if user:
+            return user_services.gen_user_info_and_tokens(user)
 
-        # 建立新的user
-        # found_user = user_services.find_user_with_email(user_data['email'],db)
+        else:
+            payload = {
+                "first_name": user_data["given_name"],
+                "last_name": user_data["family_name"] if "family_name" in user_data else "",
+                "upload_avatar": user_data["avatar_url"],
+            }
 
-        # if found_user:
-        #     raise_http_exception(api_msgs.USER_ALREADY_EXISTS)
+            new_user = user_services.svc_create_user(payload, db)
 
-        # payload = {
-        #     'email' : user_data['email'],
-        #     'first_name': user_data['given_name'],
-        #     'last_name': user_data['family_name'] if 'family_name' in user_data else '',
-        #     'upload_avatar': user_data['picture']
-        # }
-
-        # new_user = user_services.create_user_service(payload, db)
-
-        # return {
-        #     'token': security.create_token(new_user.id,'access'),
-        #     'refresh_token': security.create_token(new_user.id,'refresh'),
-        #     'user': new_user,
-        # }
-        return {"msg": "wpw"}
+            return user_services.gen_user_info_and_tokens(new_user)
 
     except Exception as e:
         get_social_login_exception(e)

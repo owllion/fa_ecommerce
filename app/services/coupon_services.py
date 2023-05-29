@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from fastapi import HTTPException, Request, status
+from fastapi import HTTPException, Request
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 

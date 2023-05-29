@@ -1,10 +1,14 @@
-from fastapi import Depends, HTTPException, status
+from datetime import timedelta
+
+from fastapi import Depends
+from fastapi.encoders import jsonable_encoder
 
 from ...constants import api_msgs
 from ...exceptions.main import get_exception, raise_http_exception
 from ...schemas import coupon_schema
 from ...services import coupon_services, user_services
 from ...utils.depends.dependencies import *
+from ...utils.redis.keys import user_coupons_key
 from ...utils.router.router_settings import (
     get_path_decorator_settings,
     get_router_settings,
@@ -66,7 +70,7 @@ def get_coupons(db: Session = Depends(db.get_db)):
 
 
 @protected_plural.get(
-    "/user",
+    "/user/{user_id}",
     **get_path_decorator_settings(
         description="Get the specific user's coupon list",
         response_model=list[coupon_schema.CouponSchema],
@@ -76,24 +80,20 @@ def get_user_coupons(req: Request, user_id: str, db: Session = Depends(db.get_db
     try:
         client = req.app.state.redis
 
-        cached_reviews = client.json().get(user_reviews_key(user_id), ".")
+        cached_coupons = client.json().get(user_coupons_key(user_id), ".")
 
-        total_len = client.json().arrlen(user_reviews_key(user_id), ".")
+        if cached_coupons:
+            return cached_coupons
 
-        if cached_reviews and total_len:
-            return cached_reviews
+        coupons = req.state.mydata.coupons
 
-        reviews = review_services.get_user_reviews_with_user_field_populated(user_id, db)
+        json_coupons = list(map(lambda x: jsonable_encoder(x), coupons))
 
-        json_reviews = list(map(lambda x: jsonable_encoder(x), reviews))
+        client.json().set(user_coupons_key(user_id), ".", json_coupons)
 
-        client.json().set(user_reviews_key(user_id), ".", json_reviews)
+        client.expire(user_coupons_key(user_id), timedelta(seconds=120))
 
-        client.expire(user_reviews_key(user_id), timedelta(seconds=120))
-
-        total_len = client.json().arrlen(user_reviews_key(user_id), ".")
-
-        return reviews
+        return coupons
 
     except Exception as e:
         get_exception(e)

@@ -41,7 +41,7 @@ def create_product(payload: product_schema.ProductCreateSchema, db: Session = De
         if product:
             raise_http_exception(api_msgs.PRODUCT_ALREADY_EXISTS)
 
-        new_product = product_services.save_to_db_then_return(payload, db)
+        new_product = product_services.svc_create_product(payload, db)
 
         return new_product
 

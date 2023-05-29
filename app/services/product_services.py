@@ -80,7 +80,7 @@ def remove_from_fav(user: user_model.User, product: product_model.Product):
     user.favorites.remove(product)
 
 
-def save_to_db_then_return(
+def svc_create_product(
     payload: product_schema.ProductCreateSchema, db: Session = Depends(db.get_db)
 ):
     new_product = product_model.Product(**payload.dict())

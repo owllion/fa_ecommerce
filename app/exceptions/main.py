@@ -29,4 +29,4 @@ def get_social_login_exception(e: Exception):
     if isinstance(e, (OAuthError,)):
         raise_http_exception(detail=e.description, status_code=status.HTTP_401_UNAUTHORIZED)
 
-    raise_http_exception(SERVER_ERROR)
+    raise_http_exception(str(e))

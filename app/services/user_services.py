@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from ..constants import api_msgs, constants
 from ..database import db
 from ..exceptions.main import raise_http_exception
-from ..models.cart import cart_item_model
+from ..models.cart import cart_item_model, cart_model
 from ..models.user import user_model
 from ..schemas import email_schema, user_schema
 from ..schemas.cart_schema import OperationType
@@ -29,6 +29,7 @@ def find_user_with_id(id: str, db: Session = Depends(db.get_db)):
 
 
 def svc_create_user(payload: user_schema.UserCreateSchema, db: Session):
+    # payload from github login is already a dictionary,no need to use .dict() to convert it again.
     if type(payload) is dict:
         new_user = user_model.User(**payload)
     else:
@@ -130,9 +131,18 @@ def find_user_with_github_username(name: str, db: Session):
     return user
 
 
-def gen_user_info_and_tokens(user: user_model.User):
+def gen_user_info_and_tokens(user: user_model.User, cart_length: int):
     return {
         "token": security.create_token(user.id, constants.TokenType.ACCESS),
         "refresh_token": security.create_token(user.id, constants.TokenType.REFRESH),
         "user": user,
+        "cart_length": cart_length,
     }
+
+
+def create_cart(user_id: str, db: Session):
+    cart = cart_model.Cart(user_id=user_id)
+
+    db.add(cart)
+    db.commit()
+    db.refresh(cart)

@@ -21,7 +21,7 @@ _, protected_singular, _, public_singular = get_router_settings(
 )
 
 
-@protected_singular.post(
+@protected_singular.put(
     "/update", **get_path_decorator_settings(description="Successfully update user data")
 )
 def update_user(

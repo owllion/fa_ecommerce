@@ -5,7 +5,7 @@ from ...constants import api_msgs, constants
 from ...database import db
 from ...exceptions.main import CustomHTTPException, get_exception, raise_http_exception
 from ...schemas import user_schema
-from ...services import user_services
+from ...services import coupon_services, user_services
 from ...utils.depends.dependencies import *
 from ...utils.router.router_settings import (
     get_path_decorator_settings,
@@ -31,6 +31,9 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
 
         new_user = user_services.svc_create_user(payload, db)
 
+        user_services.create_cart(new_user.id, db)
+        coupon_services.issue_coupons(new_user, db)
+
         link_params = {
             "user_id": new_user.id,
             "user_email": new_user.email,
@@ -48,7 +51,6 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
 @public_singular.post("/login", response_model=user_schema.LoginResultSchema)
 def login(payload: user_schema.LoginUserSchema, db: Session = Depends(db.get_db)):
     try:
-        print("這是登入")
         user = user_services.find_user_with_email(payload.email, db)
 
         if not user:
@@ -57,7 +59,6 @@ def login(payload: user_schema.LoginUserSchema, db: Session = Depends(db.get_db)
         if user_services.password_is_matched(
             payload.password, user.password
         ) and user_services.user_is_verified(user.verified):
-            print("近來囉最終部分")
             return {
                 "token": security.create_token(user.id, "access"),
                 "refresh_token": security.create_token(user.id, "refresh"),
@@ -66,10 +67,7 @@ def login(payload: user_schema.LoginUserSchema, db: Session = Depends(db.get_db)
             }
 
     except Exception as e:
-        # get_exception(e)
-        if isinstance(e, (HTTPException,)):
-            raise e
-        raise CustomHTTPException(detail=str(e))
+        get_exception(e)
 
 
 @public_singular.post("/refresh-token", response_model=user_schema.AccessAndRefreshTokenSchema)

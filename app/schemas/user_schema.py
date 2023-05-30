@@ -28,6 +28,7 @@ class EmailBaseSchema(BaseModel):
 class UserBaseSchema(EmailBaseSchema, BaseModel):
     first_name: str
     last_name: str
+    phone: str = ""
     verified: bool = False
 
     class Config:
@@ -68,7 +69,6 @@ class ResetPasswordSchema(ModifyPasswordSchema):
 
 class UserSchema(UserBaseSchema):
     id: str
-    phone: str = ""
     upload_avatar: str = ""
     default_avatar: str = Field(config("DEFAULT_AVATAR_URL"))
     created_at: datetime

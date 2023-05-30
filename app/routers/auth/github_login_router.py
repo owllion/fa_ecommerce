@@ -51,7 +51,8 @@ async def github_auth(payload: auth_schema.SocialLoginSchema, db: Session = Depe
         user = user_services.find_user_with_github_username(user_data["login"], db)
 
         if user:
-            return user_services.gen_user_info_and_tokens(user)
+            cart_len = 0 if not user.cart else len(user.cart.cart_items)
+            return user_services.gen_user_info_and_tokens(user, cart_len)
 
         payload = {
             "first_name": user_data["name"],
@@ -62,7 +63,7 @@ async def github_auth(payload: auth_schema.SocialLoginSchema, db: Session = Depe
         }
         new_user = user_services.svc_create_user(payload, db)
 
-        return user_services.gen_user_info_and_tokens(new_user)
+        return user_services.gen_user_info_and_tokens(new_user, cart_length=0)
 
     except Exception as e:
         get_social_login_exception(e)

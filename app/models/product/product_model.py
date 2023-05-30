@@ -22,7 +22,6 @@ class Product(Base):
 
     id = Column(String(80), primary_key=True, index=True, default=gen_id)
 
-    # product_id = Column(String, nullable=False, unique=True, index=True)
     product_name = Column(String(50), nullable=False)
 
     thumbnail = Column(String(100), nullable=False)

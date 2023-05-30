@@ -57,6 +57,8 @@ async def github_auth(payload: auth_schema.SocialLoginSchema, db: Session = Depe
             "first_name": user_data["name"],
             "last_name": "",
             "upload_avatar": user_data["avatar_url"],
+            "github_username": user_data["login"],
+            "verified": True,
         }
         new_user = user_services.svc_create_user(payload, db)
 

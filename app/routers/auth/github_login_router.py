@@ -9,7 +9,7 @@ from ...constants import api_msgs
 from ...database import db
 from ...exceptions.main import get_social_login_exception, raise_http_exception
 from ...schemas import auth_schema
-from ...services import user_services
+from ...services import coupon_services, user_services
 from ...utils.depends.dependencies import *
 from ...utils.router.router_settings import get_path_decorator_settings
 from ...utils.security import security
@@ -33,7 +33,6 @@ router = APIRouter(
 @router.get("/github-login")
 async def github_login():
     url = github.authorization_url(authorization_base_url)
-    print(url, "這是url")
     return url[0]
 
 
@@ -51,8 +50,7 @@ async def github_auth(payload: auth_schema.SocialLoginSchema, db: Session = Depe
         user = user_services.find_user_with_github_username(user_data["login"], db)
 
         if user:
-            cart_len = 0 if not user.cart else len(user.cart.cart_items)
-            return user_services.gen_user_info_and_tokens(user, cart_len)
+            return user_services.gen_user_info_and_tokens(user, len(user.cart.cart_items))
 
         payload = {
             "first_name": user_data["name"],
@@ -62,6 +60,8 @@ async def github_auth(payload: auth_schema.SocialLoginSchema, db: Session = Depe
             "verified": True,
         }
         new_user = user_services.svc_create_user(payload, db)
+        user_services.create_cart(new_user.id, db)
+        coupon_services.issue_coupons(new_user, db)
 
         return user_services.gen_user_info_and_tokens(new_user, cart_length=0)
 

@@ -2,13 +2,13 @@ import json
 
 import requests
 from authlib.integrations.starlette_client import OAuthError
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from ...constants import api_msgs
 from ...database import db
 from ...exceptions.main import get_social_login_exception, raise_http_exception
-from ...services import user_services
+from ...services import coupon_services, user_services
 from ...utils.security import security
 
 router = APIRouter(
@@ -27,30 +27,33 @@ async def google_auth(access_token: str, db: Session = Depends(db.get_db)):
 
         user_data = json.loads(res.text)
 
-        print(user_data, "這是userdata")
-        # print(user_data.email,'這是email .')
-        print(user_data["email"], "這是email []")
+        user = user_services.find_user_with_email(user_data["email"], db)
 
-        # 建立新的user
-        found_user = user_services.find_user_with_email(user_data["email"], db)
+        # email login
+        if user.email and user.password:
+            raise_http_exception(
+                api_msgs.EMAIL_ALREADY_REGISTERED_WITH_GOOGLE, status.HTTP_409_CONFLICT
+            )
 
-        if found_user:
-            raise_http_exception(api_msgs.USER_ALREADY_EXISTS)
+        # google login
+        if user.email and not user.password:
+            return user_services.gen_user_info_and_tokens(user, len(user.cart.cart_items))
 
+        # create new user
         payload = {
             "email": user_data["email"],
             "first_name": user_data["given_name"],
             "last_name": user_data["family_name"] if "family_name" in user_data else "",
             "upload_avatar": user_data["picture"],
+            "verified": True,
         }
 
-        new_user = user_services.create_user_service(payload, db)
+        new_user = user_services.svc_create_user(payload, db)
 
-        return {
-            "token": security.create_token(new_user.id, "access"),
-            "refresh_token": security.create_token(new_user.id, "refresh"),
-            "user": new_user,
-        }
+        user_services.create_cart(new_user.id, db)
+        coupon_services.issue_coupons(new_user, db)
+
+        return user_services.gen_user_info_and_tokens(new_user, cart_length=0)
 
     except Exception as e:
         get_social_login_exception(e)

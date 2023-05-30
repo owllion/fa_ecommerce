@@ -46,7 +46,8 @@ Choose one of them to launch the service
 #http
 uvicorn app.main:main --reload  
 #https
-uvicorn app.main:app --port 8000 --reload --ssl-keyfile app/cert/key.pem --ssl-certfile app/cert/cert.pem 
+uvicorn app.main:app --reload --env-file=app/localhost.env 
+--ssl-keyfile app/cert/key.pem --ssl-certfile app/cert/cert.pem --port=443
 #production
 uvicorn app.main:app --reload --env-file app/.env.prod 
 ```

@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from ...constants import api_msgs
 from ...database import db
 from ...exceptions.main import get_social_login_exception, raise_http_exception
-from ...services import coupon_services, user_services
+from ...services import user_services
 from ...utils.security import security
 
 router = APIRouter(
@@ -51,7 +51,7 @@ async def google_auth(access_token: str, db: Session = Depends(db.get_db)):
         new_user = user_services.svc_create_user(payload, db)
 
         user_services.create_cart(new_user.id, db)
-        coupon_services.issue_coupons(new_user, db)
+        user_services.issue_coupons(new_user, db)
 
         return user_services.gen_user_info_and_tokens(new_user, cart_length=0)
 

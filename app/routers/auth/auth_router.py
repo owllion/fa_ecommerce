@@ -5,7 +5,7 @@ from ...constants import api_msgs, constants
 from ...database import db
 from ...exceptions.main import CustomHTTPException, get_exception, raise_http_exception
 from ...schemas import user_schema
-from ...services import coupon_services, user_services
+from ...services import user_services
 from ...utils.depends.dependencies import *
 from ...utils.router.router_settings import (
     get_path_decorator_settings,
@@ -30,9 +30,8 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
             raise_http_exception(api_msgs.ACCOUNT_ALREADY_EXISTS, status.HTTP_409_CONFLICT)
 
         new_user = user_services.svc_create_user(payload, db)
-
         user_services.create_cart(new_user.id, db)
-        coupon_services.issue_coupons(new_user, db)
+        user_services.issue_coupons(new_user, db)
 
         link_params = {
             "user_id": new_user.id,

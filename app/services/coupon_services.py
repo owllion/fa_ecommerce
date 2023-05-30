@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 from ..constants import api_msgs
 from ..exceptions.main import get_exception, raise_http_exception
 from ..models.coupon import coupon_model
-from ..models.user import user_model
 from ..schemas import coupon_schema
 
 
@@ -97,11 +96,6 @@ def get_final_price_and_discounted_amount(coupon: coupon_model.Coupon, total_pri
 
 def get_first_ten_coupons(db: Session):
     return db.query(coupon_model.Coupon).limit(10).all()
-
-
-# when registering for the first time
-def issue_coupons(user: user_model.User, db: Session):
-    user.coupons.extend(get_first_ten_coupons(db))
 
 
 def add_coupon_to_user_coupon_list(req: Request, coupon: coupon_model.Coupon, db: Session):

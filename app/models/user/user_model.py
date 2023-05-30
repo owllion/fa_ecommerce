@@ -1,7 +1,5 @@
-import uuid
-
 from decouple import config
-from sqlalchemy import TIMESTAMP, Boolean, Column, Integer, String, event, text
+from sqlalchemy import TIMESTAMP, Boolean, Column, String, event, text
 from sqlalchemy.orm import relationship
 
 from ...database.db import Base

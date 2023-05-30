@@ -12,6 +12,7 @@ from ..schemas import email_schema, user_schema
 from ..schemas.cart_schema import OperationType
 from ..utils.email import email
 from ..utils.security import security
+from . import coupon_services
 
 
 def find_user_with_email(email: str, db: Session = Depends(db.get_db)):
@@ -146,3 +147,9 @@ def create_cart(user_id: str, db: Session):
     db.add(cart)
     db.commit()
     db.refresh(cart)
+
+
+# when registering for the first time
+def issue_coupons(user: user_model.User, db: Session):
+    user.coupons.extend(coupon_services.get_first_ten_coupons(db))
+    db.commit()

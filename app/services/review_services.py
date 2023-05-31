@@ -25,7 +25,7 @@ def svc_get_user_reviews(user_id: str, db: Session):
 def get_user_reviews_with_user_field_populated(user_id: str, db: Session):
     reviews = (
         db.query(review_model.Review)
-        .options(subqueryload(review_model.Review.user))
+        .options(subqueryload(review_model.Review.user), subqueryload(review_model.Review.product))
         .filter(review_model.Review.user_id == user_id)
         .all()
     )

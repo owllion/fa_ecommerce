@@ -74,7 +74,7 @@ def get_reviews(db: Session = Depends(db.get_db)):
     "/user/{user_id}",
     **get_path_decorator_settings(
         description="Get the specific user's review list",
-        response_model=list[review_schema.ReviewSchema],
+        response_model=list[review_schema.UserReviewListSchema],
     )
 )
 def get_user_reviews(req: Request, user_id: str, db: Session = Depends(db.get_db)):
@@ -94,7 +94,7 @@ def get_user_reviews(req: Request, user_id: str, db: Session = Depends(db.get_db
 
         client.json().set(user_reviews_key(user_id), ".", json_reviews)
 
-        client.expire(user_reviews_key(user_id), timedelta(seconds=120))
+        client.expire(user_reviews_key(user_id), timedelta(seconds=10))
 
         total_len = client.json().arrlen(user_reviews_key(user_id), ".")
 

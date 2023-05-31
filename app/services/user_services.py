@@ -1,12 +1,17 @@
+from functools import reduce
+
 from decouple import config
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import Depends, Request, status
+from fastapi.encoders import jsonable_encoder
 from pydantic import EmailStr
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from ..constants import api_msgs, constants
 from ..database import db
 from ..exceptions.main import raise_http_exception
 from ..models.cart import cart_item_model, cart_model
+from ..models.product import product_model
 from ..models.user import user_model
 from ..schemas import email_schema, user_schema
 from ..schemas.cart_schema import OperationType
@@ -122,8 +127,11 @@ def update_qty(cart_item: cart_item_model.CartItem, stock: int, operation_type: 
     # 確認完當前購物車內數量是正常的之後(超過就會error)
     # 是按下+ -> 判斷加上去是否會>stock，會就error
     # 按下 - -> 判斷減去是否會<1(前端確認即可，但後端為了保險還是要確認)
-    if cart_item.quantity > 1 and cart_item.quantity < stock:
-        cart_item.quantity += 1 if operation_type == OperationType.INC else -1
+
+    print(cart_item.qty, "qty")
+    print(stock, "stock")
+    if cart_item.qty >= 1 and cart_item.qty < stock:
+        cart_item.qty += 1 if operation_type == OperationType.INC else -1
         db.commit()
         # 在購物車裡面做更新，qty只會是+1(因為不給手動輸入)
     else:
@@ -157,3 +165,10 @@ def create_cart(user_id: str, db: Session):
 def issue_coupons(user: user_model.User, db: Session):
     user.coupons.extend(coupon_services.get_first_ten_coupons(db))
     db.commit()
+
+
+def calc_cart_length(cart_id: str, db: Session):
+    num_of_cart_items = (
+        db.query(func.sum(cart_item_model.CartItem.qty)).filter_by(cart_id=cart_id).scalar()
+    )
+    return num_of_cart_items

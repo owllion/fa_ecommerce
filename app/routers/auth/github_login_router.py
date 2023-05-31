@@ -2,6 +2,7 @@ import json
 
 from decouple import config
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.encoders import jsonable_encoder
 from requests_oauthlib import OAuth2Session
 from sqlalchemy.orm import Session
 
@@ -50,9 +51,9 @@ async def github_auth(payload: auth_schema.SocialLoginSchema, db: Session = Depe
         user = user_services.find_user_with_github_username(user_data["login"], db)
 
         if user:
-            res = user_services.gen_user_info_and_tokens(user, len(user.cart.cart_items) or 0)
-            print((res["user"].id), "這是user資料")
-            return user_services.gen_user_info_and_tokens(user, len(user.cart.cart_items) or 0)
+            return user_services.gen_user_info_and_tokens(
+                user, user_services.calc_cart_length(user.cart.id, db) or 0
+            )
 
         payload = {
             "first_name": user_data["name"],

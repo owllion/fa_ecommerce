@@ -37,7 +37,9 @@ async def google_auth(access_token: str, db: Session = Depends(db.get_db)):
 
         # google login
         if user.email and not user.password:
-            return user_services.gen_user_info_and_tokens(user, len(user.cart.cart_items))
+            return user_services.gen_user_info_and_tokens(
+                user, user_services.calc_cart_length(user.cart.id, db)
+            )
 
         # create new user
         payload = {

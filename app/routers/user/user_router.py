@@ -218,12 +218,12 @@ def update_item_qty(
                 product.product_items,
             )
         )
-        stock = product_item[0].size.value
+        stock = product_item[0].stock
 
         if not stock:
             raise ValueError(api_msgs.PRODUCT_IS_NOT_AVAILABLE_ERROR)
 
-        user_services.update_qty(cart_item, stock, payload.operation_type, db)
+        user_services.update_qty(cart_item, int(stock), payload.operation_type, db)
 
     except Exception as e:
         get_exception(e)

@@ -41,6 +41,7 @@ def create_order(
 def get_order(req: Request, order_id: str, db: Session = Depends(db.get_db)):
     try:
         client = req.app.state.redis
+
         cached_order = client.json().get(orders_key(order_id), ".")
 
         if cached_order:

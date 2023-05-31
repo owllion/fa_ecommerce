@@ -50,7 +50,9 @@ async def github_auth(payload: auth_schema.SocialLoginSchema, db: Session = Depe
         user = user_services.find_user_with_github_username(user_data["login"], db)
 
         if user:
-            return user_services.gen_user_info_and_tokens(user, len(user.cart.cart_items))
+            res = user_services.gen_user_info_and_tokens(user, len(user.cart.cart_items) or 0)
+            print((res["user"].id), "這是user資料")
+            return user_services.gen_user_info_and_tokens(user, len(user.cart.cart_items) or 0)
 
         payload = {
             "first_name": user_data["name"],

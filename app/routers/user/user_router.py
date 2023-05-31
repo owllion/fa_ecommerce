@@ -183,7 +183,10 @@ def remove_from_cart(
     req: Request, payload: cart_schema.RemoveFromCartSchema, db: Session = Depends(db.get_db)
 ):
     try:
+        print(req.state.mydata.cart.id, "這是cart items")
         cart_item = user_services.get_item_from_user_cart(req, payload.product_id, payload.size)
+
+        print(cart_item, "這是cart_item")
 
         user_services.delete_item(db, cart_item)
 

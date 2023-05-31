@@ -7,6 +7,7 @@ from ..constants import api_msgs
 from ..database import db
 from ..exceptions.main import raise_http_exception
 from ..models.product import product_model
+from ..models.review import review_model
 from ..models.user import user_favorite_model, user_model
 from ..schemas import product_schema
 
@@ -29,7 +30,7 @@ def find_product_with_relation_field_populated(id: str, db: Session):
     product = (
         db.query(product_model.Product)
         .options(
-            subqueryload(product_model.Product.reviews),
+            subqueryload(product_model.Product.reviews).subqueryload(review_model.Review.user),
             subqueryload(product_model.Product.images),
             subqueryload(product_model.Product.thumbnails),
         )

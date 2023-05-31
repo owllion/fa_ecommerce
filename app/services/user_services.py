@@ -77,6 +77,10 @@ async def send_link(payload: email_schema.SendLinkSchema):
 
 def get_item_from_user_cart(req: Request, product_id: str, size: str):
     def find_item(item: cart_item_model.CartItem, id: str, size: str):
+        print(item.product_id, "這是item.pr_id")
+        print(id, "收到的product_id")
+        print(item.size, "this is item.size")
+        print(size, "收到的size")
         if item.product_id == id and item.size == size:
             return True
         return False

@@ -62,17 +62,13 @@ def get_product(req: Request, product_id: str, db: Session = Depends(db.get_db))
 
         cached_product = client.json().get(products_key(product_id), ".")
 
-        print(json.loads(cached_product), "這是cached product")
         if cached_product:
-            print(json.loads(cached_product), "這是cached product")
             return json.loads(cached_product)
 
         product = product_services.get_populated_product_or_raise_not_found(product_id, db)
 
         if not product:
             raise_http_exception(api_msgs.PRODUCT_NOT_FOUND)
-
-        print(jsonable_encoder(product.reviews), "這populated的product")
 
         client.json().set(products_key(product_id), ".", json.dumps(jsonable_encoder(product)))
 

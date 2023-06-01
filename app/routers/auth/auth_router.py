@@ -62,7 +62,7 @@ def login(payload: user_schema.LoginUserSchema, db: Session = Depends(db.get_db)
                 "token": security.create_token(user.id, "access"),
                 "refresh_token": security.create_token(user.id, "refresh"),
                 "user": user,
-                "cart_length": user_services.calc_cart_length(user.cart.id, db),
+                "cart_length": user_services.calc_cart_length(user.cart.id, db) or 0,
             }
 
     except Exception as e:

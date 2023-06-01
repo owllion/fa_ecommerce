@@ -74,15 +74,12 @@ def line_pay_check_payment_status(
 
         has_paid = check_payment_status(transaction_id, conf_data)
 
-        print(has_paid, "這是has_paid")
-
         # update_order_status
         if has_paid:
             order.payment_status = PaymentStatus.PAID.value
             db.commit()
 
-        # 導回首頁
-        return RedirectResponse("http://localhost:3000/")
+        return RedirectResponse("https://localhost:3000/checkout/order-complete")
 
     except Exception as e:
         get_exception(e)

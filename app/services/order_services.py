@@ -166,7 +166,6 @@ def create_order_item(
 
 def set_coupon_as_used(req: Request, code: str, db: Session):
     coupon = coupon_services.get_coupon_or_raise_not_found(req, code, db)
-
     coupon.is_used = True
 
     db.commit()

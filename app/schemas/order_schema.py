@@ -120,6 +120,7 @@ class OrderSchema(OrderBaseSchema):
         orm_mode = True
 
 
+# orderList
 class OrderInListSchema(OrderStatusSchema):
     id: str
     total: float

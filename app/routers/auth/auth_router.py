@@ -124,3 +124,20 @@ def check_if_token_is_valid(payload: user_schema.TokenSchema):
     except Exception as e:
         get_exception(e)
         return {"is_valid": False}
+
+
+@public_singular.post(
+    "/check-account",
+    **get_path_decorator_settings(
+        description="Check if the account already exists.",
+    )
+)
+def check_if_account_exists(
+    payload: user_schema.EmailBaseSchema, db: Session = Depends(db.get_db)
+):
+    try:
+        user = user_services.find_user_with_email(payload.email, db)
+        return {"has_account": True} if user else {"has_account": False}
+
+    except Exception as e:
+        get_exception(e)

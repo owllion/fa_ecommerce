@@ -232,13 +232,19 @@ def update_item_qty(
 @protected_singular.get(
     "/cart",
     **get_path_decorator_settings(
-        description="Get user's cart", response_model=list[cart_schema.CartItemSchema]
+        description="Get user's cart", response_model=cart_schema.UserCartItemsSchema
     )
 )
 def get_user_cart(req: Request):
     try:
         cart_items = req.state.mydata.cart.cart_items
-        return [item for item in cart_items]
+        # print(cart.id, "this is if")
+        return {
+            "cart_id": req.state.mydata.cart.id,
+            "cart_items": [item for item in cart_items],
+        }
+        # cart_items = req.state.mydata.cart.cart_items
+        # return [item for item in cart_items]
 
     except Exception as e:
         get_exception(e)

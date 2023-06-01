@@ -67,6 +67,7 @@ class OrderBaseSchema(OrderStatusSchema):
 
 
 class OrderCreateSchema(OrderBaseSchema):
+    cart_id: str
     owner_id: str
     # can not be modified, so that when updating,that schema can directly inherit base schema.
     order_items: list[OrderItemCreateSchema]

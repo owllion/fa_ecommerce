@@ -47,7 +47,7 @@ def line_pay_payment(
             db.commit()
             db.refresh(payment_url)
 
-            return RedirectResponse(url=url)
+            return {"url": url}
 
     except Exception as e:
         get_exception(e)

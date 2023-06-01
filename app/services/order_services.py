@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session, joinedload
 from ..constants import api_msgs
 from ..database import db
 from ..exceptions.main import raise_http_exception
+from ..models.cart import cart_item_model
 from ..models.order import order_item_model, order_model
 from ..models.product import product_item_model, product_model, size_model
 from ..schemas import order_schema, product_item_schema
@@ -28,14 +29,8 @@ def get_product_item(item, db):
 
 def update_stock_and_sales(item: order_schema.OrderItemSchema, db: Session):
     product_item = get_product_item(item, db)
-
-    # print(product_item.stock,'這是stock')
-    # print(product_item.sales,'這是sales')
-
     product_item.stock -= item.qty
     product_item.sales += item.qty
-
-    db.commit()
 
 
 def update_stock_and_sales_for_all_order_items(
@@ -61,7 +56,7 @@ def get_order_data_except_order_items(payload: order_schema.OrderCreateSchema):
     return order_data
 
 
-def create_order_then_return(payload: order_schema.OrderCreateSchema, db: Session):
+def create_order(payload: order_schema.OrderCreateSchema, db: Session):
     payload = assign_enum_values(payload)
 
     order_data = get_order_data_except_order_items(payload)
@@ -168,13 +163,18 @@ def set_coupon_as_used(req: Request, code: str, db: Session):
 
     coupon.is_used = True
 
+
+def delete_realated_cart_items(cart_id: str, size: str, product_id: str, db: Session):
+    db.query(cart_item_model.CartItem).filter_by(
+        cart_id == cart_id, product_id=product_id, size=size
+    ).delete()
     db.commit()
 
 
 def svc_create_order(
     req: Request, payload: order_schema.OrderCreateSchema, db: Session, need_order: bool = False
 ):
-    order = create_order_then_return(payload, db)
+    order = create_order(payload, db)
 
     create_order_item(payload.order_items, order.id, db)
 
@@ -182,5 +182,9 @@ def svc_create_order(
         set_coupon_as_used(req, payload.discount_code, db)
 
     update_stock_and_sales_for_all_order_items(payload.order_items, db)
+
+    delete_realated_cart_items()
+
+    db.commit()
 
     return order if need_order else None

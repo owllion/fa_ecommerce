@@ -32,7 +32,7 @@ def is_threshold_met(min_amount: float, total_price: float):
 def get_price_and_discount(discount_type: str, total_price: float, amount: float):
     final_price = (
         total_price - amount
-        if discount_type == "fix_amount"
+        if discount_type == "fixed_amount"
         else round(total_price * (amount * 0.01))
     )
 

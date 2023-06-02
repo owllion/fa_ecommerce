@@ -1,152 +1,152 @@
-# name: CI/CD Pipeline
+name: CI/CD Pipeline
 
-# on:
-#   push:
-#     branches: [main]
+on:
+  push:
+    branches: [main]
 
-# # env:
-# #   RUN_REGION: us-central1
+# env:
+#   RUN_REGION: us-central1
 
-# jobs:
-#   continuous-integration:
-#     runs-on: ubuntu-latest
-#     #jobs is gonna run on ubuntu
+jobs:
+  continuous-integration:
+    runs-on: ubuntu-latest
+    #jobs is gonna run on ubuntu
 
-#     steps:
-#       - uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-#       - name: Set up Python 3.10
-#         uses: actions/setup-python@v2
-#         with:
-#           python-version: "3.10"
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
 
-#       - name: Install Python Virtual ENV
-#         run: pip3 install virtualenv
+      - name: Install Python Virtual ENV
+        run: pip3 install virtualenv
 
-#       - name: Setup Virtual env
-#         uses: actions/cache@v2
-#         id: cache-venv
-#         with:
-#           path: venv #cache路徑
-#           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }} #每個cache的獨特key，可用來做辨識hasfile是內建函數，最後return一個hash
-#           restore-keys: |
-#             ${{ runner.os }}-venv-
-#           #用來恢復cache(如果cache expire或照不到)反之就會重新建立cache
+      - name: Setup Virtual env
+        uses: actions/cache@v2
+        id: cache-venv
+        with:
+          path: venv #cache路徑
+          key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }} #每個cache的獨特key，可用來做辨識hasfile是內建函數，最後return一個hash
+          restore-keys: |
+            ${{ runner.os }}-venv-
+          #用來恢復cache(如果cache expire或照不到)反之就會重新建立cache
 
-#       - name: Activate and Install Depencies into Virtual env
-#         run: python -m venv venv && source venv/bin/activate &&
-#           pip3 install -r requirements.txt
-#         if: steps.cache-venv.outputs.cache-hit != 'true'
+      - name: Activate and Install Depencies into Virtual env
+        run: python -m venv venv && source venv/bin/activate &&
+          pip3 install -r requirements.txt
+        if: steps.cache-venv.outputs.cache-hit != 'true'
 
-#       - name: Activate venv and Run Test
-#         env:
-#           DB_NAME: ${{ secrets.DB_NAME }}
-#           DB_USER: ${{ secrets.DB_USER }}
-#           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-#           DB_HOST: ${{ secrets.DB_HOST }}
-#           DB_PORT: ${{ secrets.DB_PORT }}
+      - name: Activate venv and Run Test
+        env:
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
 
-#           DEFAULT_AVATAR_URL: ${{ secrets.DEFAULT_AVATAR_URL }}
+          DEFAULT_AVATAR_URL: ${{ secrets.DEFAULT_AVATAR_URL }}
 
-#           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-#           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
-#           GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
-#           GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET }}
+          GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET }}
 
-#           # Redis
-#           REDIS_HOST: ${{ secrets.REDIS_HOST }}
-#           REDIS_PORT: ${{ secrets.REDIS_PORT }}
-#           REDIS_PW: ${{ secrets.REDIS_PW }}
+          # Redis
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          REDIS_PW: ${{ secrets.REDIS_PW }}
 
-#           # JWT
-#           ACCESS_TOKEN_EXPIRES_IN: ${{ secrets.ACCESS_TOKEN_EXPIRES_IN }}
-#           REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.REFRESH_TOKEN_EXPIRES_IN }}
-#           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-#           JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
+          # JWT
+          ACCESS_TOKEN_EXPIRES_IN: ${{ secrets.ACCESS_TOKEN_EXPIRES_IN }}
+          REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.REFRESH_TOKEN_EXPIRES_IN }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
 
-#           REFRESH_SECRET: ${{ secrets.REFRESH_SECRET }}
-#           RESET_PWD_SECRET: ${{ secrets.RESET_PWD_SECRET }}
-#           VALIDATE_EMAIL_SECRET: ${{ secrets.VALIDATE_EMAIL_SECRET }}
+          REFRESH_SECRET: ${{ secrets.REFRESH_SECRET }}
+          RESET_PWD_SECRET: ${{ secrets.RESET_PWD_SECRET }}
+          VALIDATE_EMAIL_SECRET: ${{ secrets.VALIDATE_EMAIL_SECRET }}
 
-#           #email setting
-#           MAIL_FROM: ${{ secrets.MAIL_FROM }}
-#           MAIL_PWD: ${{ secrets.MAIL_PWD }}
+          #email setting
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_PWD: ${{ secrets.MAIL_PWD }}
 
-#           # LINE Pay
-#           LINEPAY_CHANNEL_ID: ${{ secrets.LINEPAY_CHANNEL_ID }}
+          # LINE Pay
+          LINEPAY_CHANNEL_ID: ${{ secrets.LINEPAY_CHANNEL_ID }}
 
-#           LINEPAY_CHANNEL_SECRET_KEY: ${{ secrets.LINEPAY_CHANNEL_SECRET_KEY }}
+          LINEPAY_CHANNEL_SECRET_KEY: ${{ secrets.LINEPAY_CHANNEL_SECRET_KEY }}
 
-#           LINEPAY_RETURN_HOST: ${{ secrets.LINEPAY_RETURN_HOST }}
+          LINEPAY_RETURN_HOST: ${{ secrets.LINEPAY_RETURN_HOST }}
 
-#           LINEPAY_RETURN_CONFIRM_URL: ${{ secrets.LINEPAY_RETURN_CONFIRM_URL }}
+          LINEPAY_RETURN_CONFIRM_URL: ${{ secrets.LINEPAY_RETURN_CONFIRM_URL }}
 
-#           # API
-#           REQUEST_API: ${{ secrets.REQUEST_API }}
+          # API
+          REQUEST_API: ${{ secrets.REQUEST_API }}
 
-#         run: . venv/bin/activate && pytest
+        run: . venv/bin/activate && pytest
 
-#   continuous-deployment:
-#     runs-on: ubuntu-latest
-#     needs: [continuous-integration]
-#     if: github.ref == 'refs/heads/main'
+  continuous-deployment:
+    runs-on: ubuntu-latest
+    needs: [continuous-integration]
+    if: github.ref == 'refs/heads/main'
 
-#     #Allow the job to fetch a GitHub ID token
-#     permissions:
-#       id-token: write
-#       contents: read
+    #Allow the job to fetch a GitHub ID token
+    permissions:
+      id-token: write
+      contents: read
 
-#     steps:
-#       - name: Set up gcloud Cloud SDK environment
-#         uses: google-github-actions/setup-gcloud@v1
-#         with:
-#           project_id: ${{ secrets.GCP_PROJECT_ID }}
+    steps:
+      - name: Set up gcloud Cloud SDK environment
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-#       - name: Authenticate to Google Cloud
-#         uses: google-github-actions/auth@v1.1.1
-#         with:
-#           workload_identity_provider: "projects/442631561829/locations/global/workloadIdentityPools/fa-pool/providers/github"
-#           service_account: "fastapi-ec@fastapi-ec-387409.iam.gserviceaccount.com"
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1.1.1
+        with:
+          workload_identity_provider: "projects/442631561829/locations/global/workloadIdentityPools/fa-pool/providers/github"
+          service_account: "fastapi-ec@fastapi-ec-387409.iam.gserviceaccount.com"
 
-#       - name: Info
-#         run: gcloud info
+      - name: Info
+        run: gcloud info
 
-#       # - name: Build and push image to Container Registry
-#       #   # run: |
-#       #   #   gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_SERVICE_NAME }} ..
+      # - name: Build and push image to Container Registry
+      #   # run: |
+      #   #   gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_SERVICE_NAME }} ..
 
-#       #   run: |
-#       #     cd $GITHUB_WORKSPACE
-#       #     gcloud builds submit --config cloudbuild.yaml .
+      #   run: |
+      #     cd $GITHUB_WORKSPACE
+      #     gcloud builds submit --config cloudbuild.yaml .
 
-#       # Configure docker to use the gcloud command-line tool as a credential helper
-#       - run: |
-#           gcloud auth configure-docker
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - run: |
+          gcloud auth configure-docker
 
-#       - name: Set up QEMU
-#         uses: docker/setup-qemu-action@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
-#       - name: Set up Docker Buildx
-#         uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-#       - name: Login to DockerHub
-#         uses: docker/login-action@v2
-#         with:
-#           registry: ghcr.io
-#           username: ${{ github.actor }}
-#           password: ${{ secrets.PERSONAL_TOKEN }}
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.PERSONAL_TOKEN }}
 
-#       - name: Build and push
-#         uses: docker/build-push-action@v3
-#         with:
-#           push: true
-#           tags: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_SERVICE_NAME }}
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_SERVICE_NAME }}
 
-#       #----gcp
-#       - name: Deploy to gcp
-#         uses: "google-github-actions/deploy-cloudrun@v1"
-#         with:
-#           service: ${{ secrets.GCP_SERVICE_NAME }}
-#           image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_SERVICE_NAME }}
-#           region: ${{ secrets.GCP_REGION }}
+      #----gcp
+      - name: Deploy to gcp
+        uses: "google-github-actions/deploy-cloudrun@v1"
+        with:
+          service: ${{ secrets.GCP_SERVICE_NAME }}
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_SERVICE_NAME }}
+          region: ${{ secrets.GCP_REGION }}

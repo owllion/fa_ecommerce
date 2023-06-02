@@ -34,6 +34,7 @@ router = APIRouter(
 @router.get("/github-login")
 async def github_login():
     url = github.authorization_url(authorization_base_url)
+    print(url, "this is url")
     return url[0]
 
 

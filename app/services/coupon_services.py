@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from ..constants import api_msgs
 from ..exceptions.main import get_exception, raise_http_exception
 from ..models.coupon import coupon_model
+from ..models.user import user_coupon_model
 from ..schemas import coupon_schema
 
 
@@ -98,14 +99,11 @@ def get_first_ten_coupons(db: Session):
     return db.query(coupon_model.Coupon).limit(10).all()
 
 
-def add_coupon_to_user_coupon_list(req: Request, coupon: coupon_model.Coupon, db: Session):
-    found_coupon = get_coupon_from_req_user(req, coupon.code)
-
-    if found_coupon:
-        raise_http_exception(api_msgs.COUPON_ALREADY_EXISTS)
-
-    req.state.mydata.coupons.append(coupon)
+def add_coupon_to_user_coupon_list(user_id: str, coupon_id: str, db: Session):
+    user_coupon = user_coupon_model.UserCoupon(user_id=user_id, coupon_id=coupon_id)
+    db.add(user_coupon)
     db.commit()
+    db.refresh(user_coupon)
 
 
 def svc_create_coupon(payload: coupon_schema.CouponCreateSchema, db: Session):

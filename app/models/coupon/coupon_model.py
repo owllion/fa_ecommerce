@@ -25,6 +25,13 @@ class Coupon(Base):
 
     code = Column(String(255), nullable=False, index=True)
 
+    related_user_coupons = relationship(
+        "UserCoupon",
+        back_populates="coupon",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
+
     description = Column(Text, default="")
 
     amount = Column(DECIMAL(10, 2), nullable=False)
@@ -34,8 +41,6 @@ class Coupon(Base):
     minimum_amount = Column(DECIMAL(10, 2), nullable=False)
 
     discount_type = Column(String(255), nullable=False)
-
-    is_used = Column(Boolean, default=False)
 
     created_at = Column(TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP"))
 

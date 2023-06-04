@@ -80,18 +80,18 @@ def get_user_coupons(req: Request, user_id: str, db: Session = Depends(db.get_db
     try:
         client = req.app.state.redis
 
-        cached_coupons = client.json().get(user_coupons_key(user_id), ".")
+        # cached_coupons = client.json().get(user_coupons_key(user_id), ".")
 
-        if cached_coupons:
-            return cached_coupons
+        # if cached_coupons:
+        #     return cached_coupons
 
         coupons = req.state.mydata.coupons
 
-        json_coupons = list(map(lambda x: jsonable_encoder(x), coupons))
+        # json_coupons = list(map(lambda x: jsonable_encoder(x), coupons))
 
-        client.json().set(user_coupons_key(user_id), ".", json_coupons)
+        # client.json().set(user_coupons_key(user_id), ".", json_coupons)
 
-        client.expire(user_coupons_key(user_id), timedelta(seconds=120))
+        # client.expire(user_coupons_key(user_id), timedelta(seconds=120))
 
         return coupons
 
@@ -204,12 +204,12 @@ def redeem_coupon(
     req: Request, payload: coupon_schema.RedeemCouponSchema, db: Session = Depends(db.get_db)
 ):
     try:
-        coupon = coupon_services.find_coupon_with_code(payload.code, db)
+        # coupon = coupon_services.find_coupon_with_code(payload.code, db)
 
-        if not coupon:
-            raise_http_exception(api_msgs.COUPON_NOT_FOUND)
+        # if not coupon:
+        #     raise_http_exception(api_msgs.COUPON_NOT_FOUND)
 
-        coupon_services.add_coupon_to_user_coupon_list(req, coupon, db)
+        coupon_services.add_coupon_to_user_coupon_list(req.state.mydata.id, payload.coupon_id, db)
 
     except Exception as e:
         get_exception(e)

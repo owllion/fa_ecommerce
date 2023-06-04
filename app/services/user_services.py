@@ -36,6 +36,7 @@ def find_user_with_id(id: str, db: Session = Depends(db.get_db)):
 
 def svc_create_user(payload: user_schema.UserCreateSchema, db: Session):
     # payload from github login is already a dictionary,no need to use .dict() to convert it again.
+    # here payload's type is just a 'type', this is not an endpoint, so pydantic will not convert this 'payload' to paydantic obj, the payload you pass will remain what it is.
     if type(payload) is dict:
         new_user = user_model.User(**payload)
     else:

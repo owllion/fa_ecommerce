@@ -65,9 +65,18 @@ async def github_auth(payload: auth_schema.SocialLoginSchema, db: Session = Depe
         }
         new_user = user_services.svc_create_user(payload, db)
         user_services.create_cart(new_user.id, db)
-        user_services.issue_coupons(new_user, db)
+        user_services.issue_coupons(new_user.id, db)
 
         return user_services.gen_user_info_and_tokens(new_user, cart_length=0)
+
+    except Exception as e:
+        get_social_login_exception(e)
+
+
+@router.get("/issue-coupons/{user_id}")
+async def wow(user_id: str, db: Session = Depends(db.get_db)):
+    try:
+        user_services.issue_coupons(user_id, db)
 
     except Exception as e:
         get_social_login_exception(e)

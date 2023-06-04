@@ -30,8 +30,8 @@ def getconn() -> pymysql.connections.Connection:
     return conn
 
 
-engine = create_engine(db_url)
-# engine = create_engine("mysql+pymysql://", creator=getconn)
+# engine = create_engine(db_url)
+engine = create_engine("mysql+pymysql://", creator=getconn)
 
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

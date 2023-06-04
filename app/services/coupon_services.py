@@ -2,6 +2,7 @@ from datetime import datetime
 
 from fastapi import HTTPException, Request
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from ..constants import api_msgs
@@ -95,15 +96,21 @@ def get_final_price_and_discounted_amount(coupon: coupon_model.Coupon, total_pri
     return (final_price_after_discount, discounted_amount)
 
 
-def get_first_ten_coupons(db: Session):
-    return db.query(coupon_model.Coupon).limit(10).all()
+def get_random_10_coupon_ids(db: Session):
+    ids = db.query(coupon_model.Coupon.id).order_by(func.random()).limit(10).all()
+    return [id for id, in ids]
 
 
-def create_usre_coupon(user_id: str, coupon_id: str, db: Session):
+def create_user_coupon(user_id: str, coupon_id: str, db: Session):
     user_coupon = user_coupon_model.UserCoupon(user_id=user_id, coupon_id=coupon_id)
     db.add(user_coupon)
     db.commit()
-    db.refresh(user_coupon)
+
+
+def create_10_user_coupons(user_id: str, db: Session):
+    ids = get_random_10_coupon_ids(db)
+    for coupon_id in ids:
+        create_user_coupon(user_id, coupon_id, db)
 
 
 def svc_create_coupon(payload: coupon_schema.CouponCreateSchema, db: Session):

@@ -163,8 +163,8 @@ def create_cart(user_id: str, db: Session):
 
 
 # when registering for the first time
-def issue_coupons(user: user_model.User, db: Session):
-    user.coupons.extend(coupon_services.get_first_ten_coupons(db))
+def issue_coupons(user_id: str, db: Session):
+    coupon_services.create_10_user_coupons(user_id, db)
     db.commit()
 
 

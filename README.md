@@ -18,7 +18,7 @@ Deployed on GCP Cloud Run with CI/CD integration for automated build, packaging,
 
 ## Table Diagram
 ![](https://res.cloudinary.com/azainseong/image/upload/v1685869487/298279DC-B989-4044-AA37-F39F13D3BE4B_ww57ca.jpg)
-[see table relation in text](https://kaput-hose-1ba.notion.site/fastapi-ecommerce-project-Table-Relationships-bdd84cf011fd49f39fcbc1c57cf05326)
+[see table relation in notion](https://www.notion.so/fastapi-ecommerce-project-Table-Relationships-bdd84cf011fd49f39fcbc1c57cf05326?pvs=4)
 
 ## Features
 - redis/redisJson for cache

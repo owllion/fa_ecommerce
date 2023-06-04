@@ -72,7 +72,19 @@ class RedeemCouponSchema(BaseModel):
 
 
 # baseSchema就是update時也可以改的，但基本上沒有，誰會要改這，直接就createschema吧
-class UserCouponCreateSchema(BaseModel):
+class UserCouponBaseSchema(BaseModel):
     user_id: str
     coupon_id: str
+    is_used: bool = False
+
+
+class UserCouponCreateSchema(UserCouponBaseSchema):
+    pass
+
+
+class GetUserCouponSchema(BaseModel):
     is_used: bool
+    coupon: CouponSchema
+
+    class Config:
+        orm_mode = True

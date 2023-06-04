@@ -73,7 +73,7 @@ def get_coupons(db: Session = Depends(db.get_db)):
     "/user/{user_id}",
     **get_path_decorator_settings(
         description="Get the specific user's coupon list",
-        response_model=list[coupon_schema.CouponSchema],
+        response_model=list[coupon_schema.GetUserCouponSchema],
     )
 )
 def get_user_coupons(req: Request, user_id: str, db: Session = Depends(db.get_db)):
@@ -198,7 +198,7 @@ def apply_coupon(
 
 
 @protected_singular.post(
-    "/redeem-coupon", **get_path_decorator_settings(description="Successfully redeem a coupon.")
+    "/redeem-coupon", **get_path_decorator_settings(description="create a user_coupon.")
 )
 def redeem_coupon(
     req: Request, payload: coupon_schema.RedeemCouponSchema, db: Session = Depends(db.get_db)

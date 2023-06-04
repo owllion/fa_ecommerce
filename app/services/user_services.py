@@ -185,10 +185,10 @@ def is_email_login(email: str, password: str):
 
 def create_google_login_user(user_data: user_schema.GoogleLoginUserDataSchema, db: Session):
     payload = {
-        "email": user_data.email,
-        "first_name": user_data.given_name,
-        "last_name": user_data.family_name if "family_name" in user_data else "",
-        "upload_avatar": user_data.picture,
+        "email": user_data["email"],
+        "first_name": user_data["given_name"],
+        "last_name": user_data["family_name"] if "family_name" in user_data else "",
+        "upload_avatar": user_data["picture"],
         "verified": True,
     }
 

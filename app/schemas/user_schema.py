@@ -141,3 +141,10 @@ class UserUpdateSchema(BaseModel):
 
 class UserUploadAvatarSchema(BaseModel):
     url: HttpUrl
+
+
+class GoogleLoginUserDataSchema(BaseModel):
+    email: EmailStr
+    given_name: str
+    family_name: str = ""
+    picture: str

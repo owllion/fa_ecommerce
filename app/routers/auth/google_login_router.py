@@ -25,39 +25,23 @@ async def google_auth(access_token: str, db: Session = Depends(db.get_db)):
             f"https://www.googleapis.com/oauth2/v1/userinfo?access_token={access_token}"
         )
 
-        print(res, "這是res ")
-
         user_data = json.loads(res.text)
-        print(user_data, "這是uesr_data")
+
         user = user_services.find_user_with_email(user_data["email"], db)
 
-        # email login
-        if user.email and user.password:
-            raise_http_exception(
-                api_msgs.EMAIL_ALREADY_REGISTERED_WITH_GOOGLE, status.HTTP_409_CONFLICT
-            )
+        if user:
+            if user_services.is_email_login(user.email, user.password):
+                raise_http_exception(
+                    api_msgs.EMAIL_ALREADY_REGISTERED_WITH_GOOGLE, status.HTTP_409_CONFLICT
+                )
 
-        # google login
-        if user.email and not user.password:
-            return user_services.gen_user_info_and_tokens(
-                user, user_services.calc_cart_length(user.cart.id, db) or 0
-            )
+            if user_services.is_google_login(user.email, user.password):
+                return user_services.gen_user_info_and_tokens(
+                    user, user_services.calc_cart_length(user.cart.id, db) or 0
+                )
 
-        # create new user
-        payload = {
-            "email": user_data["email"],
-            "first_name": user_data["given_name"],
-            "last_name": user_data["family_name"] if "family_name" in user_data else "",
-            "upload_avatar": user_data["picture"],
-            "verified": True,
-        }
-
-        new_user = user_services.svc_create_user(payload, db)
-
-        user_services.create_cart(new_user.id, db)
-        user_services.issue_coupons(new_user, db)
-
-        return user_services.gen_user_info_and_tokens(new_user, cart_length=0)
+        else:
+            return user_services.create_google_login_user(user_data, db)
 
     except Exception as e:
         get_social_login_exception(e)

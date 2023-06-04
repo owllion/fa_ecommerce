@@ -173,3 +173,28 @@ def calc_cart_length(cart_id: str, db: Session):
         db.query(func.sum(cart_item_model.CartItem.qty)).filter_by(cart_id=cart_id).scalar()
     )
     return num_of_cart_items
+
+
+def is_google_login(email: str, password: str):
+    return True if email and not password else False
+
+
+def is_email_login(email: str, password: str):
+    return True if email and password else False
+
+
+def create_google_login_user(user_data: user_schema.GoogleLoginUserDataSchema, db: Session):
+    payload = {
+        "email": user_data.email,
+        "first_name": user_data.given_name,
+        "last_name": user_data.family_name if "family_name" in user_data else "",
+        "upload_avatar": user_data.picture,
+        "verified": True,
+    }
+
+    new_user = svc_create_user(payload, db)
+
+    create_cart(new_user.id, db)
+    issue_coupons(new_user, db)
+
+    return gen_user_info_and_tokens(new_user, cart_length=0)

@@ -204,12 +204,7 @@ def redeem_coupon(
     req: Request, payload: coupon_schema.RedeemCouponSchema, db: Session = Depends(db.get_db)
 ):
     try:
-        # coupon = coupon_services.find_coupon_with_code(payload.code, db)
-
-        # if not coupon:
-        #     raise_http_exception(api_msgs.COUPON_NOT_FOUND)
-
-        coupon_services.add_coupon_to_user_coupon_list(req.state.mydata.id, payload.coupon_id, db)
+        coupon_services.create_usre_coupon(req.state.mydata.id, payload.coupon_id, db)
 
     except Exception as e:
         get_exception(e)

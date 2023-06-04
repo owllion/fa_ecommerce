@@ -99,7 +99,7 @@ def get_first_ten_coupons(db: Session):
     return db.query(coupon_model.Coupon).limit(10).all()
 
 
-def add_coupon_to_user_coupon_list(user_id: str, coupon_id: str, db: Session):
+def create_usre_coupon(user_id: str, coupon_id: str, db: Session):
     user_coupon = user_coupon_model.UserCoupon(user_id=user_id, coupon_id=coupon_id)
     db.add(user_coupon)
     db.commit()

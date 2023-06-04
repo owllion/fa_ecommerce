@@ -25,8 +25,10 @@ async def google_auth(access_token: str, db: Session = Depends(db.get_db)):
             f"https://www.googleapis.com/oauth2/v1/userinfo?access_token={access_token}"
         )
 
-        user_data = json.loads(res.text)
+        print(res, "這是res ")
 
+        user_data = json.loads(res.text)
+        print(user_data, "這是uesr_data")
         user = user_services.find_user_with_email(user_data["email"], db)
 
         # email login

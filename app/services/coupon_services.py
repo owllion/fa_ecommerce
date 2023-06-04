@@ -66,10 +66,16 @@ def get_user_coupons(user_id: str, db: Session):
     return coupons
 
 
-def get_coupon_from_req_user(req: Request, code: str):
-    coupon = list(filter(lambda x: x.code == code, req.state.mydata.coupons))
+def get_user_coupon(user_id: str, coupon_id: str, db: Session):
+    coupon = (
+        db.query(user_coupon_model.UserCoupon)
+        .filter_by(user_id=user_id, coupon_id=coupon_id)
+        .first()
+    )
 
-    return coupon[0] if coupon else None
+    if not coupon:
+        raise_http_exception(api_msgs.COUPON_NOT_FOUND)
+    return coupon
 
 
 def get_coupon_or_raise_not_found(req: Request, code: str, db: Session):
@@ -104,13 +110,15 @@ def get_random_10_coupon_ids(db: Session):
 def create_user_coupon(user_id: str, coupon_id: str, db: Session):
     user_coupon = user_coupon_model.UserCoupon(user_id=user_id, coupon_id=coupon_id)
     db.add(user_coupon)
-    db.commit()
 
 
 def create_10_user_coupons(user_id: str, db: Session):
     ids = get_random_10_coupon_ids(db)
+    print(ids, "這是ids")
     for coupon_id in ids:
+        print(coupon_id, "這是單個coupon_id")
         create_user_coupon(user_id, coupon_id, db)
+    db.commit()
 
 
 def svc_create_coupon(payload: coupon_schema.CouponCreateSchema, db: Session):

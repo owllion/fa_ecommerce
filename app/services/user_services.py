@@ -165,7 +165,6 @@ def create_cart(user_id: str, db: Session):
 # when registering for the first time
 def issue_coupons(user_id: str, db: Session):
     coupon_services.create_10_user_coupons(user_id, db)
-    db.commit()
 
 
 def calc_cart_length(cart_id: str, db: Session):

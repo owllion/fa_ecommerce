@@ -59,16 +59,16 @@ class AppliedCouponResultSchema(BaseModel):
     used_code: str
 
 
-class CodeSchema(BaseModel):
-    code: str
+class CouponIdSchema(BaseModel):
+    coupon_id: str
 
 
-class ApplyCouponSchema(CodeSchema):
+class ApplyCouponSchema(CouponIdSchema):
     total_price: float
 
 
-class RedeemCouponSchema(BaseModel):
-    coupon_id: str
+class RedeemCouponSchema(CouponIdSchema):
+    pass
 
 
 # baseSchema就是update時也可以改的，但基本上沒有，誰會要改這，直接就createschema吧

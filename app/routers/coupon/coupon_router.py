@@ -80,18 +80,18 @@ def get_user_coupons(req: Request, user_id: str, db: Session = Depends(db.get_db
     try:
         client = req.app.state.redis
 
-        # cached_coupons = client.json().get(user_coupons_key(user_id), ".")
+        cached_coupons = client.json().get(user_coupons_key(user_id), ".")
 
-        # if cached_coupons:
-        #     return cached_coupons
+        if cached_coupons:
+            return cached_coupons
 
         coupons = req.state.mydata.coupons
 
-        # json_coupons = list(map(lambda x: jsonable_encoder(x), coupons))
+        json_coupons = list(map(lambda x: jsonable_encoder(x), coupons))
 
-        # client.json().set(user_coupons_key(user_id), ".", json_coupons)
+        client.json().set(user_coupons_key(user_id), ".", json_coupons)
 
-        # client.expire(user_coupons_key(user_id), timedelta(seconds=120))
+        client.expire(user_coupons_key(user_id), timedelta(seconds=120))
 
         return coupons
 
@@ -174,10 +174,7 @@ def apply_coupon(
     req: Request, payload: coupon_schema.ApplyCouponSchema, db: Session = Depends(db.get_db)
 ):
     try:
-        coupon = coupon_services.get_coupon_from_req_user(req, payload.code)
-
-        if not coupon:
-            raise_http_exception(api_msgs.COUPON_NOT_FOUND)
+        coupon = coupon_services.get_user_coupon(req.state.mydata.id, payload.coupon_id, db)
 
         if coupon.is_used:
             raise_http_exception(api_msgs.COUPON_ALREADY_USED)

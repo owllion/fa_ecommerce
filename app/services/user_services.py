@@ -195,6 +195,6 @@ def create_google_login_user(user_data: user_schema.GoogleLoginUserDataSchema, d
     new_user = svc_create_user(payload, db)
 
     create_cart(new_user.id, db)
-    issue_coupons(new_user, db)
+    issue_coupons(new_user.id, db)
 
     return gen_user_info_and_tokens(new_user, cart_length=0)

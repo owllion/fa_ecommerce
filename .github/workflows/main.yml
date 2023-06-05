@@ -87,6 +87,8 @@ jobs:
 
           LINEPAY_RETURN_CONFIRM_URL: ${{ secrets.LINEPAY_RETURN_CONFIRM_URL }}
 
+          SHOP_NAME: ${{ secrets.SHOP_NAME}}
+
           # API
           REQUEST_API: ${{ secrets.REQUEST_API }}
 

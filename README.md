@@ -21,14 +21,16 @@ Deployed on GCP Cloud Run with CI/CD integration for automated build, packaging,
 [see table relation in notion](https://www.notion.so/fastapi-ecommerce-project-Table-Relationships-bdd84cf011fd49f39fcbc1c57cf05326?pvs=4)
 
 ## Features
-- redis/redisJson for cache
-- aws lambda for server deployment
-- aws RDS for db deployment
-- docker for containerization
-- pydantic for data verification
+- <strong>Shopping Functionality</strong>: <br>Browse (by category and search), add to cart, apply coupons, leave comments, add to favorites, and complete checkout.
+- <strong>User Management</strong>: <br>Login, logout, register (email/Google/GitHub), password recovery, profile page (view and update personal information, upload profile picture, view order history, and manage coupons .etc).
+- <strong>Pydantic Data Verification</strong>: <br>Ensure data integrity and validation using Pydantic.
+- <strong>LINE Pay Integration</strong>: <br>Integration with LINE Pay for seamless payment processing.
+- <strong>Cache Optimization</strong>: <br>Improve website performance and response time by utilizing Redis for data caching.
+- <strong>Containerized Deployment</strong>: <br>Containerize the application using Docker for easy deployment, scalability, and management.
+- <strong>CI/CD Integration</strong>:  <br>Automate the build, packaging, and deployment processes with GitHub Actions for continuous integration and deployment.
+- <strong>Deployment to Google Cloud Platform</strong>: <br>Deploy the server to Cloud Run for efficient scaling and deployment. Manage the database using Cloud SQL.
 
 ## Technologies
-
 - fastapi - v0.95.0
 - SQLAlchemy - v2.0.7
 - mysql - v8.0.31
@@ -72,4 +74,3 @@ Under Refactoring.
 This project is licensed under the terms of the MIT license.
 
 Copyright &copy; 2023
-

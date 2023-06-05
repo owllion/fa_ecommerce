@@ -75,6 +75,7 @@ def get_user_coupon(user_id: str, coupon_id: str, db: Session):
 
     if not coupon:
         raise_http_exception(api_msgs.COUPON_NOT_FOUND)
+
     return coupon
 
 

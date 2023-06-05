@@ -174,15 +174,21 @@ def apply_coupon(
     req: Request, payload: coupon_schema.ApplyCouponSchema, db: Session = Depends(db.get_db)
 ):
     try:
-        coupon = coupon_services.get_user_coupon(req.state.mydata.id, payload.coupon_id, db)
+        coupon = coupon_services.find_coupon_with_code(payload.code, db)
 
-        if coupon.is_used:
+        if not coupon:
+            raise_http_exception(api_msgs.COUPON_NOT_FOUND)
+
+        user_coupon = coupon_services.get_user_coupon(req.state.mydata.id, coupon.id, db)
+
+        if user_coupon.is_used:
             raise_http_exception(api_msgs.COUPON_ALREADY_USED)
 
         (
             final_price_after_discount,
             discounted_amount,
         ) = coupon_services.get_final_price_and_discounted_amount(coupon, payload.total_price)
+        # pass coupon,not user_coupon,coz we only need coupon's info,will not change anything.
 
         return {
             "used_code": payload.code,

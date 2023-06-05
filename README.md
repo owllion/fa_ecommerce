@@ -75,8 +75,3 @@ Under Refactoring.
 This project is licensed under the terms of the MIT license.
 
 Copyright &copy; 2023
-
-img[alt=redis] {
-   margin-right: 2rem;
-   display: block;
-}

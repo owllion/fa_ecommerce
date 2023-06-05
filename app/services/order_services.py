@@ -165,7 +165,7 @@ def create_order_item(
 
 
 def set_coupon_as_used(req: Request, code: str, db: Session):
-    coupon = coupon_services.find_coupon_with_code(code)
+    coupon = coupon_services.find_coupon_with_code(code, db)
 
     if not coupon:
         raise_http_exception(api_msgs.COUPON_NOT_FOUND)

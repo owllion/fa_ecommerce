@@ -32,7 +32,7 @@ async def google_auth(access_token: str, db: Session = Depends(db.get_db)):
         if user:
             if user_services.is_email_login(user.email, user.password):
                 raise_http_exception(
-                    api_msgs.EMAIL_ALREADY_REGISTERED_WITH_GOOGLE, status.HTTP_409_CONFLICT
+                    api_msgs.EMAIL_ALREADY_REGISTERED_WITH_EMAIL_LOGIN, status.HTTP_409_CONFLICT
                 )
 
             if user_services.is_google_login(user.email, user.password):

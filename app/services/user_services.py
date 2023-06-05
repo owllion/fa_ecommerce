@@ -197,3 +197,19 @@ def create_google_login_user(user_data: user_schema.GoogleLoginUserDataSchema, d
     issue_coupons(new_user.id, db)
 
     return gen_user_info_and_tokens(new_user, cart_length=0)
+
+
+async def create_email_login_user(payload: user_schema.UserCreateSchema):
+    new_user = svc_create_user(payload, db)
+    create_cart(new_user.id, db)
+    issue_coupons(new_user, db)
+
+    link_params = {
+        "user_id": new_user.id,
+        "user_email": new_user.email,
+        "link_type": constants.URLLinkType.VERIFY,
+        "token_type": constants.TokenType.VALIDATE_EMAIL,
+        "url_params": constants.URLParams.VERIFY_EMAIL,
+    }
+
+    await send_link(link_params)

@@ -44,6 +44,9 @@ ACCOUNT_ALREADY_EXISTS = "account already exist"
 INCORRECT_LOGIN_INPUT = "incorrect email or password"
 
 EMAIL_ALREADY_REGISTERED_WITH_GOOGLE = "this email is already registered with google login"
+
+EMAIL_ALREADY_REGISTERED_WITH_EMAIL_LOGIN = "this email is already registered with email login"
+
 EMAIL_NOT_VERIFIED = "Please verify your email address"
 
 MALFORMED_PAYLOAD = "could not validate credentials"

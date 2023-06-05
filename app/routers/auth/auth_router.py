@@ -27,21 +27,13 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
         user = user_services.find_user_with_email(payload.email, db)
 
         if user:
-            raise_http_exception(api_msgs.ACCOUNT_ALREADY_EXISTS, status.HTTP_409_CONFLICT)
+            if user_services.is_google_login(user.email, user.password):
+                raise_http_exception(api_msgs.EMAIL_ALREADY_REGISTERED_WITH_GOOGLE)
 
-        new_user = user_services.svc_create_user(payload, db)
-        user_services.create_cart(new_user.id, db)
-        user_services.issue_coupons(new_user, db)
-
-        link_params = {
-            "user_id": new_user.id,
-            "user_email": new_user.email,
-            "link_type": constants.URLLinkType.VERIFY,
-            "token_type": constants.TokenType.VALIDATE_EMAIL,
-            "url_params": constants.URLParams.VERIFY_EMAIL,
-        }
-
-        await user_services.send_link(link_params)
+            if user_services.is_email_login(user.email, user.password):
+                raise_http_exception(api_msgs.ACCOUNT_ALREADY_EXISTS, status.HTTP_409_CONFLICT)
+        else:
+            user_services.create_email_login_user(payload)
 
     except Exception as e:
         get_exception(e)

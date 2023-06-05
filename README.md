@@ -28,7 +28,7 @@ Deployed on GCP Cloud Run with CI/CD integration for automated build, packaging,
 - <img width="24" height="24" src="https://img.icons8.com/color/48/redis.png" alt="redis"  /><strong>Cache Optimization</strong>: Improve website performance and response time by utilizing Redis for data caching.
 - 🐳 <strong>Containerized Deployment</strong>: 
 <br>Containerize the application using Docker for easy deployment, scalability, and management.
-- ![image](https://res.cloudinary.com/azainseong/image/upload/c_scale,w_24/v1685957609/44036562_i2zm0p.png) <strong>CI/CD Integration</strong>:  <br>Automate the build, packaging, and deployment processes with GitHub Actions for continuous integration and deployment.
+- ![image](https://res.cloudinary.com/azainseong/image/upload/c_scale,w_15/v1685957609/44036562_i2zm0p.png) <strong>CI/CD Integration</strong>:  <br>Automate the build, packaging, and deployment processes with GitHub Actions for continuous integration and deployment.
 - <img width="24" height="24" src="https://img.icons8.com/color/48/google-cloud.png" alt="google-cloud"/> <strong>Deployment to Google Cloud Platform</strong>: Deploy the server to Cloud Run for efficient scaling and deployment. Manage the database using Cloud SQL.
 
 ## Technologies

@@ -124,6 +124,7 @@ class OrderSchema(OrderBaseSchema):
 class OrderInListSchema(OrderStatusSchema):
     id: str
     total: float
+    discount_total: float
     created_at: datetime
 
     class Config:

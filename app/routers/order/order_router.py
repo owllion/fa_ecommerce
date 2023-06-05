@@ -94,7 +94,6 @@ def get_user_orders(req: Request, user_id: str, db: Session = Depends(db.get_db)
         if cached_orders and total_len:
             return {"list": cached_orders, "total": total_len}
 
-        # orders = order_services.get_orders_by_user_id(user_id, db)
         orders = req.state.mydata.orders
 
         json_orders = list(map(lambda x: jsonable_encoder(x), orders))

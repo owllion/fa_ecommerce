@@ -9,8 +9,6 @@ services:
       - .:/app
     ports:
       - 8000:8000
-    # environment:
-    #   - DB_URL=postgresql://fastapi_traefik:fastapi_traefik@db:5432/fastapi_traefik
     depends_on:
       - redis
       - db
@@ -40,8 +38,6 @@ services:
       # MYSQL_USER: ${DB_USER}
     ports:
       - 3307:3306
-    # expose:
-    #   - 3307
     volumes:
       - mysql-volume:/var/lib/mysql
     # volumes:

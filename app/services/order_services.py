@@ -16,7 +16,7 @@ def find_corresponding_size_id_with(size: str, db: Session):
     return db.query(size_model.Size).filter_by(value=size).first().id
 
 
-def get_product_item(item, db):
+def get_product_item(item, db: Session):
     item.size = item.size.value
     size_id = find_corresponding_size_id_with(item.size, db)
 
@@ -58,7 +58,7 @@ def remove_data_key(
     for key in keys_to_remove:
         if key in order_data:
             del order_data[key]
-    print(order_data, "這是order data")
+
     return order_data
 
 
@@ -67,7 +67,7 @@ def create_order(payload: order_schema.OrderCreateSchema, db: Session):
 
     order_data = remove_data_key(payload)
     order = order_model.Order(**order_data)
-    print(order, "這是order!")
+
     db.add(order)
     db.commit()
     db.refresh(order)  # 從資料庫中重新加載對象
@@ -165,14 +165,19 @@ def create_order_item(
 
 
 def set_coupon_as_used(req: Request, code: str, db: Session):
-    coupon = coupon_services.get_coupon_or_raise_not_found(req, code, db)
-    coupon.is_used = True
+    coupon = coupon_services.find_coupon_with_code(code)
+
+    if not coupon:
+        raise_http_exception(api_msgs.COUPON_NOT_FOUND)
+
+    user_coupon = coupon_services.get_user_coupon(req.state.mydata.id, coupon.id, db)
+
+    user_coupon.is_used = True
 
     db.commit()
 
 
 def delete_realated_cart_items(cart_id: str, db: Session):
-    print("dele進入")
     db.query(cart_item_model.CartItem).filter_by(cart_id=cart_id).delete()
 
 
@@ -180,18 +185,14 @@ def svc_create_order(
     req: Request, payload: order_schema.OrderCreateSchema, db: Session, need_order: bool = False
 ):
     order = create_order(payload, db)
-    print(payload.order_items, "這是order_items@@")
     create_order_item(payload.order_items, order.id, db)
 
-    print(payload.discount_code, "有discount_codew")
     if payload.discount_code:
         set_coupon_as_used(req, payload.discount_code, db)
-    print("set coupon as used")
+
     update_stock_and_sales_for_all_order_items(payload.order_items, db)
-    print("update stock")
 
     delete_realated_cart_items(payload.cart_id, db)
-    print("delete_related")
     db.commit()
 
     return order if need_order else None

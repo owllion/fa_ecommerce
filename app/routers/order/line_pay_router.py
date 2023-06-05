@@ -23,7 +23,7 @@ _, protected_singular, _, public_singular = get_router_settings(
 
 @protected_singular.post(
     "/request-payment",
-    **get_path_decorator_settings(description="create order and request line-pay Request API")
+    **get_path_decorator_settings(description="create order and request line-pay Request API"),
 )
 def line_pay_payment(
     req: Request, payload: order_schema.OrderCreateSchema, db: Session = Depends(db.get_db)
@@ -57,7 +57,7 @@ def line_pay_payment(
     "/check-payment-status",
     **get_path_decorator_settings(
         description="after successfully paid,the page will be directed to this url,and it will check if the order has been paid or not.",
-    )
+    ),
 )
 def line_pay_check_payment_status(
     transaction_id: str = Query(..., alias="transactionId"),
@@ -79,7 +79,7 @@ def line_pay_check_payment_status(
             order.payment_status = PaymentStatus.PAID.value
             db.commit()
 
-        return RedirectResponse("https://localhost:3000/checkout/order-complete")
+        return RedirectResponse(f"{config('FRONTEND_DEPLOY_URL')}/checkout/order-complete")
 
     except Exception as e:
         get_exception(e)

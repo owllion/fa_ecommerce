@@ -67,16 +67,16 @@ def get_user_coupons(user_id: str, db: Session):
 
 
 def get_user_coupon(user_id: str, coupon_id: str, db: Session):
-    coupon = (
+    user_coupon = (
         db.query(user_coupon_model.UserCoupon)
         .filter_by(user_id=user_id, coupon_id=coupon_id)
         .first()
     )
 
-    if not coupon:
+    if not user_coupon:
         raise_http_exception(api_msgs.COUPON_NOT_FOUND)
 
-    return coupon
+    return user_coupon
 
 
 def get_coupon_or_raise_not_found(req: Request, code: str, db: Session):

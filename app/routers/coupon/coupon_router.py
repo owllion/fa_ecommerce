@@ -88,13 +88,10 @@ def get_user_coupons(req: Request, user_id: str, db: Session = Depends(db.get_db
         user_coupons = coupon_services.svc_get_user_coupons(req.state.mydata.id, db)
 
         dict_coupons = list(map(lambda x: jsonable_encoder(x), user_coupons))
-        # 完全只有user coupon存在db的欄位，沒有關聯的coupon的資料喔
-
-        # print(user_coupons, "這是use coupons")
 
         client.json().set(user_coupons_key(user_id), ".", dict_coupons)
 
-        client.expire(user_coupons_key(user_id), timedelta(seconds=120))
+        client.expire(user_coupons_key(user_id), timedelta(seconds=30))
 
         return user_coupons
 

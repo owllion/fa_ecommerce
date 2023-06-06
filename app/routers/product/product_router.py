@@ -198,24 +198,25 @@ def get_top_selling_products(req: Request, db: Session = Depends(db.get_db)):
         # if cached_products:
         #     return cached_products
 
-        products = (
+        product_items = (
             db.query(product_item_model.ProductItem)
             .order_by(desc(getattr(product_item_model.ProductItem, "sales")))
             .limit(10)
             .all()
         )
+
         # 這邊不用getattr會error
         """
         Can't resolve label reference for ORDER BY / GROUP BY / DISTINCT etc. Textual SQL expression 'sales' should be explicitly declared as text('sales')"
         """
 
-        # dict_products = list(map(lambda x: jsonable_encoder(x.parent_product), product_items))
+        dict_products = list(map(lambda x: jsonable_encoder(x.parent_product), product_items))
 
         # client.json().set(best_selling_products_key(), ".", dict_products)
 
         # client.expire(best_selling_products_key(), timedelta(seconds=600))
 
-        return products
+        return dict_products
 
     except Exception as e:
         get_exception(e)

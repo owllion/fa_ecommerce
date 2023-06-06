@@ -85,15 +85,18 @@ def get_user_coupons(req: Request, user_id: str, db: Session = Depends(db.get_db
         if cached_coupons:
             return cached_coupons
 
-        coupons = req.state.mydata.coupons
+        user_coupons = coupon_services.svc_get_user_coupons(req.state.mydata.id, db)
 
-        json_coupons = list(map(lambda x: jsonable_encoder(x), coupons))
+        dict_coupons = list(map(lambda x: jsonable_encoder(x), user_coupons))
+        # 完全只有user coupon存在db的欄位，沒有關聯的coupon的資料喔
 
-        client.json().set(user_coupons_key(user_id), ".", json_coupons)
+        # print(user_coupons, "這是use coupons")
+
+        client.json().set(user_coupons_key(user_id), ".", dict_coupons)
 
         client.expire(user_coupons_key(user_id), timedelta(seconds=120))
 
-        return coupons
+        return user_coupons
 
     except Exception as e:
         get_exception(e)
@@ -207,7 +210,8 @@ def redeem_coupon(
     req: Request, payload: coupon_schema.RedeemCouponSchema, db: Session = Depends(db.get_db)
 ):
     try:
-        coupon_services.create_usre_coupon(req.state.mydata.id, payload.coupon_id, db)
+        coupon_services.create_user_coupon(req.state.mydata.id, payload.coupon_id, db)
+        db.commit()
 
     except Exception as e:
         get_exception(e)

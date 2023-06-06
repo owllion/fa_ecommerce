@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import HTTPException, Request
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import func
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, subqueryload
 
 from ..constants import api_msgs
 from ..exceptions.main import get_exception, raise_http_exception
@@ -60,10 +60,15 @@ def get_coupons(db: Session):
     return db.query(coupon_model.Coupon).all()
 
 
-def get_user_coupons(user_id: str, db: Session):
-    coupons = db.query(coupon_model.Coupon).filter(coupon_model.Coupon.user_id == user_id).all()
+def svc_get_user_coupons(user_id: str, db: Session):
+    user_coupons = (
+        db.query(user_coupon_model.UserCoupon)
+        .options(subqueryload(user_coupon_model.UserCoupon.coupon))
+        .filter_by(user_id=user_id)
+        .all()
+    )
 
-    return coupons
+    return user_coupons
 
 
 def get_user_coupon(user_id: str, coupon_id: str, db: Session):
@@ -114,14 +119,10 @@ def create_user_coupon(user_id: str, coupon_id: str, db: Session):
 
 
 def create_10_user_coupons(user_id: str, db: Session):
-    print(user_id, "這是user_id")
     ids = get_random_10_coupon_ids(db)
-    print(ids, "這是ids")
     for coupon_id in ids:
-        print(coupon_id, "這是單個coupon_id")
         create_user_coupon(user_id, coupon_id, db)
     db.commit()
-    print("create完成10張coupon了")
 
 
 def svc_create_coupon(payload: coupon_schema.CouponCreateSchema, db: Session):

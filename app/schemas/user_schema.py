@@ -18,11 +18,19 @@ class LoginTypeValue(str, Enum):
     EMAIL = "email"
     GOOGLE = "google"
     GITHUB = "github"
-    FACEBOOK = "facebook"
+
+
+class TokenTypeValue(str, Enum):
+    VALIDATE_EMAIL = "validate_email"
+    RESET_PWD = "reset_pwd"
 
 
 class EmailBaseSchema(BaseModel):
     email: EmailStr
+
+
+class SendEmailSchema(EmailBaseSchema):
+    token_type: TokenTypeValue
 
 
 class UserBaseSchema(EmailBaseSchema, BaseModel):
@@ -45,17 +53,6 @@ class UserCreateSchema(UserBaseSchema):
 
 class LoginUserSchema(EmailBaseSchema, BaseModel):
     password: str
-
-
-class LoginTypeCreateSchema(BaseModel):
-    value: LoginTypeValue | None = Field(LoginTypeValue.EMAIL)
-
-
-class LoginTypeSchema(BaseModel):
-    value: str
-
-    class Config:
-        orm_mode = True
 
 
 class ModifyPasswordSchema(BaseModel):
@@ -93,7 +90,7 @@ class TokenSchema(BaseModel):
     # for verification
 
 
-class AccessAndRefreshTokenSchema(TokenBaseSchema):
+class AccessAndRefreshTokenSchema(TokenSchema):
     pass
     # only return token pair
 

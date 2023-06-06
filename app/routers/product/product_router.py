@@ -191,14 +191,14 @@ def delete_product(product_id: str, db: Session = Depends(db.get_db)):
 )
 def get_top_selling_products(req: Request, db: Session = Depends(db.get_db)):
     try:
-        client = req.app.state.redis
+        # client = req.app.state.redis
 
-        cached_products = client.json().get(best_selling_products_key(), ".")
+        # cached_products = client.json().get(best_selling_products_key(), ".")
 
-        if cached_products:
-            return cached_products
+        # if cached_products:
+        #     return cached_products
 
-        product_items = (
+        products = (
             db.query(product_item_model.ProductItem)
             .order_by(desc(getattr(product_item_model.ProductItem, "sales")))
             .limit(10)
@@ -209,13 +209,13 @@ def get_top_selling_products(req: Request, db: Session = Depends(db.get_db)):
         Can't resolve label reference for ORDER BY / GROUP BY / DISTINCT etc. Textual SQL expression 'sales' should be explicitly declared as text('sales')"
         """
 
-        dict_products = list(map(lambda x: jsonable_encoder(x.parent_product), product_items))
+        # dict_products = list(map(lambda x: jsonable_encoder(x.parent_product), product_items))
 
-        client.json().set(best_selling_products_key(), ".", dict_products)
+        # client.json().set(best_selling_products_key(), ".", dict_products)
 
-        client.expire(best_selling_products_key(), timedelta(seconds=600))
+        # client.expire(best_selling_products_key(), timedelta(seconds=600))
 
-        return dict_products
+        return products
 
     except Exception as e:
         get_exception(e)

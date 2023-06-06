@@ -46,7 +46,6 @@ def login(payload: user_schema.LoginUserSchema, db: Session = Depends(db.get_db)
 
         if not user:
             raise_http_exception(api_msgs.USER_NOT_FOUND)
-        print(user, "這是uesr")
         if user_services.password_is_matched(
             payload.password, user.password
         ) and user_services.user_is_verified(user.verified):
@@ -76,38 +75,34 @@ def get_refresh_token(payload: user_schema.TokenSchema, db: Session = Depends(db
 
 
 @public_singular.post(
-    "/verify-token",
+    "/check-verify-token",
     **get_path_decorator_settings(
         response_model=user_schema.RegisterResultSchema,
         description="Verify the token extracted from the link(email verification or google login callback).",
     )
 )
-def verify_token_from_link(payload: user_schema.TokenSchema, db: Session = Depends(db.get_db)):
+def verify_token(payload: user_schema.TokenSchema, db: Session = Depends(db.get_db)):
     try:
-        decoded_data = security.decode_token(payload.token, "access", db)
+        decoded_data = security.decode_token(payload.token, constants.TokenType.VALIDATE_EMAIL, db)
 
         decoded_data.verified = 1
 
         db.commit()
 
-        return {
-            "token": security.create_token(decoded_data.id, "access"),
-            "refresh_token": security.create_token(decoded_data.id, "refresh"),
-            "user": decoded_data,
-        }
+        return user_services.gen_user_info_and_tokens(decoded_data, cart_length=0)
 
     except Exception as e:
         get_exception(e)
 
 
 @public_singular.post(
-    "/check-token",
+    "/check-reset-token",
     **get_path_decorator_settings(
         response_model=None,
-        description="Check if the token retrieved from the link is valid",
+        description="Check if the reset_pwd token is still valid or not.",
     )
 )
-def check_if_token_is_valid(payload: user_schema.TokenSchema):
+def check_token(payload: user_schema.TokenSchema, db: Session = Depends(db.get_db)):
     try:
         security.decode_token(payload.token, constants.TokenType.RESET_PWD, db)
 
@@ -138,6 +133,43 @@ def check_if_account_exists(
                 return {"has_account": True}
 
         return {"has_account": False}
+
+    except Exception as e:
+        get_exception(e)
+
+
+@public_singular.post(
+    "/send-email",
+    **get_path_decorator_settings(
+        description="Send email to specific email address.",
+    )
+)
+async def send_email(payload: user_schema.SendEmailSchema, db: Session = Depends(db.get_db)):
+    try:
+        user = user_services.find_user_with_email(payload.email, db)
+
+        if not user:
+            raise_http_exception(api_msgs.USER_NOT_FOUND)
+        link_type = (
+            constants.URLLinkType.RESET
+            if "reset" in payload.token_type
+            else constants.URLLinkType.VERIFY
+        )
+        url_params = (
+            constants.URLParams.RESET_PWD
+            if "reset" in payload.token_type
+            else constants.URLParams.VERIFY_EMAIL
+        )
+
+        link_params = {
+            "user_id": user.id,
+            "user_email": user.email,
+            "link_type": link_type,
+            "token_type": payload.token_type,
+            "url_params": url_params,
+        }
+
+        await user_services.send_link(link_params)
 
     except Exception as e:
         get_exception(e)

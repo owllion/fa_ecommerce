@@ -49,7 +49,6 @@ async def send_link(params: email_schema.SendLinkParamsSchema):
 
         fm = FastMail(conf)
         await fm.send_message(message)
-        print("祭出之後")
 
     except Exception as e:
         get_exception(e)

@@ -78,6 +78,6 @@ def decode_token(token: str, token_type: str, db: Session):
         return user
 
     except ExpiredSignatureError:
-        raise_http_exception(api_msgs.TOKEN_EXPIRED, status.HTTP_401_UNAUTHORIZED)
+        raise_http_exception(api_msgs.TOKEN_EXPIRED, status.HTTP_400_BAD_REQUEST)
     except JWTError as e:
         raise_http_exception(api_msgs.MALFORMED_TOKEN)

@@ -41,13 +41,13 @@ def update_user(
         get_exception(e)
 
 
-@protected_singular.post(
+@public_singular.post(
     "/reset-password",
     **get_path_decorator_settings(description="Password has been successfully reset")
 )
 def reset_password(payload: user_schema.ResetPasswordSchema, db: Session = Depends(db.get_db)):
     try:
-        user = decode_token(payload.token, payload.token_type, db)
+        user = decode_token(payload.token, constants.TokenType.RESET_PWD, db)
         user.password = payload.password
         db.commit()
 

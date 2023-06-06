@@ -129,7 +129,15 @@ def check_if_account_exists(
 ):
     try:
         user = user_services.find_user_with_email(payload.email, db)
-        return {"has_account": True} if user else {"has_account": False}
+
+        if user:
+            if user_services.is_google_login(user.email, user.password):
+                raise_http_exception(api_msgs.EMAIL_ALREADY_REGISTERED_WITH_GOOGLE)
+
+            if user_services.is_email_login(user.email, user.password):
+                return {"has_account": True}
+
+        return {"has_account": False}
 
     except Exception as e:
         get_exception(e)

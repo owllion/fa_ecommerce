@@ -114,12 +114,14 @@ def create_user_coupon(user_id: str, coupon_id: str, db: Session):
 
 
 def create_10_user_coupons(user_id: str, db: Session):
+    print(user_id, "這是user_id")
     ids = get_random_10_coupon_ids(db)
     print(ids, "這是ids")
     for coupon_id in ids:
         print(coupon_id, "這是單個coupon_id")
         create_user_coupon(user_id, coupon_id, db)
     db.commit()
+    print("create完成10張coupon了")
 
 
 def svc_create_coupon(payload: coupon_schema.CouponCreateSchema, db: Session):

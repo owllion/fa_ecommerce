@@ -33,7 +33,7 @@ async def create_user(payload: user_schema.UserCreateSchema, db: Session = Depen
             if user_services.is_email_login(user.email, user.password):
                 raise_http_exception(api_msgs.ACCOUNT_ALREADY_EXISTS, status.HTTP_409_CONFLICT)
         else:
-            user_services.create_email_login_user(payload)
+            await user_services.create_email_login_user(payload, db)
 
     except Exception as e:
         get_exception(e)

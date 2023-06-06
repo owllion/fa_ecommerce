@@ -70,23 +70,19 @@ def password_is_matched(payload_pwd: str, user_pwd: str):
 
 async def send_link(payload: email_schema.SendLinkSchema):
     token = security.create_token(
-        payload.user_id,
-        payload.token_type,
+        payload["user_id"],
+        payload["token_type"],
     )
 
-    target_link = f'{config("FRONTEND_DEPLOY_URL")}/auth/{payload.url_params}/{token}'
+    target_link = config("FRONTEND_DEPLOY_URL") + "/auth/" + payload["url_params"] + "/" + token
 
     await email.send_link(
-        {"type": payload.link_type, "link": target_link, "email": payload.user_email}
+        {"type": payload["link_type"], "link": target_link, "email": payload["user_email"]}
     )
 
 
 def get_item_from_user_cart(req: Request, product_id: str, size: str):
     def find_item(item: cart_item_model.CartItem, id: str, size: str):
-        print(item.product_id, "這是item.pr_id")
-        print(id, "收到的product_id")
-        print(item.size, "this is item.size")
-        print(size, "收到的size")
         if item.product_id == id and item.size == size:
             return True
         return False
@@ -195,14 +191,13 @@ def create_google_login_user(user_data: user_schema.GoogleLoginUserDataSchema, d
 
     create_cart(new_user.id, db)
     issue_coupons(new_user.id, db)
-
     return gen_user_info_and_tokens(new_user, cart_length=0)
 
 
-async def create_email_login_user(payload: user_schema.UserCreateSchema):
+async def create_email_login_user(payload: user_schema.UserCreateSchema, db: Session):
     new_user = svc_create_user(payload, db)
     create_cart(new_user.id, db)
-    issue_coupons(new_user, db)
+    issue_coupons(new_user.id, db)
 
     link_params = {
         "user_id": new_user.id,

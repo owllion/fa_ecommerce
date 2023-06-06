@@ -46,13 +46,6 @@ class User(Base):
         passive_deletes=True,
     )
 
-    # coupons = relationship(
-    #     "Coupon",
-    #     backref="users",
-    #     secondary="user_coupon",
-    #     cascade="all, delete",
-    #     passive_deletes=True,
-    # )
     coupons = relationship(
         "UserCoupon",
         backref="user",

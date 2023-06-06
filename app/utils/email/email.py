@@ -23,6 +23,7 @@ conf = ConnectionConfig(
 
 async def send_link(params: email_schema.SendLinkParamsSchema):
     link_type, link, email = params.values()
+    print(link_type, link, email, "三個印出")
 
     res = get_mail_text(link_type)
 
@@ -48,6 +49,7 @@ async def send_link(params: email_schema.SendLinkParamsSchema):
 
         fm = FastMail(conf)
         await fm.send_message(message)
+        print("祭出之後")
 
     except Exception as e:
         get_exception(e)

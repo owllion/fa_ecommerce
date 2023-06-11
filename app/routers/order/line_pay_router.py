@@ -70,7 +70,6 @@ def line_pay_check_payment_status(
         total = order.total
 
         conf_data = {"amount": int(total), "currency": "TWD"}
-        print(conf_data, "這是conf_data")
 
         has_paid = check_payment_status(transaction_id, conf_data)
 

@@ -23,9 +23,6 @@ conf = ConnectionConfig(
 
 async def send_link(params: email_schema.SendLinkParamsSchema):
     link_type, link, email = params.values()
-    print(link_type, link, email, "三個印出")
-
-    res = get_mail_text(link_type)
 
     btn_text, title, content, link_type, action = get_mail_text(link_type).values()
 

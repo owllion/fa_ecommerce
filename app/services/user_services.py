@@ -121,16 +121,9 @@ def delete_item(db: Session, cart_item: cart_item_model.CartItem):
 
 
 def update_qty(cart_item: cart_item_model.CartItem, stock: int, operation_type: str, db: Session):
-    # 確認完當前購物車內數量是正常的之後(超過就會error)
-    # 是按下+ -> 判斷加上去是否會>stock，會就error
-    # 按下 - -> 判斷減去是否會<1(前端確認即可，但後端為了保險還是要確認)
-
-    print(cart_item.qty, "qty")
-    print(stock, "stock")
     if cart_item.qty >= 1 and cart_item.qty < stock:
         cart_item.qty += 1 if operation_type == OperationType.INC else -1
         db.commit()
-        # 在購物車裡面做更新，qty只會是+1(因為不給手動輸入)
     else:
         raise_http_exception(api_msgs.CART_ITEM_QUANTITY_LIMITS_ERROR)
 

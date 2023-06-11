@@ -13,9 +13,6 @@ from ..schemas import coupon_schema
 
 
 def is_valid_coupon(expiry_date: datetime):
-    print(expiry_date, "這是expire date")
-    print(type(expiry_date), "這是expire date")
-
     expiry_datetime = datetime.strptime(expiry_date, "%Y-%m-%dT%H:%M:%S")
 
     if (expiry_datetime - datetime.now()).total_seconds() > 0:

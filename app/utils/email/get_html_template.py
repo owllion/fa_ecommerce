@@ -1,11 +1,10 @@
 from ...schemas import email_schema
 
-def get_html_template(params: email_schema.CreateEmailContentSchema
-) -> str:
-    btn_text, btn_link, title, content, link_type, action = params.values()
-    print(btn_link,btn_text,title,content,link_type,'全都印出來')
 
-    html = f'''
+def get_html_template(params: email_schema.CreateEmailContentSchema) -> str:
+    btn_text, btn_link, title, content, link_type, action = params.values()
+
+    html = f"""
     <!DOCTYPE html
         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office"
@@ -798,11 +797,5 @@ def get_html_template(params: email_schema.CreateEmailContentSchema
 </body>
 
 </html>
-    '''
+    """
     return html
-
-
-
-
-
-

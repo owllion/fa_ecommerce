@@ -38,11 +38,10 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 session = SessionLocal()
 
 Base = declarative_base()
-# use to create our application’s database model
 metadata = Base.metadata
 
 
-# Dependency
+# for Depends()
 def get_db():
     db = SessionLocal()
     try:

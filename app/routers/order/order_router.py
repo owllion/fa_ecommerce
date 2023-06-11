@@ -26,7 +26,6 @@ def create_order(
     req: Request, payload: order_schema.OrderCreateSchema, db: Session = Depends(db.get_db)
 ):
     try:
-        print(payload, "這是payload")
         order_services.svc_create_order(req, payload, db)
 
     except Exception as e:

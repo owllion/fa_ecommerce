@@ -73,7 +73,6 @@ def product_item_not_exists(product_id: str, size_id: str, db: Session):
 
 
 def get_product_item_or_raise_not_found(product_id: str, size_id: str, db: Session):
-    print(size_id, "這是收到的size id")
     product_item = find_product_item(product_id, size_id, db)
     if product_item:
         return product_item

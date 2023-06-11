@@ -183,10 +183,7 @@ def remove_from_cart(
     req: Request, payload: cart_schema.RemoveFromCartSchema, db: Session = Depends(db.get_db)
 ):
     try:
-        print(req.state.mydata.cart.id, "這是cart items")
         cart_item = user_services.get_item_from_user_cart(req, payload.product_id, payload.size)
-
-        print(cart_item, "這是cart_item")
 
         user_services.delete_item(db, cart_item)
 
@@ -238,13 +235,10 @@ def update_item_qty(
 def get_user_cart(req: Request):
     try:
         cart_items = req.state.mydata.cart.cart_items
-        # print(cart.id, "this is if")
         return {
             "cart_id": req.state.mydata.cart.id,
             "cart_items": [item for item in cart_items],
         }
-        # cart_items = req.state.mydata.cart.cart_items
-        # return [item for item in cart_items]
 
     except Exception as e:
         get_exception(e)

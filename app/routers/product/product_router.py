@@ -87,51 +87,13 @@ def get_product(req: Request, product_id: str, db: Session = Depends(db.get_db))
         response_model=product_schema.ResponsePaginateProductsSchema,
     )
 )
-async def get_products(
-    req: Request, payload: product_schema.PaginateProductsSchema, db: Session = Depends(db.get_db)
-):
+def get_products(payload: product_schema.PaginateProductsSchema, db: Session = Depends(db.get_db)):
     try:
-        client = req.app.state.redis
-
-        json_payload = jsonable_encoder(payload)
-
-        cached_products = client.json().get(search_options_key(json.dumps(json_payload)), ".")
-
-        cached_total = client.get(number_of_search_result_key(json.dumps(json_payload)))
-
-        if cached_products and cached_total:
-            res = {"list": json.loads(cached_products), "total": int(cached_total)}
-
-            return res
-
         query = db.query(product_model.Product)
 
         total, filtered_list = product_services.filter_products(query, payload).values()
 
-        if not filtered_list:
-            res = {"list": [], "total": 0}
-        else:
-            res = {"list": filtered_list, "total": total}
-
-            dict_products = list(map(lambda x: jsonable_encoder(x), filtered_list))
-
-            # 設定新搜尋結果
-            client.json().set(
-                search_options_key(json.dumps(json_payload)), ".", json.dumps(dict_products)
-            )
-
-            # 搜尋結果expire
-            client.expire(search_options_key(json.dumps(json_payload)), timedelta(seconds=3600))
-
-            # 設定筆數(string)
-            client.set(number_of_search_result_key(json.dumps(json_payload)), str(total))
-
-            # 搜尋結果expire
-            client.expire(
-                number_of_search_result_key(json.dumps(json_payload)), timedelta(seconds=3600)
-            )
-
-        return res
+        return {"list": filtered_list or [], "total": total or 0}
 
     except Exception as e:
         get_exception(e)
@@ -191,13 +153,6 @@ def delete_product(product_id: str, db: Session = Depends(db.get_db)):
 )
 def get_top_selling_products(req: Request, db: Session = Depends(db.get_db)):
     try:
-        # client = req.app.state.redis
-
-        # cached_products = client.json().get(best_selling_products_key(), ".")
-
-        # if cached_products:
-        #     return cached_products
-
         product_items = (
             db.query(product_item_model.ProductItem)
             .order_by(desc(getattr(product_item_model.ProductItem, "sales")))
@@ -205,16 +160,7 @@ def get_top_selling_products(req: Request, db: Session = Depends(db.get_db)):
             .all()
         )
 
-        # 這邊不用getattr會error
-        """
-        Can't resolve label reference for ORDER BY / GROUP BY / DISTINCT etc. Textual SQL expression 'sales' should be explicitly declared as text('sales')"
-        """
-
         dict_products = list(map(lambda x: jsonable_encoder(x.parent_product), product_items))
-
-        # client.json().set(best_selling_products_key(), ".", dict_products)
-
-        # client.expire(best_selling_products_key(), timedelta(seconds=600))
 
         return dict_products
 

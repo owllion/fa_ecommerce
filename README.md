@@ -1,4 +1,4 @@
-﻿# fa_ecommerce - MERN Stack Shopping App Server
+﻿# fa_ecommerce - Shopping App Server
  
 [![CI CD Pipeline](https://github.com/owllion/fa_ecommerce/actions/workflows/main.yml/badge.svg)](https://github.com/owllion/fa_ecommerce/actions/workflows/main.yml)
 [![MIT licensed][shield-license]](#)
